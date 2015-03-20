@@ -1,13 +1,17 @@
 allprojects {
+  // Download all libs from maven central
   repositories {
     mavenCentral()
   }
 
   apply plugin: 'eclipse'
+
+  // Always generate clean eclipse files.
+  tasks.eclipse.dependsOn tasks.cleanEclipse
 }
 
 subprojects {
+  // Use Java 8 for all projects
   apply plugin: 'java'
-
   sourceCompatibility = 1.8
 }
