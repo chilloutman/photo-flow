@@ -1,0 +1,9 @@
+apply plugin:'application'
+
+mainClassName = 'ch.zhaw.photoflow.Main'
+
+dependencies {
+  runtime(
+    project(':core')
+  )
+}
