@@ -11,3 +11,7 @@ gradle-app.setting
 .classpath
 .settings/
 */bin/
+
+#Ignore Intellij files
+.iml
+*/.idea/
