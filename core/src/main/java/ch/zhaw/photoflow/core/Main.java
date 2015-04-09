@@ -1,10 +1,25 @@
 package ch.zhaw.photoflow.core;
 
-public class Main {
+import ch.zhaw.photoflow.core.dummy.DummyPhotoDao;
+import ch.zhaw.photoflow.core.dummy.DummyProjectDao;
 
-  public static void main(String[] args) {
-    // TODO
-    System.out.println("hi");
-  }
+/**
+ * This is the creator and provider the main core classes (e.g. data access objects).
+ */
+public class Main {
+	
+//	private final PhotoDao photoDao = new SqlitePhotoDao();
+//	private final ProjectDao projectDao = new SqliteProjectDao();
+
+	private final PhotoDao photoDao = new DummyPhotoDao();
+	private final ProjectDao projectDao = new DummyProjectDao();
+
+	public PhotoDao getPhotoDao() {
+		return photoDao;
+	}
+
+	public ProjectDao getProjectDao() {
+		return projectDao;
+	}
 
 }
