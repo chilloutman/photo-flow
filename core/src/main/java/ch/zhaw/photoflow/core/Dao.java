@@ -4,10 +4,10 @@ import java.util.List;
 
 public interface Dao<T> {
 
-	public List<T> load();
+	public List<T> load() throws DaoException;
 	
-	public T save(T object);
+	public T save(T object) throws DaoException;
 	
-	public void delete(T object);
+	public void delete(T object) throws DaoException;
 	
 }
