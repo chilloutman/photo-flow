@@ -1,6 +1,6 @@
 package ch.zhaw.photoflow.core.domain;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public class Photo {
@@ -8,7 +8,7 @@ public class Photo {
 	private String filePath;
 	private int fileSize;
 	private FileFormat fileFormat;
-	private Timestamp creationDate;
+	private Date creationDate;
 	private PhotoStatus status;
 	private Photographer photographer;
 	private List<Tag> tags;
@@ -44,11 +44,11 @@ public class Photo {
 		this.fileFormat = fileFormat;
 	}
 
-	public Timestamp getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Timestamp creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
