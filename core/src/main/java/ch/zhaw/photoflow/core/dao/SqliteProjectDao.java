@@ -1,4 +1,4 @@
-package ch.zhaw.photoflow.core.impl;
+package ch.zhaw.photoflow.core.dao;
 
 import java.util.List;
 

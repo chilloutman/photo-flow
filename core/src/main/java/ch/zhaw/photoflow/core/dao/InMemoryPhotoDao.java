@@ -1,4 +1,4 @@
-package ch.zhaw.photoflow.core.dummy;
+package ch.zhaw.photoflow.core.dao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,11 +6,11 @@ import java.util.List;
 import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.domain.Photo;
 
-public class DummyPhotoDao implements PhotoDao {
+public class InMemoryPhotoDao implements PhotoDao {
 
 	private final List<Photo> photos = new ArrayList<>();
 	
-	public DummyPhotoDao() {
+	public InMemoryPhotoDao() {
 		// TODO: Generate better dummy data.
 		photos.add(new Photo());
 		photos.add(new Photo());

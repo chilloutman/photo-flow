@@ -16,7 +16,7 @@ subprojects {
 	sourceCompatibility = 1.8
 
 	dependencies {
-		runtime(
+		compile(
 			'com.google.guava:guava:18.0'
 		)
 	}
