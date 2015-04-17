@@ -10,7 +10,7 @@ import ch.zhaw.photoflow.core.domain.Photo;
 public class SqlitePhotoDao implements PhotoDao {
 
 	@Override
-	public List<Photo> loadAll() {
+	public List<Photo> loadAll(int projectId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

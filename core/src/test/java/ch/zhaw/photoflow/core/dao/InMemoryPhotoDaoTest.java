@@ -16,7 +16,10 @@ import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoTest;
 
 public class InMemoryPhotoDaoTest {
-
+	
+	private static final Integer PROJECT_1 = 1;
+	private static final Integer PROJECT_2 = 2;
+	
 	private PhotoDao dao;
 	
 	@Before
@@ -24,26 +27,34 @@ public class InMemoryPhotoDaoTest {
 		dao = new InMemoryPhotoDao();
 		
 		dao.save(Photo.newPhoto(p -> {
+			p.setProjectId(PROJECT_1);
 			p.setFilePath("swag.jpg");
 		}));
 		
 		dao.save(Photo.newPhoto(p -> {
+			p.setProjectId(PROJECT_1);
 			p.setFilePath("yolo.jpg");
 		}));
 		
 		dao.save(Photo.newPhoto(p -> {
+			p.setProjectId(PROJECT_2);
 			p.setFilePath("pimp.jpg");
 		}));
 	}
 	
 	@Test
-	public void loadReturnsAllProjects () throws DaoException {
-		assertThat(dao.loadAll(), hasSize(3));
+	public void loadReturnsEmptyList () throws DaoException {
+		assertThat(dao.loadAll(1337), hasSize(0));
+	}
+	
+	@Test
+	public void loadReturnsAllPhotosForProject () throws DaoException {
+		assertThat(dao.loadAll(PROJECT_1), hasSize(2));
 	}
 	
 	@Test(expected = UnsupportedOperationException.class)
 	public void listIsImmutable () throws DaoException {
-		List<Photo> photos = dao.loadAll();
+		List<Photo> photos = dao.loadAll(PROJECT_1);
 		photos.clear();
 	}
 	
@@ -52,13 +63,13 @@ public class InMemoryPhotoDaoTest {
 	 */
 	@Test
 	public void photosAreNotLive () throws DaoException {
-		dao.loadAll().get(0).setFilePath(PhotoTest.FILE_PATH);
-		assertThat(dao.loadAll().get(0).getFilePath(), not(PhotoTest.FILE_PATH));
+		dao.loadAll(PROJECT_1).get(0).setFilePath(PhotoTest.FILE_PATH);
+		assertThat(dao.loadAll(PROJECT_1).get(0).getFilePath(), not(PhotoTest.FILE_PATH));
 	}
 	
 	@Test
 	public void savePhoto () throws DaoException {
-		Photo photo = dao.loadAll().get(0);
+		Photo photo = dao.loadAll(PROJECT_1).get(0);
 		photo.setFilePath(PhotoTest.FILE_PATH);
 		dao.save(photo);
 		assertThat(dao.load(photo.getId().get()).get().getFilePath(), is(PhotoTest.FILE_PATH));
@@ -66,11 +77,12 @@ public class InMemoryPhotoDaoTest {
 	
 	@Test
 	public void deletePhoto () throws DaoException {
-		Integer id = dao.loadAll().get(0).getId().get();
+		int size = dao.loadAll(PROJECT_1).size();
+		int id = dao.loadAll(PROJECT_1).get(0).getId().get();
 		dao.delete(Photo.newPhoto(p -> {
 			p.setId(id);
 		}));
-		assertThat(dao.loadAll(), hasSize(2));
+		assertThat(dao.loadAll(PROJECT_1), hasSize(size-1));
 	}
 	
 }

@@ -25,8 +25,11 @@ public class InMemoryPhotoDao implements PhotoDao {
 	}
 	
 	@Override
-	public List<Photo> loadAll() {
-		return photos.stream().map(Photo::copy).collect(toImmutableList());
+	public List<Photo> loadAll(int projectId) {
+		return photos.stream()
+			.filter(p -> p.getProjectId().equals(Optional.of(projectId)))
+			.map(Photo::copy)
+			.collect(toImmutableList());
 	}
 	
 	@Override

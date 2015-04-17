@@ -1,4 +1,4 @@
-package core;
+package ch.zhaw.photoflow.core.dao;
 
 import static ch.zhaw.photoflow.core.domain.Project.newProject;
 import static org.hamcrest.CoreMatchers.is;

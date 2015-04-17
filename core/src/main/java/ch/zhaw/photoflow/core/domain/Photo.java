@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 public class Photo {
 	
 	private Optional<Integer> id = Optional.empty();
+	private Optional<Integer> projectId = Optional.empty();
 	private String filePath;
 	private Integer fileSize;
 	private FileFormat fileFormat;
@@ -43,6 +44,7 @@ public class Photo {
 	public static Photo copy (Photo photo) {
 		return newPhoto(p -> {
 			p.id = photo.id;
+			p.projectId = photo.projectId;
 			p.filePath = photo.filePath;
 			p.fileSize = photo.fileSize;
 			p.fileFormat = photo.fileFormat;
@@ -62,8 +64,16 @@ public class Photo {
 		return id;
 	}
 	
-	public void setId(Integer id) {
+	public void setId(int id) {
 		this.id = Optional.of(id);
+	}
+	
+	public Optional<Integer> getProjectId() {
+		return projectId;
+	}
+	
+	public void setProjectId (int id) {
+		this.projectId = Optional.of(id);
 	}
 	
 	public String getFilePath() {

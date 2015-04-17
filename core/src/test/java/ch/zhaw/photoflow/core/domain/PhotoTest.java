@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 public class PhotoTest {
 	
 	public static final Integer ID = 42;
+	public static final Integer PROJECT_ID = 100;
 	public static final String FILE_PATH = "/some/file/path";
 	public static final Integer FILE_SIZE = 9000;
 	public static final FileFormat FILE_FORMAT = FileFormat.JPEG;
@@ -32,6 +33,7 @@ public class PhotoTest {
 	public void copy() {
 		Photo photo = Photo.copy(Photo.newPhoto(p -> {
 			p.setId(ID);
+			p.setProjectId(PROJECT_ID);
 			p.setFilePath(FILE_PATH);
 			p.setFileSize(FILE_SIZE);
 			p.setFileFormat(FILE_FORMAT);
@@ -42,6 +44,7 @@ public class PhotoTest {
 		}));
 		
 		assertThat(photo.getId().get(), is(ID));
+		assertThat(photo.getProjectId().get(), is(PROJECT_ID));
 		assertThat(photo.getFilePath(), is(FILE_PATH));
 		assertThat(photo.getFileSize(), is(FILE_SIZE));
 		assertThat(photo.getFileFormat(), is(FILE_FORMAT));
