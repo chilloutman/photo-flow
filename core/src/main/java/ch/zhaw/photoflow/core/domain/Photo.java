@@ -1,25 +1,67 @@
 package ch.zhaw.photoflow.core.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import com.google.common.collect.ImmutableList;
 
 public class Photo {
-
+	
+	private Optional<Integer> id = Optional.empty();
 	private String filePath;
-	private int fileSize;
+	private Integer fileSize;
 	private FileFormat fileFormat;
 	private Date creationDate;
-	private PhotoStatus status;
+	private PhotoStatus status = PhotoStatus.NEW;
 	private Photographer photographer;
-	private List<Tag> tags;
+	private List<Tag> tags = new ArrayList<>();
 	
-	public Photo() {
+	/**
+	 * Conveniently create and configure a new instance.
+	 * @param setUpProject configure function.
+	 * @return the new instance.
+	 */
+	public static Photo newPhoto (Consumer<Photo> configurePhoto) {
+		Photo p = new Photo();
+		configurePhoto.accept(p);
+		return p;
+	}
+	
+	/**
+	 * Creates a new instance an copies all properties to it.
+	 * @param photo the photo to copy the properties from.
+	 * @return the new instance.
+	 */
+	public static Photo copy (Photo photo) {
+		return newPhoto(p -> {
+			p.id = photo.id;
+			p.filePath = photo.filePath;
+			p.fileSize = photo.fileSize;
+			p.fileFormat = photo.fileFormat;
+			p.creationDate = photo.creationDate;
+			p.status = photo.status;
+			p.photographer = photo.photographer;
+			p.tags = photo.tags;
+		});
+	}
+	
+	private Photo() {
 		
 	}
 	
-	
-	
 	/************ GETTERS AND SETTERS ************/
+	public Optional<Integer> getId() {
+		return id;
+	}
+	
+	public void setId(Integer id) {
+		this.id = Optional.of(id);
+	}
+	
 	public String getFilePath() {
 		return filePath;
 	}
@@ -68,12 +110,33 @@ public class Photo {
 		this.photographer = photographer;
 	}
 
-	public List<Tag> getTags() {
-		return tags;
+	public ImmutableList<Tag> getTags() {
+		return ImmutableList.copyOf(tags);
 	}
 
-	public void setTags(List<Tag> tags) {
-		this.tags = tags;
+	public void addTag(Tag tag) {
+		this.tags.add(tag);
+	}
+	
+	public void removeTag(Tag tag) {
+		this.tags.remove(tag);
+	}
+	
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+	
+	/**
+	 * Only the id is relevant for equality.
+	 */
+	@Override
+	public boolean equals(Object object) {
+		if (object == null) return false;
+		if (getClass() != object.getClass()) return false;
+		Photo that = (Photo) object;
+
+		return Objects.equals(id, that.id);
 	}
 	
 }

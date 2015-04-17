@@ -1,20 +1,40 @@
 package ch.zhaw.photoflow.core.domain;
 
+import java.util.Objects;
+
+import com.google.common.base.MoreObjects;
+
 public class Tag {
 
-	private String name;
+	private final String name;
 	
-	public Tag() {
-		
+	public Tag(String name) {
+		this.name = name;
 	}
 
-	
-	/************ GETTERS AND SETTERS ************/
 	public String getName() {
 		return name;
 	}
-
-	public void setName(String name) {
-		this.name = name;
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
 	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == null) return false;
+		if (getClass() != object.getClass()) return false;
+		Tag that = (Tag) object;
+		
+		return Objects.equals(name, that.name);
+	}
+	
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+			.add("name", name)
+			.toString();
+	}
+	
 }

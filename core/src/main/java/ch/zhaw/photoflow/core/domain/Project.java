@@ -1,8 +1,12 @@
 package ch.zhaw.photoflow.core.domain;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import com.google.common.collect.ImmutableList;
 
 public class Project {
 
@@ -10,7 +14,7 @@ public class Project {
 	private String name;
 	private String description;
 	private ProjectStatus status = ProjectStatus.NEW;
-	private List<Todo> todos;
+	private List<Todo> todos = new ArrayList<>();
 	
 	/**
 	 * Conveniently create and configure a new instance.
@@ -23,22 +27,24 @@ public class Project {
 		return p;
 	}
 	
+	/**
+	 * Creates a new instance an copies all properties to it.
+	 * @param project the project to copy the properties from.
+	 * @return the new instance.
+	 */
 	public static Project copy (Project project) {
 		return newProject(p -> {
-			if (project.getId().isPresent()) {
-				p.setId(project.getId().get());
-			}
-			p.setName(project.getName());
-			p.setDescription(project.getDescription());
-			p.setStatus(project.getStatus());
-			p.setTodos(project.getTodos()); // TODO: copy this?
+			p.id = project.id;
+			p.name = project.name;
+			p.description = project.description;
+			p.status = project.status;
+			p.todos = new ArrayList<>(project.todos);
 		});
 	}
 	
-	public Project() {
+	private Project() {
 	}
 
-	/************ GETTERS AND SETTERS ************/
 	public Optional<Integer> getId() {
 		return id;
 	}
@@ -71,11 +77,33 @@ public class Project {
 		this.status = status;
 	}
 
-	public List<Todo> getTodos() {
-		return todos;
+	public ImmutableList<Todo> getTodos() {
+		return ImmutableList.copyOf(todos);
 	}
+	
+	public void addTodo(Todo todo) {
+		todos.add(todo);
+	}
+	
+	public void removeTodo(Todo todo) {
+		todos.remove(todo);
+	}
+	
+	@Override
+	public int hashCode() {
+		return id.hashCode();
+	}
+	
+	/**
+	 * Only the id is relevant for equality.
+	 */
+	@Override
+	public boolean equals(Object object) {
+		if (object == null) return false;
+		if (getClass() != object.getClass()) return false;
+		Project that = (Project) object;
 
-	public void setTodos(List<Todo> todos) {
-		this.todos = todos;
+		return Objects.equals(id, that.id);
 	}
+	
 }

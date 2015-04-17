@@ -1,19 +1,43 @@
 package ch.zhaw.photoflow.core.domain;
 
+import java.util.Objects;
+
+import com.google.common.base.MoreObjects;
+
+/**
+ * This class is immutable. There should be no setters.
+ */
 public class Todo {
 	
-	private String description;
+	private final String description;
 	
 	public Todo(String description) {
 		this.description = description;
 	}
 	
-	/************ GETTERS AND SETTERS ************/
 	public String getDescription() {
 		return description;
 	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	
+	@Override
+	public int hashCode() {
+		return description.hashCode();
 	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (object == null) return false;
+		if (getClass() != object.getClass()) return false;
+		Todo that = (Todo) object;
+		
+		return Objects.equals(description, that.description);
+	}
+	
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+			.add("description", description)
+			.toString();
+	}
+
 }

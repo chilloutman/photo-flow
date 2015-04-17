@@ -34,7 +34,7 @@ public class ProjectTest {
 			p.setId(TEST_ID);
 			p.setName(TEST_NAME);
 			p.setDescription(TEST_DESCRIPTION);
-			p.setTodos(TEST_TODOS);
+			TEST_TODOS.forEach(p::addTodo);
 		}));
 		
 		assertThat(project.getId().get(), is(TEST_ID));

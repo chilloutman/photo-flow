@@ -9,7 +9,6 @@ gradle-app.setting
 # Ignore generated eclipse files
 .project
 .classpath
-.settings/
 */bin/
 
 #Ignore Intellij files
