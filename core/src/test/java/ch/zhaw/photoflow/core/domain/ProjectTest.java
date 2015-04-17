@@ -7,19 +7,33 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;
 
 public class ProjectTest {
 	
-	public static final Integer TEST_ID = 42;
-	public static final String TEST_NAME = "TEST_DESCRIPTION";
-	public static final String TEST_DESCRIPTION = "TEST_DESCRIPTION";
-	public static final List<Todo> TEST_TODOS = ImmutableList.of(
+	public static final Integer ID = 42;
+	public static final String NAME = "TEST_DESCRIPTION";
+	public static final String DESCRIPTION = "TEST_DESCRIPTION";
+	public static final List<Todo> TODOS = ImmutableList.of(
 		new Todo("todo 1"),
 		new Todo("todo 2")
 	);
+	
+	private Project project;
+	
+	@Before
+	public void before() {
+		project = Project.copy(newProject(p -> {
+			p.setId(ID);
+			p.setName(NAME);
+			p.setDescription(DESCRIPTION);
+			TODOS.forEach(p::addTodo);
+		}));
+
+	}
 	
 	@Test
 	public void idIsAbsentButNotNull() {
@@ -30,17 +44,11 @@ public class ProjectTest {
 	
 	@Test
 	public void copy() {
-		Project project = Project.copy(newProject(p -> {
-			p.setId(TEST_ID);
-			p.setName(TEST_NAME);
-			p.setDescription(TEST_DESCRIPTION);
-			TEST_TODOS.forEach(p::addTodo);
-		}));
-		
-		assertThat(project.getId().get(), is(TEST_ID));
-		assertThat(project.getName(), is(TEST_NAME));
-		assertThat(project.getDescription(), is(TEST_DESCRIPTION));
-		assertThat(project.getTodos(), is(TEST_TODOS));
+		Project copy = Project.copy(project);
+		assertThat(copy.getId().get(), is(ID));
+		assertThat(copy.getName(), is(NAME));
+		assertThat(copy.getDescription(), is(DESCRIPTION));
+		assertThat(copy.getTodos(), is(TODOS));
 	}
-
+	
 }

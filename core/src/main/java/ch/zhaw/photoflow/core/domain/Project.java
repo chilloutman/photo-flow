@@ -1,5 +1,7 @@
 package ch.zhaw.photoflow.core.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,8 +15,12 @@ public class Project {
 	private Optional<Integer> id = Optional.empty();
 	private String name;
 	private String description;
-	private ProjectStatus status = ProjectStatus.NEW;
+	private ProjectState state = ProjectState.NEW;
 	private List<Todo> todos = new ArrayList<>();
+	
+	public static Project newProject () {
+		return new Project();
+	}
 	
 	/**
 	 * Conveniently create and configure a new instance.
@@ -22,7 +28,7 @@ public class Project {
 	 * @return the new instance.
 	 */
 	public static Project newProject (Consumer<Project> configureProject) {
-		Project p = new Project();
+		Project p = newProject();
 		configureProject.accept(p);
 		return p;
 	}
@@ -37,7 +43,7 @@ public class Project {
 			p.id = project.id;
 			p.name = project.name;
 			p.description = project.description;
-			p.status = project.status;
+			p.state = project.state;
 			p.todos = new ArrayList<>(project.todos);
 		});
 	}
@@ -58,7 +64,7 @@ public class Project {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = checkNotNull(name);
 	}
 
 	public String getDescription() {
@@ -66,15 +72,16 @@ public class Project {
 	}
 
 	public void setDescription(String description) {
-		this.description = description;
+		this.description = checkNotNull(description);
 	}
 
-	public ProjectStatus getStatus() {
-		return status;
+	public ProjectState getState() {
+		return state;
 	}
-
-	public void setStatus(ProjectStatus status) {
-		this.status = status;
+	
+	/** Not public, so that only the Workflow can change it. */
+	void setState(ProjectState state) {
+		this.state = state;
 	}
 
 	public ImmutableList<Todo> getTodos() {

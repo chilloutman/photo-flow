@@ -55,16 +55,16 @@ public class InMemoryProjectDaoTest {
 	 */
 	@Test
 	public void projectsAreNotLive () throws DaoException {
-		dao.loadAll().get(0).setDescription(ProjectTest.TEST_DESCRIPTION);
-		assertThat(dao.loadAll().get(0).getDescription(), not(ProjectTest.TEST_DESCRIPTION));
+		dao.loadAll().get(0).setDescription(ProjectTest.DESCRIPTION);
+		assertThat(dao.loadAll().get(0).getDescription(), not(ProjectTest.DESCRIPTION));
 	}
 	
 	@Test
 	public void saveProject () throws DaoException {
 		Project project = dao.loadAll().get(0);
-		project.setDescription(ProjectTest.TEST_DESCRIPTION);
+		project.setDescription(ProjectTest.DESCRIPTION);
 		dao.save(project);
-		assertThat(dao.load(project.getId().get()).get().getDescription(), is(ProjectTest.TEST_DESCRIPTION));
+		assertThat(dao.load(project.getId().get()).get().getDescription(), is(ProjectTest.DESCRIPTION));
 	}
 	
 	@Test

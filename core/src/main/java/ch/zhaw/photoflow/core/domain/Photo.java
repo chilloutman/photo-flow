@@ -16,9 +16,13 @@ public class Photo {
 	private Integer fileSize;
 	private FileFormat fileFormat;
 	private Date creationDate;
-	private PhotoStatus status = PhotoStatus.NEW;
+	private PhotoState state = PhotoState.NEW;
 	private Photographer photographer;
 	private List<Tag> tags = new ArrayList<>();
+	
+	public static Photo newPhoto () {
+		return new Photo();
+	}
 	
 	/**
 	 * Conveniently create and configure a new instance.
@@ -26,7 +30,7 @@ public class Photo {
 	 * @return the new instance.
 	 */
 	public static Photo newPhoto (Consumer<Photo> configurePhoto) {
-		Photo p = new Photo();
+		Photo p = newPhoto();
 		configurePhoto.accept(p);
 		return p;
 	}
@@ -43,7 +47,7 @@ public class Photo {
 			p.fileSize = photo.fileSize;
 			p.fileFormat = photo.fileFormat;
 			p.creationDate = photo.creationDate;
-			p.status = photo.status;
+			p.state = photo.state;
 			p.photographer = photo.photographer;
 			p.tags = photo.tags;
 		});
@@ -94,12 +98,13 @@ public class Photo {
 		this.creationDate = creationDate;
 	}
 
-	public PhotoStatus getStatus() {
-		return status;
+	public PhotoState getState() {
+		return state;
 	}
 
-	public void setStatus(PhotoStatus status) {
-		this.status = status;
+	/** Not public, so that only the Workflow can change it. */
+	void setState(PhotoState state) {
+		this.state = state;
 	}
 
 	public Photographer getPhotographer() {

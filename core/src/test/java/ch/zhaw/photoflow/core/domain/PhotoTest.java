@@ -17,7 +17,7 @@ public class PhotoTest {
 	public static final Integer FILE_SIZE = 9000;
 	public static final FileFormat FILE_FORMAT = FileFormat.JPEG;
 	public static final Date CREATION_DATE = new Date();
-	public static final PhotoStatus STATUS = PhotoStatus.FLAGGED;
+	public static final PhotoState STATE = PhotoState.FLAGGED;
 	public static final Photographer PHOTOGRAPHER = new Photographer("Chuck", "Norris");
 	public static final ImmutableList<Tag> TAGS = ImmutableList.of(new Tag("AWESOME"), new Tag("TEST"));
 	
@@ -36,7 +36,7 @@ public class PhotoTest {
 			p.setFileSize(FILE_SIZE);
 			p.setFileFormat(FILE_FORMAT);
 			p.setCreationDate(CREATION_DATE);
-			p.setStatus(STATUS);
+			p.setState(STATE);
 			p.setPhotographer(PHOTOGRAPHER);
 			TAGS.forEach(p::addTag);
 		}));
@@ -46,7 +46,7 @@ public class PhotoTest {
 		assertThat(photo.getFileSize(), is(FILE_SIZE));
 		assertThat(photo.getFileFormat(), is(FILE_FORMAT));
 		assertThat(photo.getCreationDate(), is(CREATION_DATE));
-		assertThat(photo.getStatus(), is(STATUS));
+		assertThat(photo.getState(), is(STATE));
 		assertThat(photo.getPhotographer(), is(PHOTOGRAPHER));
 		assertThat(photo.getTags(), is(TAGS));
 	}
