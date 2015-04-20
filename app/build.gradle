@@ -3,7 +3,7 @@ apply plugin:'application'
 mainClassName = 'ch.zhaw.photoflow.Main'
 
 dependencies {
-  runtime(
+  compile(
     project(':core')
   )
 }

@@ -6,7 +6,7 @@ import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
 /**
  * This is the creator and provider the main core classes (e.g. data access objects).
  */
-public class Main {
+public class PhotoFlow {
 	
 //	private final PhotoDao photoDao = new SqlitePhotoDao();
 //	private final ProjectDao projectDao = new SqliteProjectDao();
