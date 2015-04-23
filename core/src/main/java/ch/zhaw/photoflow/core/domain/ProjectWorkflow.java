@@ -17,7 +17,7 @@ public class ProjectWorkflow {
 		return true;
 	}
 	
-	public static void transistion(Project project, Collection<Photo> photos, ProjectState nextState) {
+	public static void transition(Project project, Collection<Photo> photos, ProjectState nextState) {
 		if (!canTransition(project, photos, nextState)) {
 			throw new IllegalStateException("Invalid transition from " + project.getState() + " to " + nextState + ". Call canTransition() first!");
 		}

@@ -130,6 +130,7 @@ public class Photo {
 	}
 
 	public void addTag(Tag tag) {
+		//TODO:Check if tag already exists in list. (DAO part does not belong here!)
 		this.tags.add(tag);
 	}
 	

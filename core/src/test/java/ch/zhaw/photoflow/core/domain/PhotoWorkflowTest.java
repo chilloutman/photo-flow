@@ -19,14 +19,14 @@ public class PhotoWorkflowTest {
 	
 	@Test(expected = IllegalStateException.class)
 	public void toFlaggedDuringNew() {
-		PhotoWorkflow.transistion(project, photo, PhotoState.FLAGGED);
+		PhotoWorkflow.transition(project, photo, PhotoState.FLAGGED);
 	}
 	
 	@Test
 	public void toFlaggedDuringInWork() {
 		project.setState(ProjectState.IN_WORK);
 		
-		PhotoWorkflow.transistion(project, photo, PhotoState.FLAGGED);
+		PhotoWorkflow.transition(project, photo, PhotoState.FLAGGED);
 		assertThat(photo.getState(), is(PhotoState.FLAGGED));
 	}
 	
@@ -34,7 +34,7 @@ public class PhotoWorkflowTest {
 	public void toDiscardedDuringInWork() {
 		project.setState(ProjectState.IN_WORK);
 		
-		PhotoWorkflow.transistion(project, photo, PhotoState.DISCARDED);
+		PhotoWorkflow.transition(project, photo, PhotoState.DISCARDED);
 		assertThat(photo.getState(), is(PhotoState.DISCARDED));
 	}
 	
@@ -43,7 +43,7 @@ public class PhotoWorkflowTest {
 		project.setState(ProjectState.IN_WORK);
 		photo.setState(PhotoState.FLAGGED);
 		
-		PhotoWorkflow.transistion(project, photo, PhotoState.EDITING);
+		PhotoWorkflow.transition(project, photo, PhotoState.EDITING);
 		assertThat(photo.getState(), is(PhotoState.EDITING));
 	}
 

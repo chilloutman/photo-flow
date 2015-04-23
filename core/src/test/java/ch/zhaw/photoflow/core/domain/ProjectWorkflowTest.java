@@ -30,23 +30,23 @@ public class ProjectWorkflowTest {
 	
 	@Test
 	public void toDone() {
-		ProjectWorkflow.transistion(project, emptyList(), ProjectState.IN_WORK);
-		ProjectWorkflow.transistion(project, emptyList(), ProjectState.DONE);
+		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
+		ProjectWorkflow.transition(project, emptyList(), ProjectState.DONE);
 	}
 	
 	@Test
 	public void toDonewithPause() {
-		ProjectWorkflow.transistion(project, emptyList(), ProjectState.IN_WORK);
-		ProjectWorkflow.transistion(project, emptyList(), ProjectState.PAUSED);
-		ProjectWorkflow.transistion(project, emptyList(), ProjectState.IN_WORK);
-		ProjectWorkflow.transistion(project, emptyList(), ProjectState.DONE);
+		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
+		ProjectWorkflow.transition(project, emptyList(), ProjectState.PAUSED);
+		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
+		ProjectWorkflow.transition(project, emptyList(), ProjectState.DONE);
 	}
 	
 	@Test
 	public void toDoneAndBack() {
-		ProjectWorkflow.transistion(project, emptyList(), ProjectState.IN_WORK);
-		ProjectWorkflow.transistion(project, emptyList(), ProjectState.DONE);
-		ProjectWorkflow.transistion(project, emptyList(), ProjectState.IN_WORK);
+		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
+		ProjectWorkflow.transition(project, emptyList(), ProjectState.DONE);
+		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
 	}
 
 }

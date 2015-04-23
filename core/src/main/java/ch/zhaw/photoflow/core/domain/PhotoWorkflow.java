@@ -15,7 +15,7 @@ public class PhotoWorkflow {
 		return true;
 	}
 	
-	public static void transistion(Project project, Photo photo, PhotoState nextState) {
+	public static void transition(Project project, Photo photo, PhotoState nextState) {
 		if (!canTransition(project, photo, nextState)) {
 			throw new IllegalStateException("Invalid photos state transition from " + photo.getState() + " to " + nextState + " during project state " + project.getState() + ". Call canTransition() first!");
 		}
