@@ -3,7 +3,7 @@ package ch.zhaw.photoflow.core;
 import static ch.zhaw.photoflow.core.domain.Photo.newPhoto;
 import static ch.zhaw.photoflow.core.domain.Project.newProject;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
@@ -29,17 +29,17 @@ public final class DummyData {
 	
 	public static final ImmutableList<Photo> PHOTOS = ImmutableList.of(
 		newPhoto(p -> {
-			p.setCreationDate(new Date());
+			p.setCreationDate(LocalDateTime.now());
 			p.setFileFormat(FileFormat.JPEG);
 			p.setProjectId(1);
 		}),
 		newPhoto(p -> {
-			p.setCreationDate(new Date());
+			p.setCreationDate(LocalDateTime.now());
 			p.setFileFormat(FileFormat.JPEG);
 			p.setProjectId(1);
 		}),
 		newPhoto(p -> {
-			p.setCreationDate(new Date());
+			p.setCreationDate(LocalDateTime.now());
 			p.setFileFormat(FileFormat.JPEG);
 			p.setProjectId(2);
 		})
