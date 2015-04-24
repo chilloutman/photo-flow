@@ -6,7 +6,10 @@ import java.util.Collection;
 
 import com.google.common.collect.ImmutableSet;
 
-public enum ProjectState {
+/**
+ * Represents the state of a {@link Project} inside the {@link ProjectWorkflow}.
+ */
+public enum ProjectState implements State<ProjectState> {
 	NEW("New") {
 		@Override
 		Collection<ProjectState> nextStates() {
@@ -77,6 +80,7 @@ public enum ProjectState {
 		return name;
 	}
 	
+	@Override
 	public boolean isValidNextState(ProjectState state) {
 		return nextStates().contains(state);
 	}

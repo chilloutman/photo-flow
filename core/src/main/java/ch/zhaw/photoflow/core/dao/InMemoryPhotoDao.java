@@ -11,6 +11,8 @@ import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.domain.Photo;
 
+import com.google.common.collect.ImmutableList;
+
 public class InMemoryPhotoDao implements PhotoDao {
 
 	private static int idCounter = 0;
@@ -25,7 +27,7 @@ public class InMemoryPhotoDao implements PhotoDao {
 	}
 	
 	@Override
-	public List<Photo> loadAll(int projectId) {
+	public ImmutableList<Photo> loadAll(int projectId) {
 		return photos.stream()
 			.filter(p -> p.getProjectId().equals(Optional.of(projectId)))
 			.map(Photo::copy)

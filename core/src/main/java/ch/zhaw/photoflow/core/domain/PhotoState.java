@@ -4,7 +4,10 @@ import java.util.Collection;
 
 import com.google.common.collect.ImmutableSet;
 
-public enum PhotoState {
+/**
+ * Represents the state of a {@link Photo} inside the {@link PhotoWorkflow}.
+ */
+public enum PhotoState implements State<PhotoState> {
 	NEW("New") {
 		@Override
 		Collection<PhotoState> nextStates() {
@@ -42,6 +45,7 @@ public enum PhotoState {
 		return name;
 	}
 	
+	@Override
 	public boolean isValidNextState(PhotoState state) {
 		return nextStates().contains(state);
 	}

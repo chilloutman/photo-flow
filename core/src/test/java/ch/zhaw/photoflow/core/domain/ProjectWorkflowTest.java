@@ -1,16 +1,13 @@
 package ch.zhaw.photoflow.core.domain;
 
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class ProjectWorkflowTest {
 
+	private ProjectWorkflow workflow;
 	private Project project;
 	private Photo newPhoto;
 	private Photo flaggedPhoto;
@@ -18,6 +15,7 @@ public class ProjectWorkflowTest {
 	
 	@Before
 	public void before() {
+		workflow = new ProjectWorkflow();
 		project = Project.newProject();
 		newPhoto = Photo.newPhoto();
 		flaggedPhoto = Photo.newPhoto(p -> {
@@ -30,23 +28,23 @@ public class ProjectWorkflowTest {
 	
 	@Test
 	public void toDone() {
-		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
-		ProjectWorkflow.transition(project, emptyList(), ProjectState.DONE);
+		workflow.transition(project, emptyList(), ProjectState.IN_WORK);
+		workflow.transition(project, emptyList(), ProjectState.DONE);
 	}
 	
 	@Test
 	public void toDonewithPause() {
-		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
-		ProjectWorkflow.transition(project, emptyList(), ProjectState.PAUSED);
-		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
-		ProjectWorkflow.transition(project, emptyList(), ProjectState.DONE);
+		workflow.transition(project, emptyList(), ProjectState.IN_WORK);
+		workflow.transition(project, emptyList(), ProjectState.PAUSED);
+		workflow.transition(project, emptyList(), ProjectState.IN_WORK);
+		workflow.transition(project, emptyList(), ProjectState.DONE);
 	}
 	
 	@Test
 	public void toDoneAndBack() {
-		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
-		ProjectWorkflow.transition(project, emptyList(), ProjectState.DONE);
-		ProjectWorkflow.transition(project, emptyList(), ProjectState.IN_WORK);
+		workflow.transition(project, emptyList(), ProjectState.IN_WORK);
+		workflow.transition(project, emptyList(), ProjectState.DONE);
+		workflow.transition(project, emptyList(), ProjectState.IN_WORK);
 	}
 
 }

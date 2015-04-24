@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableList;
 
-public class Photo {
+public class Photo implements PersistentDomainObject {
 	
 	private Optional<Integer> id = Optional.empty();
 	private Optional<Integer> projectId = Optional.empty();
@@ -59,11 +59,12 @@ public class Photo {
 		
 	}
 	
-	/************ GETTERS AND SETTERS ************/
+	@Override
 	public Optional<Integer> getId() {
 		return id;
 	}
 	
+	@Override
 	public void setId(int id) {
 		this.id = Optional.of(id);
 	}

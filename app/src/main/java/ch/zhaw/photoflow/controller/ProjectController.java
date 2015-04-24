@@ -14,12 +14,16 @@ import ch.zhaw.photoflow.core.domain.ProjectState;
 import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 
 public class ProjectController extends AbstractController {
+	private final ProjectWorkflow workflow;
+	private final PhotoWorkflow photoWorkflow;
 	ProjectDao projectDao;
 	PhotoDao photoDao;
 	Project project;
 	List<Photo> photos;
 	
-	public ProjectController(ProjectDao projectDao, PhotoDao photoDao, Project project) {
+	public ProjectController(ProjectDao projectDao, PhotoDao photoDao, Project project, ProjectWorkflow workflow, PhotoWorkflow photoWorkflow) {
+		this.workflow = workflow;
+		this.photoWorkflow = photoWorkflow;
 		this.photos = new ArrayList<Photo>();
 		this.projectDao = projectDao;
 		this.photoDao = photoDao;
@@ -80,7 +84,7 @@ public class ProjectController extends AbstractController {
 	 */
 	public void transistState(Project project, ProjectState projectState) {
 
-		ProjectWorkflow.transition(project, this.photos, projectState);
+		workflow.transition(project, this.photos, projectState);
 		try {
 			this.projectDao.save(project);
 			try {
@@ -101,7 +105,7 @@ public class ProjectController extends AbstractController {
 	 */
 	public void flagPhoto(Photo photo) {
 		this.photos.remove(photo);
-		PhotoWorkflow.transition(this.project, photo, PhotoState.FLAGGED);
+		photoWorkflow.transition(this.project, photo, PhotoState.FLAGGED);
 		this.photos.add(photo);
 	}
 	

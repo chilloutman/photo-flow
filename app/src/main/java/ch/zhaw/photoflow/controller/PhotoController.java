@@ -9,13 +9,15 @@ import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Tag;
 
 public class PhotoController extends AbstractController {
-
+	
+	PhotoWorkflow workflow;
 	PhotoDao photoDao;
 	Photo photo;
 	
-	public PhotoController(PhotoDao photoDao, Photo photo) {
+	public PhotoController(PhotoDao photoDao, Photo photo, PhotoWorkflow workflow) {
 		this.photoDao = photoDao;
 		this.photo = photo;
+		this.workflow = workflow;
 	}
 	
 	/**
@@ -26,7 +28,7 @@ public class PhotoController extends AbstractController {
 	public void transistState(Project project, PhotoState photoState) {
 		
 		
-		PhotoWorkflow.transition(project, photo, photoState);
+		workflow.transition(project, photo, photoState);
 		try {
 			photoDao.save(photo);
 		} catch (DaoException e) {

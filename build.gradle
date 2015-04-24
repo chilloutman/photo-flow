@@ -20,4 +20,8 @@ subprojects {
 			'com.google.guava:guava:18.0'
 		)
 	}
+	
+	javadoc {
+		failOnError = false
+	}
 }

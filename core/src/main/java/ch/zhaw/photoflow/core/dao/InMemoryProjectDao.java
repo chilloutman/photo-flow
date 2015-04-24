@@ -11,6 +11,8 @@ import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
 
+import com.google.common.collect.ImmutableList;
+
 public class InMemoryProjectDao implements ProjectDao {
 	
 	private static int idCounter = 0;
@@ -29,7 +31,7 @@ public class InMemoryProjectDao implements ProjectDao {
 	 * @return An immutable list of all projects. {@link #save(Project)} must be called after changing projects.
 	 */
 	@Override
-	public List<Project> loadAll() {
+	public ImmutableList<Project> loadAll() {
 		return projects.stream().map(Project::copy).collect(toImmutableList());
 	}
 	

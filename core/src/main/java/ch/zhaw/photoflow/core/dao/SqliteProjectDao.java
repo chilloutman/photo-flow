@@ -1,16 +1,17 @@
 package ch.zhaw.photoflow.core.dao;
 
-import java.util.List;
 import java.util.Optional;
 
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
 
+import com.google.common.collect.ImmutableList;
+
 public class SqliteProjectDao implements ProjectDao {
 
 	@Override
-	public List<Project> loadAll() {
+	public ImmutableList<Project> loadAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,25 +1,37 @@
 package ch.zhaw.photoflow.core.domain;
 
-public class PhotoWorkflow {
+/**
+ * Manages state transition in the photo workflow states.
+ */
+public class PhotoWorkflow extends AbstractWorkflow<PhotoState> {
 	
-	// TODO: This could be improved by return some kind of message that indicates *why* the transition can't take place.
-	public static boolean canTransition(Project project, Photo photo, PhotoState nextState) {
-		if (!project.getState().isValidPhotoState(nextState)) {
-			return false;
-		}
-		
-		if (!photo.getState().isValidNextState(nextState)) {
-			return false;
-		}
-		
-		return true;
+	public PhotoWorkflow () {
 	}
 	
-	public static void transition(Project project, Photo photo, PhotoState nextState) {
-		if (!canTransition(project, photo, nextState)) {
-			throw new IllegalStateException("Invalid photos state transition from " + photo.getState() + " to " + nextState + " during project state " + project.getState() + ". Call canTransition() first!");
-		}
-		photo.setState(nextState);
+	/**
+	 * Check if a transition is possible.
+	 * @param project The project that the photo belongs to.
+	 * @param photo The photo to check the transition for.
+	 * @param nextState The state to check the transition to.
+	 * @return {@code true} if {@link #transition(Project, Photo, PhotoState)} could be executed.
+	 */
+	// TODO: This could be improved by return some kind of message that indicates *why* the transition can't take place.
+	public boolean canTransition(Project project, Photo photo, PhotoState nextState) {
+		return canTransition(photo.getState(), nextState, () ->
+			project.getState().isValidPhotoState(nextState)
+		);
+	}
+	
+	/**
+	 * Execute a transition.
+	 * @param project The project that the photo belongs to.
+	 * @param photo The photo to transition.
+	 * @param nextState The state to transition to.
+	 */
+	public void transition(Project project, Photo photo, PhotoState nextState) {
+		transition(canTransition(project, photo, nextState), () -> {
+			photo.setState(nextState);
+		});
 	}
 	
 }
