@@ -1,6 +1,12 @@
 package ch.zhaw.photoflow.core;
 
+import static ch.zhaw.photoflow.core.domain.Photo.newPhoto;
 import static ch.zhaw.photoflow.core.domain.Project.newProject;
+
+import java.util.Date;
+
+import ch.zhaw.photoflow.core.domain.FileFormat;
+import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
 
 import com.google.common.collect.ImmutableList;
@@ -21,17 +27,41 @@ public final class DummyData {
 		})
 	);
 	
-	private DummyData() {
-	}
+	public static final ImmutableList<Photo> PHOTOS = ImmutableList.of(
+		newPhoto(p -> {
+			p.setCreationDate(new Date());
+			p.setFileFormat(FileFormat.JPEG);
+			p.setProjectId(1);
+		}),
+		newPhoto(p -> {
+			p.setCreationDate(new Date());
+			p.setFileFormat(FileFormat.JPEG);
+			p.setProjectId(1);
+		}),
+		newPhoto(p -> {
+			p.setCreationDate(new Date());
+			p.setFileFormat(FileFormat.JPEG);
+			p.setProjectId(2);
+		})
+	);
+	
+	private DummyData() { }
 	
 	public static void addProjects(ProjectDao dao) {
-			PROJECTS.forEach(p -> {
-				try {
-					dao.save(p);
-				} catch (DaoException e) {
-					throw new RuntimeException(e);
-				}
-			});
+		PROJECTS.forEach(p -> {
+			try {
+				dao.save(p);
+			} catch (DaoException e) { throw new RuntimeException(e); }
+		});
+	}
+	
+	public static void addPhotos(PhotoDao dao, Project project) {
+		PHOTOS.forEach(p -> {
+			p.setProjectId(project.getId().get());
+			try {
+				dao.save(p);
+			} catch (DaoException e) { throw new RuntimeException(e); } 
+		});
 	}
 	
 }

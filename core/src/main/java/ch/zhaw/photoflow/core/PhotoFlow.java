@@ -2,6 +2,8 @@ package ch.zhaw.photoflow.core;
 
 import ch.zhaw.photoflow.core.dao.InMemoryPhotoDao;
 import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
+import ch.zhaw.photoflow.core.dao.SqlitePhotoDao;
+import ch.zhaw.photoflow.core.dao.SqliteProjectDao;
 import ch.zhaw.photoflow.core.domain.PhotoWorkflow;
 import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 
@@ -10,15 +12,30 @@ import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
  */
 public class PhotoFlow {
 	
-//	private final PhotoDao photoDao = new SqlitePhotoDao();
-//	private final ProjectDao projectDao = new SqliteProjectDao();
-
-	private final PhotoDao photoDao = new InMemoryPhotoDao();
-	private final ProjectDao projectDao = new InMemoryProjectDao();
+	// TODO: Maybe read this from The environment.
+	private final boolean DEBUG = true;
+	
+	private final PhotoDao photoDao;
+	private final ProjectDao projectDao;
 	
 	private final ProjectWorkflow projectWorkflow = new ProjectWorkflow();
 	private final PhotoWorkflow photoWorkflow = new PhotoWorkflow();
 
+	public PhotoFlow() {
+		if (DEBUG) {
+			photoDao = new InMemoryPhotoDao();
+			projectDao = new InMemoryProjectDao();
+
+			DummyData.addProjects(projectDao);
+			try {
+				DummyData.addPhotos(photoDao, projectDao.loadAll().stream().findAny().get());
+			} catch (DaoException e) { throw new RuntimeException(e); }
+		} else {
+			photoDao = new SqlitePhotoDao();
+			projectDao = new SqliteProjectDao();
+		}
+	}
+	
 	public PhotoDao getPhotoDao() {
 		return photoDao;
 	}
