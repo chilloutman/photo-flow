@@ -1,7 +1,7 @@
 package ch.zhaw.photoflow.core.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,7 +16,7 @@ public class Photo implements PersistentDomainObject {
 	private String filePath;
 	private Integer fileSize;
 	private FileFormat fileFormat;
-	private Date creationDate;
+	private LocalDateTime creationDate;
 	private PhotoState state = PhotoState.NEW;
 	private Photographer photographer;
 	private List<Tag> tags = new ArrayList<>();
@@ -101,11 +101,11 @@ public class Photo implements PersistentDomainObject {
 		this.fileFormat = fileFormat;
 	}
 
-	public Date getCreationDate() {
+	public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
+	public void setCreationDate(LocalDateTime creationDate) {
 		this.creationDate = creationDate;
 	}
 
