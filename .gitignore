@@ -11,6 +11,7 @@ gradle-app.setting
 .classpath
 */bin/
 */.settings/org.eclipse.jdt.core.prefs 
+*/.settings/org.springsource.ide.eclipse.gradle.core.prefs
 
 #Ignore Intellij files
 .iml
