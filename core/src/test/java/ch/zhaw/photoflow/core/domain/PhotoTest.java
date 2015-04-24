@@ -4,6 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 import org.junit.Test;
@@ -17,7 +20,7 @@ public class PhotoTest {
 	public static final String FILE_PATH = "/some/file/path";
 	public static final Integer FILE_SIZE = 9000;
 	public static final FileFormat FILE_FORMAT = FileFormat.JPEG;
-	public static final Date CREATION_DATE = new Date();
+	public static final LocalDateTime CREATION_DATE = LocalDateTime.now();
 	public static final PhotoState STATE = PhotoState.FLAGGED;
 	public static final Photographer PHOTOGRAPHER = new Photographer("Chuck", "Norris");
 	public static final ImmutableList<Tag> TAGS = ImmutableList.of(new Tag("AWESOME"), new Tag("TEST"));
