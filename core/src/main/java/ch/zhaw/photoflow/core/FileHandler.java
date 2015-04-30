@@ -1,9 +1,14 @@
 package ch.zhaw.photoflow.core;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import com.google.common.io.Files;
 
@@ -20,12 +25,17 @@ public class FileHandler {
 		setUserHomePath(System.getProperty("user.home"));
 		if(!createWorkingPath()){
 			// TODO: WorkingPath schon gesetzt, den efach wiiter
+		}else{
+			setWorkingPath(getUserHomePath()+PHOTO_FLOW);
 		}
-		setWorkingPath(userHomePath+PHOTO_FLOW);
 	}
 		
 	private boolean createWorkingPath(){
-		return new File(userHomePath+PHOTO_FLOW).mkdir();
+		File f = new File(getUserHomePath()+PHOTO_FLOW);
+		if(f.exists() && f.isDirectory()){
+			return true; //TODO
+		}
+		return new File(getUserHomePath()+PHOTO_FLOW).mkdir();
 	}
 
 	/**
@@ -33,7 +43,7 @@ public class FileHandler {
 	 * @param project
 	 */
 	public void createProject(Project project) {
-		new File("./"+project.getId()).mkdir();
+		new File(getWorkingPath()+project.getId()).mkdir();
 	}
 	
 	public Photo importPhoto(Photo photo, File file) throws IOException {
@@ -42,23 +52,42 @@ public class FileHandler {
 		photo.setFilePath(newFile.getAbsolutePath());
 		photo.setCreationDate(LocalDateTime.now());
 		photo.setFileSize((int) file.length());
-		//photo.setFileFormat();
-		// TODO: Save Photo to DB
 		return photo;
 	}
 	
-	public File loadPhoto(Photo photo) {
+	public File loadPhoto(Photo photo) throws FileNotFoundException {
 		File file = new File(photo.getFilePath());
-		// TODO: Load Photo from DB
 		if(!file.isFile()){
-			// TODO: baamm error ^^
+			throw new FileNotFoundException("File not found or invalid!");
 		}
 		return file;
 	}
 	
-	public File exportZip(List<Photo> list) {
-		// TODO: Alli Föteli vom Dao lade und Zip erstelle
+	public File exportZip(String zipName, List<Photo> list) throws FileNotFoundException, IOException {
+		FileOutputStream fos = new FileOutputStream(zipName);
+		ZipOutputStream zos = new ZipOutputStream(fos);
+		for(Photo photo : list){
+			 addToZip(photo.getFilePath(), zos);
+		}
+		zos.close();
+		fos.close();
 		return null;
+	}
+	
+	private void addToZip(String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
+		File file = new File(fileName);
+		FileInputStream fis = new FileInputStream(file);
+		ZipEntry zipEntry = new ZipEntry(fileName);
+		zos.putNextEntry(zipEntry);
+
+		byte[] bytes = new byte[1024];
+		int length;
+		while ((length = fis.read(bytes)) >= 0) {
+			zos.write(bytes, 0, length);
+		}
+
+		zos.closeEntry();
+		fis.close();		
 	}
 	
 
