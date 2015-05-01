@@ -30,7 +30,11 @@ public class FileHandler {
 			setWorkingPath(getUserHomePath()+PHOTO_FLOW);
 		}
 	}
-		
+	
+	/**
+	 * Creates working path, where actual Projectfiles are stored.
+	 * @return true, if directory can be created, false, if it already exists
+	 */
 	private boolean createWorkingPath(){
 		File f = new File(getUserHomePath()+PHOTO_FLOW+"/");
 		if(f.exists() && f.isDirectory()){
@@ -40,13 +44,20 @@ public class FileHandler {
 	}
 
 	/**
-	 * This method is used to create a new Project (File-Folder on Explorer)
+	 * This method is used to create a new Project (File-Folder on Explorer).
 	 * @param project
 	 */
 	public void createProject(Project project) {
 		new File(getWorkingPath()+project.getId()).mkdir();
 	}
 	
+	/**
+	 * Function used to import a physical Photo to the Project-Directory and set Photo parameters.
+	 * @param photo Logical representation of a Photo.
+	 * @param file Physical Photo-File.
+	 * @return Photo Updated logical representation of a Photo.
+	 * @throws IOException Throws an Error if File already exists in Project-Directory.
+	 */
 	public Photo importPhoto(Photo photo, File file) throws IOException {
 		if(new File(getWorkingPath()+file.getName()).exists()){
 			throw new FileAlreadyExistsException("File already exists!");
@@ -59,6 +70,12 @@ public class FileHandler {
 		return photo;
 	}
 	
+	/**
+	 * Method to get the physical Photo-File according to the logical Photo.
+	 * @param photo Logical representation of a Photo.
+	 * @return File physical Photo File.
+	 * @throws FileNotFoundException Error is thrown if physical File cannot be found or is invalid.
+	 */
 	public File loadPhoto(Photo photo) throws FileNotFoundException {
 		File file = new File(photo.getFilePath());
 		if(!file.isFile()){
@@ -67,6 +84,14 @@ public class FileHandler {
 		return file;
 	}
 	
+	/**
+	 * Method to zip a list of physical Project-Photo-Files into one Zip-File.
+	 * @param zipName Name of the Zip-File.
+	 * @param list List of physical Photos.
+	 * @return created Zip-File.
+	 * @throws FileNotFoundException If a File in the List cannot be found, this Exception is thrown.
+	 * @throws IOException
+	 */
 	public File exportZip(String zipName, List<Photo> list) throws FileNotFoundException, IOException {
 		FileOutputStream fos = new FileOutputStream(zipName);
 		ZipOutputStream zos = new ZipOutputStream(fos);
@@ -78,6 +103,13 @@ public class FileHandler {
 		return new File(zipName);
 	}
 	
+	/**
+	 * Method used to add a single physical Photo into a Zip-File.
+	 * @param fileName Path to the physical Photo.
+	 * @param zos ZipOutputStream
+	 * @throws FileNotFoundException If the physical File cannot be found, this Exception is thrown.
+	 * @throws IOException
+	 */
 	private void addToZip(String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
 		File file = new File(fileName);
 		FileInputStream fis = new FileInputStream(file);
