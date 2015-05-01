@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -31,11 +32,11 @@ public class FileHandler {
 	}
 		
 	private boolean createWorkingPath(){
-		File f = new File(getUserHomePath()+PHOTO_FLOW);
+		File f = new File(getUserHomePath()+PHOTO_FLOW+"/");
 		if(f.exists() && f.isDirectory()){
 			return true; //TODO
 		}
-		return new File(getUserHomePath()+PHOTO_FLOW).mkdir();
+		return f.mkdir();
 	}
 
 	/**
@@ -47,7 +48,10 @@ public class FileHandler {
 	}
 	
 	public Photo importPhoto(Photo photo, File file) throws IOException {
-		File newFile = new File("./"+photo.getProjectId());
+		if(new File(getWorkingPath()+file.getName()).exists()){
+			throw new FileAlreadyExistsException("File already exists!");
+		}
+		File newFile = new File(getWorkingPath()+file.getName());
 		Files.copy(file, newFile);
 		photo.setFilePath(newFile.getAbsolutePath());
 		photo.setCreationDate(LocalDateTime.now());
@@ -71,7 +75,7 @@ public class FileHandler {
 		}
 		zos.close();
 		fos.close();
-		return null;
+		return new File(zipName);
 	}
 	
 	private void addToZip(String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
