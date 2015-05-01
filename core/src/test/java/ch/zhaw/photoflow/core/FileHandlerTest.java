@@ -23,12 +23,32 @@ public class FileHandlerTest {
 	private Project project;
 	private Photo photo1, photo2, photo3, photo4;
 	private List<Photo> pList;
-	private File file = new File(System.getProperty("user.home")+"/Test/test.jpg");
-	private File file2 = new File(System.getProperty("user.home")+"/Test/test2.jpg");
-	private File file3 = new File(System.getProperty("user.home")+"/Test/test.jpg");
+	private static String userHome = System.getProperty("user.home");
+	private File file = new File(userHome+"/Test/test.jpg");
+	private File file2 = new File(userHome+"/Test/test2.jpg");
+	private File file3 = new File(userHome+"/Test/test.jpg");
+	private File file4 = new File(userHome+"/Test/test3.jpg");
 	
 	@Before
-	public void before() {
+	public void before() throws IOException {
+		
+		// Clean first, that after Test can be manually checked if Files get created
+		File f = new File(userHome+"/Test/");
+		File f2 = new File(userHome+"/PhotoFlow/");
+		if(f.isDirectory()){
+			f.delete();
+		}
+		if(f2.isDirectory()){
+			f2.delete();
+		}
+		
+		// Prepare Test
+		f.mkdir();
+		f2.mkdir();
+		file.createNewFile();
+		file2.createNewFile();
+		file3.createNewFile();
+		file4.createNewFile();
 		project = Project.newProject();
 		project.setId(1234);
 		try {
@@ -41,7 +61,7 @@ public class FileHandlerTest {
 		photo2 = Photo.newPhoto();
 		photo3 = Photo.newPhoto();
 		photo4 = Photo.newPhoto();
-		photo4.setFilePath(System.getProperty("user.home")+"/Test/testNotExist.jpg");
+		photo4.setFilePath(userHome+"/Test/testNotExist.jpg");
 		pList = new ArrayList<Photo>();
 		pList.add(photo1);
 		pList.add(photo2);
@@ -60,10 +80,10 @@ public class FileHandlerTest {
 	
 	@Test
 	public void checkExportZip() throws FileNotFoundException, IOException {
-		photo1.setFilePath(System.getProperty("user.home")+"/Test/test.jpg");
-		photo2.setFilePath(System.getProperty("user.home")+"/Test/test2.jpg");
-		photo3.setFilePath(System.getProperty("user.home")+"/Test/test3.jpg");
-		assertTrue(fileHandler.exportZip(System.getProperty("user.home")+"/Test/test.zip", pList).isFile());
+		photo1.setFilePath(userHome+"/Test/test.jpg");
+		photo2.setFilePath(userHome+"/Test/test2.jpg");
+		photo3.setFilePath(userHome+"/Test/test3.jpg");
+		assertTrue(fileHandler.exportZip(userHome+"/Test/test.zip", pList).isFile());
 	}
 	
 	@Test(expected=FileNotFoundException.class)
