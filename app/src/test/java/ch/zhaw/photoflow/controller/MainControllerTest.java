@@ -1,8 +1,10 @@
 package ch.zhaw.photoflow.controller;
 
-import static ch.zhaw.photoflow.core.domain.Project.newProject;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.zhaw.photoflow.core.DaoException;
-import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Tag;
@@ -59,13 +60,6 @@ public class MainControllerTest {
 	}
 	
 	
-	//create
-	@Test (expected = DaoException.class)
-	public void failDuringCreateProject()
-	{
-				
-	}
-	
 	@Test
 	public void toCreateProject()
 	{
@@ -85,13 +79,6 @@ public class MainControllerTest {
 			assertThat(main.getProjects(), is(not(empty())));
 	}
 
-	
-	//delete
-	@Test (expected = DaoException.class)
-	public void failDuringDeleteProject()
-	{
-		
-	}
 	
 	@Test
 	public void toDeleteProject()
