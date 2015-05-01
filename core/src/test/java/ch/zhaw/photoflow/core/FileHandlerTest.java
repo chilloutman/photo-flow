@@ -23,9 +23,9 @@ public class FileHandlerTest {
 	private Project project;
 	private Photo photo1, photo2, photo3, photo4;
 	private List<Photo> pList;
-	private File file = new File("C:/Users/Josh/Documents/Test/test.jpg");
-	private File file2 = new File("C:/Users/Josh/Documents/Test/test2.jpg");
-	private File file3 = new File("C:/Users/Josh/Documents/Test/test.jpg");
+	private File file = new File(System.getProperty("user.home")+"/Test/test.jpg");
+	private File file2 = new File(System.getProperty("user.home")+"/Test/test2.jpg");
+	private File file3 = new File(System.getProperty("user.home")+"/Test/test.jpg");
 	
 	@Before
 	public void before() {
@@ -41,7 +41,7 @@ public class FileHandlerTest {
 		photo2 = Photo.newPhoto();
 		photo3 = Photo.newPhoto();
 		photo4 = Photo.newPhoto();
-		photo4.setFilePath("C:/Users/Josh/Documents/Test/testNotExist.jpg");
+		photo4.setFilePath(System.getProperty("user.home")+"/Test/testNotExist.jpg");
 		pList = new ArrayList<Photo>();
 		pList.add(photo1);
 		pList.add(photo2);
@@ -60,10 +60,10 @@ public class FileHandlerTest {
 	
 	@Test
 	public void checkExportZip() throws FileNotFoundException, IOException {
-		photo1.setFilePath("C:/Users/Josh/Documents/Test/test.jpg");
-		photo2.setFilePath("C:/Users/Josh/Documents/Test/test2.jpg");
-		photo3.setFilePath("C:/Users/Josh/Documents/Test/test3.jpg");
-		assertTrue(fileHandler.exportZip("C:/Users/Josh/Documents/Test/test.zip", pList).isFile());
+		photo1.setFilePath(System.getProperty("user.home")+"/Test/test.jpg");
+		photo2.setFilePath(System.getProperty("user.home")+"/Test/test2.jpg");
+		photo3.setFilePath(System.getProperty("user.home")+"/Test/test3.jpg");
+		assertTrue(fileHandler.exportZip(System.getProperty("user.home")+"/Test/test.zip", pList).isFile());
 	}
 	
 	@Test(expected=FileNotFoundException.class)
