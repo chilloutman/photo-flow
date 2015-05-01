@@ -144,7 +144,7 @@ public class FileHandler {
 	private void addToZip(String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
 		File file = new File(fileName);
 		try(FileInputStream fis = new FileInputStream(file);){
-			ZipEntry zipEntry = new ZipEntry(fileName);
+			ZipEntry zipEntry = new ZipEntry(file.getName());
 			zos.putNextEntry(zipEntry);
 	
 			byte[] bytes = new byte[1024];
