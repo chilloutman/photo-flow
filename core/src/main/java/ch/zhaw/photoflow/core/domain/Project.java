@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
 public class Project implements PersistentDomainObject {
@@ -113,6 +114,17 @@ public class Project implements PersistentDomainObject {
 		Project that = (Project) object;
 
 		return Objects.equals(id, that.id);
+	}
+	
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+			.add("id", id)
+			.add("name", name)
+			.add("description", description)
+			.add("state", state)
+			.add("todos", todos)
+			.toString();
 	}
 	
 }

@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
 public class Photo implements PersistentDomainObject {
@@ -154,6 +155,21 @@ public class Photo implements PersistentDomainObject {
 		Photo that = (Photo) object;
 
 		return Objects.equals(id, that.id);
+	}
+	
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+			.add("id", id)
+			.add("projectId", projectId)
+			.add("filePath", filePath)
+			.add("fileSize", fileSize)
+			.add("fileFormat", fileFormat)
+			.add("creationDate", creationDate)
+			.add("state", state)
+			.add("photographer", photographer)
+			.add("tags", tags)
+			.toString();
 	}
 	
 }
