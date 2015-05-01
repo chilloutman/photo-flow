@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -28,13 +29,20 @@ public class FileHandlerTest {
 	
 	@Before
 	public void before() {
-		fileHandler = new FileHandler();
 		project = Project.newProject();
+		project.setId(1234);
+		try {
+			fileHandler = new FileHandler(project);
+		} catch (FileHandlerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		photo1 = Photo.newPhoto();
 		photo2 = Photo.newPhoto();
 		photo3 = Photo.newPhoto();
 		photo4 = Photo.newPhoto();
 		photo4.setFilePath("C:/Users/Josh/Documents/Test/testNotExist.jpg");
+		pList = new ArrayList<Photo>();
 		pList.add(photo1);
 		pList.add(photo2);
 		pList.add(photo3);
@@ -42,15 +50,20 @@ public class FileHandlerTest {
 	
 	@Test
 	public void checkDirectoriesCreated() {
-		assertThat(fileHandler.getUserHomePath(), notNullValue());
-		assertThat(fileHandler.getWorkingPath(), notNullValue());
+		assertTrue(fileHandler.getUserHomePath() != null);
+		assertTrue(fileHandler.getWorkingPath() != null);
+		assertTrue(fileHandler.getProjectPath() != null);
 		assertFalse(fileHandler.getUserHomePath().isEmpty());
-		assertFalse(fileHandler.getWorkingPath().isEmpty());		
+		assertFalse(fileHandler.getWorkingPath().isEmpty());
+		assertFalse(fileHandler.getProjectPath().isEmpty());
 	}
 	
 	@Test
 	public void checkExportZip() throws FileNotFoundException, IOException {
-		assertThat(fileHandler.exportZip("C:/Users/Josh/Documents/Test/test.zip", pList), notNullValue());
+		photo1.setFilePath("C:/Users/Josh/Documents/Test/test.jpg");
+		photo2.setFilePath("C:/Users/Josh/Documents/Test/test2.jpg");
+		photo3.setFilePath("C:/Users/Josh/Documents/Test/test3.jpg");
+		assertTrue(fileHandler.exportZip("C:/Users/Josh/Documents/Test/test.zip", pList).isFile());
 	}
 	
 	@Test(expected=FileNotFoundException.class)
@@ -59,7 +72,7 @@ public class FileHandlerTest {
 	}
 	
 	@Test(expected=FileAlreadyExistsException.class)
-	public void checkImportPhoto() throws IOException {
+	public void checkImportPhoto() throws IOException, FileHandlerException {
 		assertThat(fileHandler.importPhoto(photo1, file).getCreationDate(), notNullValue());
 		assertThat(fileHandler.importPhoto(photo2, file2).getFilePath(), notNullValue());
 		Photo returnPhoto = fileHandler.importPhoto(photo1, file3);

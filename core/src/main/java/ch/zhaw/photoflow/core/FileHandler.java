@@ -16,29 +16,42 @@ import com.google.common.io.Files;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
 
+
 public class FileHandler {
 	
 	private static final String PHOTO_FLOW = "PhotoFlow";
 	private String workingPath;
 	private String userHomePath;
+	private String projectPath;
+	private static File sqlLitePath;
 	
-	public FileHandler(){
-		setUserHomePath(System.getProperty("user.home"));
+	/**
+	 * Constructor initializes userhome and workingPath
+	 * @throws FotoHandlerException 
+	 */
+	public FileHandler(Project project) throws FileHandlerException{
+		setUserHomePath(System.getProperty("user.home")+"/");
+		System.out.println("UserHomePath: "+getUserHomePath());
 		if(!createWorkingPath()){
-			// TODO: WorkingPath schon gesetzt, den efach wiiter
-		}else{
-			setWorkingPath(getUserHomePath()+PHOTO_FLOW);
+			throw new FileHandlerException("Error in creating Working Directory!");
 		}
+		setWorkingPath(getUserHomePath()+PHOTO_FLOW+"/");
+		if(!createProjectPath(project)){
+			throw new FileHandlerException("Error in creating Project Directory!");
+		}
+		setProjectPath(getUserHomePath()+PHOTO_FLOW+"/"+project.getId().get()+"/");
+		File sqlFile = new File(getWorkingPath()+"DB/photoFlow.db");
+		setSqlLitePath(sqlFile);
 	}
 	
 	/**
-	 * Creates working path, where actual Projectfiles are stored.
+	 * Creates working path, where actual Project-Files are stored.
 	 * @return true, if directory can be created, false, if it already exists
 	 */
 	private boolean createWorkingPath(){
 		File f = new File(getUserHomePath()+PHOTO_FLOW+"/");
 		if(f.exists() && f.isDirectory()){
-			return true; //TODO
+			return true;
 		}
 		return f.mkdir();
 	}
@@ -46,9 +59,14 @@ public class FileHandler {
 	/**
 	 * This method is used to create a new Project (File-Folder on Explorer).
 	 * @param project
+	 * @return True if directory already exists or could be created successfully.
 	 */
-	public void createProject(Project project) {
-		new File(getWorkingPath()+project.getId()).mkdir();
+	private boolean createProjectPath(Project project) {
+		File f = new File(getWorkingPath()+project.getId().get().toString());
+		if(f.exists() && f.isDirectory()){
+			return true;
+		}
+		return f.mkdir();
 	}
 	
 	/**
@@ -57,18 +75,30 @@ public class FileHandler {
 	 * @param file Physical Photo-File.
 	 * @return Photo Updated logical representation of a Photo.
 	 * @throws IOException Throws an Error if File already exists in Project-Directory.
+	 * @throws FileHandlerException 
 	 */
-	public Photo importPhoto(Photo photo, File file) throws IOException {
-		if(new File(getWorkingPath()+file.getName()).exists()){
-			throw new FileAlreadyExistsException("File already exists!");
+	public Photo importPhoto(Photo photo, File file) throws IOException, FileHandlerException {
+		if(getFileExtension(file).equals("jpg")){
+			if(new File(getProjectPath()+file.getName()).exists()){
+				throw new FileAlreadyExistsException("File already exists!");
+			}
+			File newFile = new File(getProjectPath()+file.getName());
+			Files.copy(file, newFile);
+			photo.setFilePath(newFile.getAbsolutePath());
+			photo.setCreationDate(LocalDateTime.now());
+			photo.setFileSize((int) file.length());
+			return photo;
+		}else{
+			throw new FileHandlerException("File Extension is invalid!");
 		}
-		File newFile = new File(getWorkingPath()+file.getName());
-		Files.copy(file, newFile);
-		photo.setFilePath(newFile.getAbsolutePath());
-		photo.setCreationDate(LocalDateTime.now());
-		photo.setFileSize((int) file.length());
-		return photo;
 	}
+ 
+    private static String getFileExtension(File file) {
+        String fileName = file.getName();
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+        return fileName.substring(fileName.lastIndexOf(".")+1);
+        else return "";
+    }
 	
 	/**
 	 * Method to get the physical Photo-File according to the logical Photo.
@@ -93,13 +123,13 @@ public class FileHandler {
 	 * @throws IOException
 	 */
 	public File exportZip(String zipName, List<Photo> list) throws FileNotFoundException, IOException {
-		FileOutputStream fos = new FileOutputStream(zipName);
-		ZipOutputStream zos = new ZipOutputStream(fos);
-		for(Photo photo : list){
-			 addToZip(photo.getFilePath(), zos);
+		try(FileOutputStream fos = new FileOutputStream(zipName);
+			ZipOutputStream zos = new ZipOutputStream(fos);){
+		
+			for(Photo photo : list){
+				 addToZip(photo.getFilePath(), zos);
+			}
 		}
-		zos.close();
-		fos.close();
 		return new File(zipName);
 	}
 	
@@ -112,20 +142,37 @@ public class FileHandler {
 	 */
 	private void addToZip(String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
 		File file = new File(fileName);
-		FileInputStream fis = new FileInputStream(file);
-		ZipEntry zipEntry = new ZipEntry(fileName);
-		zos.putNextEntry(zipEntry);
-
-		byte[] bytes = new byte[1024];
-		int length;
-		while ((length = fis.read(bytes)) >= 0) {
-			zos.write(bytes, 0, length);
-		}
-
-		zos.closeEntry();
-		fis.close();		
+		try(FileInputStream fis = new FileInputStream(file);){
+			ZipEntry zipEntry = new ZipEntry(fileName);
+			zos.putNextEntry(zipEntry);
+	
+			byte[] bytes = new byte[1024];
+			int length;
+			while ((length = fis.read(bytes)) >= 0) {
+				zos.write(bytes, 0, length);
+			}
+	
+			zos.closeEntry();
+		}		
 	}
 	
+	
+
+	private static void setSqlLitePath(File sqlLitePath) {
+		FileHandler.sqlLitePath = sqlLitePath;
+	}
+
+	public String getProjectPath() {
+		return projectPath;
+	}
+
+	public void setProjectPath(String projectPath) {
+		this.projectPath = projectPath;
+	}
+
+	public File getSqlLitePath() {
+		return sqlLitePath;
+	}
 
 	public String getUserHomePath() {
 		return userHomePath;
