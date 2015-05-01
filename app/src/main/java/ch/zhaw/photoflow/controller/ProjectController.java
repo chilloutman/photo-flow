@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -32,6 +34,9 @@ public class ProjectController extends Pane implements Initializable {
 	
 	@FXML
 	TextField projectNameField;
+	
+	@FXML
+	Button workflowNextButton;
 	
 	
 	public ProjectController() {
@@ -148,11 +153,26 @@ public class ProjectController extends Pane implements Initializable {
 		System.out.println("klicked");
 	}
 
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
+		
+		//direct connection to TextField in FXML GUI
 		projectNameField.setText("I think I spider");
+		
+		//inline
+		workflowNextButton.setOnAction(event ->{
+			System.out.println("clicked Next");
+		});
+		
+		//external method
+		workflowNextButton.setOnAction(this::test);
 		
 	}
 
+
+	public void test(ActionEvent event)
+	{
+		
+	}
 }
