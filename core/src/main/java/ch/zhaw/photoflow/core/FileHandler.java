@@ -20,28 +20,24 @@ import ch.zhaw.photoflow.core.domain.Project;
 public class FileHandler {
 	
 	private static final String PHOTO_FLOW = "PhotoFlow";
-	private String workingPath;
-	private String userHomePath;
+	private static String userHomePath = System.getProperty("user.home")+"/";
+	private static String workingPath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/";
+	private static File sqlLitePath = new File(System.getProperty("user.home")+"/"+PHOTO_FLOW+"/DB/photoFlow.db");
 	private String projectPath;
-	private static File sqlLitePath;
 	
 	/**
 	 * Constructor initializes userhome and workingPath
 	 * @throws FotoHandlerException 
 	 */
 	public FileHandler(Project project) throws FileHandlerException{
-		setUserHomePath(System.getProperty("user.home")+"/");
 		System.out.println("UserHomePath: "+getUserHomePath());
 		if(!createWorkingPath()){
 			throw new FileHandlerException("Error in creating Working Directory!");
 		}
-		setWorkingPath(getUserHomePath()+PHOTO_FLOW+"/");
 		if(!createProjectPath(project)){
 			throw new FileHandlerException("Error in creating Project Directory!");
 		}
-		setProjectPath(getUserHomePath()+PHOTO_FLOW+"/"+project.getId().get()+"/");
-		File sqlFile = new File(getWorkingPath()+"DB/photoFlow.db");
-		setSqlLitePath(sqlFile);
+		setProjectPath(getWorkingPath()+project.getId().get()+"/");
 	}
 	
 	/**
@@ -49,7 +45,7 @@ public class FileHandler {
 	 * @return true, if directory can be created, false, if it already exists
 	 */
 	private boolean createWorkingPath(){
-		File f = new File(getUserHomePath()+PHOTO_FLOW+"/");
+		File f = new File(getWorkingPath());
 		if(f.exists() && f.isDirectory()){
 			return true;
 		}
@@ -92,7 +88,12 @@ public class FileHandler {
 			throw new FileHandlerException("File Extension is invalid!");
 		}
 	}
- 
+	
+	/**
+	 * Method to get FileExtension to check for valid FileExtension jpg.
+	 * @param file
+	 * @return Returns the Extension of the File.
+	 */
     private static String getFileExtension(File file) {
         String fileName = file.getName();
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
@@ -156,11 +157,6 @@ public class FileHandler {
 		}		
 	}
 	
-	
-
-	private static void setSqlLitePath(File sqlLitePath) {
-		FileHandler.sqlLitePath = sqlLitePath;
-	}
 
 	public String getProjectPath() {
 		return projectPath;
@@ -178,15 +174,8 @@ public class FileHandler {
 		return userHomePath;
 	}
 
-	public void setUserHomePath(String userHomePath) {
-		this.userHomePath = userHomePath;
-	}
-
 	public String getWorkingPath() {
 		return workingPath;
 	}
 
-	public void setWorkingPath(String workingPath) {
-		this.workingPath = workingPath;
-	}	
 }
