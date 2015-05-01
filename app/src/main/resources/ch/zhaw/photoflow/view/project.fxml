@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<?import ch.zhaw.photoflow.controller.PhotoController ?>
+
+
+<fx:root type="javafx.scene.layout.Pane" xmlns:fx="http://javafx.com/fxml">
+	<BorderPane>
+		<top>
+	      <Pane fx:id="projectPane" layoutX="1.0" layoutY="10.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="75.0" prefWidth="936.0" style="-fx-border-style: solid;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+	         <children>
+	            <TextField fx:id="projectNameField" layoutX="8.0" layoutY="27.0" text="Project Name" />
+	            <MenuButton fx:id="todoButton" layoutX="507.0" layoutY="27.0" mnemonicParsing="false" prefHeight="13.0" prefWidth="112.0" text="MenuButton">
+	               <items>
+	                  <MenuItem mnemonicParsing="false" text="Action 1" />
+	                  <MenuItem mnemonicParsing="false" text="Action 2" />
+	               </items>
+	            </MenuButton>
+	            <Button fx:id="workflowPauseButton" layoutX="774.0" layoutY="27.0" mnemonicParsing="false"  text="Pause" onAction="#syso"/>
+	            <Button fx:id="workflowNextButton" layoutX="840.0" layoutY="27.0" mnemonicParsing="false" text="Next" />
+	            <Button fx:id="workflowBackButton" layoutX="704.0" layoutY="26.0" mnemonicParsing="false" text="last" />
+	            <Label fx:id="editLabel" layoutX="299.0" layoutY="31.0" text="Edit" />
+	            <Label fx:id="exportLabel" layoutX="340.0" layoutY="31.0" text="Export" />
+	            <Label fx:id="importLabel" layoutX="246.0" layoutY="31.0" text="Import" />
+	         </children>
+	      	</Pane>
+	      </top>
+	      <center>
+	      	<TilePane fx:id="projectTilePane" layoutY="75.0" prefHeight="325.0" prefWidth="936.0" style="-fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+		</center>
+		<right>
+			<PhotoController fx:id="PhotoPane"/>
+		</right>
+	</BorderPane>
+</fx:root>

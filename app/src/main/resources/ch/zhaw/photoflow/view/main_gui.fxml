@@ -10,40 +10,19 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+<?import ch.zhaw.photoflow.controller.ProjectController ?>
+
+
+
+
+<AnchorPane maxHeight="800" maxWidth="1280" minHeight="800" minWidth="1280" prefHeight="800" prefWidth="1280" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" >
    <children>
       <BorderPane prefHeight="203.0" prefWidth="218.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <left>
             <ListView maxWidth="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
-         </left>
+         </left>	
          <center>
-            <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-               <top>
-                  <Pane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="75.0" prefWidth="200.0" style="-fx-border-style: solid;" BorderPane.alignment="CENTER">
-                     <children>
-                        <TextField fx:id="projectNameField" layoutX="8.0" layoutY="27.0" text="Project Name" />
-                        <MenuButton fx:id="todoButton" layoutX="507.0" layoutY="27.0" mnemonicParsing="false" prefHeight="13.0" prefWidth="112.0" text="MenuButton">
-                          <items>
-                            <MenuItem mnemonicParsing="false" text="Action 1" />
-                            <MenuItem mnemonicParsing="false" text="Action 2" />
-                          </items>
-                        </MenuButton>
-                        <Button fx:id="workflowPauseButton" layoutX="774.0" layoutY="27.0" mnemonicParsing="false" text="Pause" />
-                        <Button fx:id="workflowNextButton" layoutX="840.0" layoutY="27.0" mnemonicParsing="false" text="Next" />
-                        <Button fx:id="workflowBackButton" layoutX="704.0" layoutY="26.0" mnemonicParsing="false" text="last" />
-                        <Label fx:id="editLabel" layoutX="299.0" layoutY="31.0" text="Edit" />
-                        <Label fx:id="exportLabel" layoutX="340.0" layoutY="32.0" text="Export" />
-                        <Label fx:id="importLabel" layoutX="246.0" layoutY="31.0" text="Import" />
-                     </children>
-                  </Pane>
-               </top>
-               <center>
-                  <TilePane prefHeight="200.0" prefWidth="200.0" style="-fx-border-style: solid;" BorderPane.alignment="CENTER" />
-               </center>
-               <right>
-                  <Pane maxWidth="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="120.0" style="-fx-border-style: solid;" BorderPane.alignment="CENTER" />
-               </right>
-            </BorderPane>
+            <ProjectController fx:id="ProjectPane" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0"/>
          </center>
       </BorderPane>
    </children>

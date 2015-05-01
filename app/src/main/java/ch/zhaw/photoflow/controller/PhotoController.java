@@ -1,5 +1,8 @@
 package ch.zhaw.photoflow.controller;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.Pane;
+import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.domain.Photo;
@@ -8,15 +11,28 @@ import ch.zhaw.photoflow.core.domain.PhotoWorkflow;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Tag;
 
-public class PhotoController extends AbstractController {
+public class PhotoController extends Pane {
 	
 	PhotoWorkflow workflow;
 	PhotoDao photoDao;
 	Photo photo;
 	
-	public PhotoController(PhotoDao photoDao, Photo photo, PhotoWorkflow workflow) {
+	public PhotoController() {
+		this(Main.photoFlow.getPhotoDao(), Main.photoFlow.getPhotoWorkflow());
+	    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../view/photo.fxml"));
+	    fxmlLoader.setController(this);
+	    fxmlLoader.setRoot(this);
+	    fxmlLoader.setController(this);
+	    try {
+	        fxmlLoader.load();
+	    } catch (Exception ex) {
+	        throw new RuntimeException(ex);
+	    }
+
+		}
+	
+	public PhotoController(PhotoDao photoDao, PhotoWorkflow workflow) {
 		this.photoDao = photoDao;
-		this.photo = photo;
 		this.workflow = workflow;
 	}
 	

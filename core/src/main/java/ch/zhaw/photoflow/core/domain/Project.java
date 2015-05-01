@@ -18,6 +18,7 @@ public class Project implements PersistentDomainObject {
 	private String description;
 	private ProjectState state = ProjectState.NEW;
 	private List<Todo> todos = new ArrayList<>();
+	private List<Tag> tags = new ArrayList<>();
 	
 	public static Project newProject () {
 		return new Project();
@@ -46,6 +47,7 @@ public class Project implements PersistentDomainObject {
 			p.description = project.description;
 			p.state = project.state;
 			p.todos = new ArrayList<>(project.todos);
+			p.tags = new ArrayList<>(project.tags);
 		});
 	}
 	
@@ -97,6 +99,18 @@ public class Project implements PersistentDomainObject {
 	
 	public void removeTodo(Todo todo) {
 		todos.remove(todo);
+	}
+	
+	public void setTags(List<Tag> tags){
+		this.tags = tags;
+	}
+	
+	public void addTag(Tag tag){
+		tags.add(tag);
+	}
+	
+	public void removeTag(Tag tag){
+		tags.remove(tag);
 	}
 	
 	@Override

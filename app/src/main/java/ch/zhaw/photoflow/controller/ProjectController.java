@@ -1,8 +1,17 @@
 package ch.zhaw.photoflow.controller;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.ProjectDao;
@@ -13,7 +22,7 @@ import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
 import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 
-public class ProjectController extends AbstractController {
+public class ProjectController extends Pane implements Initializable {
 	private final ProjectWorkflow workflow;
 	private final PhotoWorkflow photoWorkflow;
 	ProjectDao projectDao;
@@ -21,14 +30,30 @@ public class ProjectController extends AbstractController {
 	Project project;
 	List<Photo> photos;
 	
-	public ProjectController(ProjectDao projectDao, PhotoDao photoDao, Project project, ProjectWorkflow workflow, PhotoWorkflow photoWorkflow) {
+	@FXML
+	TextField projectNameField;
+	
+	
+	public ProjectController() {
+		this(Main.photoFlow.getProjectDao(), Main.photoFlow.getPhotoDao(), Main.photoFlow.getProjectWorkflow(), Main.photoFlow.getPhotoWorkflow());
+		URL test = getClass().getResource("../view/project.fxml");
+	    FXMLLoader fxmlLoader = new FXMLLoader(test);
+	    fxmlLoader.setController(this);
+	    fxmlLoader.setRoot(this);
+	    fxmlLoader.setController(this);
+	    try {
+	        fxmlLoader.load();
+	    } catch (Exception ex) {
+	        throw new RuntimeException(ex);
+	    }
+	}
+	
+	public ProjectController(ProjectDao projectDao, PhotoDao photoDao, ProjectWorkflow workflow, PhotoWorkflow photoWorkflow) {
 		this.workflow = workflow;
 		this.photoWorkflow = photoWorkflow;
 		this.photos = new ArrayList<Photo>();
 		this.projectDao = projectDao;
 		this.photoDao = photoDao;
-		this.project = project;
-		loadPhotos(project);
 	}
 	
 	public Project getProject() {
@@ -115,4 +140,19 @@ public class ProjectController extends AbstractController {
 	public List<Photo> getPhotos() {
 		return photos;
 	}
+	
+	
+	@FXML
+	public void syso()
+	{
+		System.out.println("klicked");
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		// TODO Auto-generated method stub
+		projectNameField.setText("I think I spider");
+		
+	}
+
 }
