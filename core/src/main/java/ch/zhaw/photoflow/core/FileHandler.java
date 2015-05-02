@@ -22,8 +22,13 @@ public class FileHandler {
 	private static final String PHOTO_FLOW = "PhotoFlow";
 	private static String userHomePath = System.getProperty("user.home")+"/";
 	private static String workingPath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/";
-	private static File sqlLitePath = new File(System.getProperty("user.home")+"/"+PHOTO_FLOW+"/DB/photoFlow.db");
+	private static String sqlitePath = System.getProperty("user.home")+"\\"+PHOTO_FLOW+"\\DB\\photoFlow.db";
+	private static File sqliteFile = new File(sqlitePath);
 	private String projectPath;
+	
+	public FileHandler() {
+		
+	}
 	
 	/**
 	 * Constructor initializes userhome and workingPath
@@ -38,6 +43,18 @@ public class FileHandler {
 			throw new FileHandlerException("Error in creating Project Directory!");
 		}
 		setProjectPath(getWorkingPath()+project.getId().get()+"/");
+	}
+
+	/**
+	 * Creates sqlite db path, where the actual sqlite db is stored.
+	 * @return true, if directory can be created, false, if it already exists
+	 */
+	public boolean createSQLitePath(){
+		File f = new File(getSQLitePath());
+		if(f.exists() && f.isDirectory()){
+			return true;
+		}
+		return f.getParentFile().mkdirs();
 	}
 	
 	/**
@@ -166,8 +183,12 @@ public class FileHandler {
 		this.projectPath = projectPath;
 	}
 
-	public File getSqlLitePath() {
-		return sqlLitePath;
+	public String getSQLitePath() {
+		return sqlitePath;
+	}
+	
+	public File getSQLiteFile() {
+		return sqliteFile;
 	}
 
 	public String getUserHomePath() {

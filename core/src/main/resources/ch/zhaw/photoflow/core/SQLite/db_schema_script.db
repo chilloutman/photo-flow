@@ -1,0 +1,51 @@
+CREATE TABLE IF NOT EXISTS project (
+	ID INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL, 
+	status TEXT NOT NULL,
+	CHECK(status IN ("New", "In Work", "Paused", "Done", "Archived"))
+);
+
+CREATE TABLE IF NOT EXISTS todo (
+	ID INTEGER PRIMARY KEY,
+	project_fk INT NOT NULL,
+	description TEXT NOT NULL,
+	FOREIGN KEY(project_fk) REFERENCES project(ID)
+);
+
+CREATE TABLE IF NOT EXISTS photographer (
+	ID INTEGER PRIMARY KEY,
+	first_name TEXT NOT NULL,
+	last_name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS tag (
+	ID INTEGER PRIMARY KEY NOT NULL,
+	name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS photo (
+	ID INTEGER PRIMARY KEY,
+	project_fk INT NOT NULL,
+	photographer_fk INT NOT NULL,
+	file_path_to_original TEXT NOT NULL,
+	file_size TEXT,
+	file_format TEXT,
+	timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
+	location_lat REAL,
+	location_lon REAL,
+	status TEXT NOT NULL,
+	CHECK(status IN ("New", "Flagged", "Editing", "Discarded")),
+	FOREIGN KEY(project_fk) REFERENCES project(ID),
+	FOREIGN KEY(photographer_fk) REFERENCES photographer(ID),
+	CONSTRAINT uniqueCombo UNIQUE (project_fk, photographer_fk)
+);
+
+/*UNIQUE CONSTRAINT OVER photo_fk & tag_fk*/
+CREATE TABLE IF NOT EXISTS photo_tag (
+	photo_fk INT NOT NULL,
+	tag_fk INT NOT NULL,
+	FOREIGN KEY(photo_fk) REFERENCES photo(ID),
+	FOREIGN KEY(tag_fk) REFERENCES tag(ID),
+	CONSTRAINT uniqueCombo UNIQUE (photo_fk, tag_fk)
+);
