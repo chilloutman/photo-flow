@@ -1,18 +1,29 @@
 package ch.zhaw.photoflow.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
@@ -23,13 +34,18 @@ public class MainController extends AbstractController implements Initializable 
 	ProjectDao projectDao;
 	List<Project> projects;
 	Project project;
+	PopUpHandler popup;
+	Stage stage; 
+	Parent root;
 	
+	//FMXL-stuff
 	@FXML
 	private ProjectController projectController;
 	
 	@FXML
     private ListView projectList;
 
+	
 	
 	private String projectName;
 	private String projectDescription;
@@ -55,23 +71,8 @@ public class MainController extends AbstractController implements Initializable 
 	 * Processes stuff for object {@link Project} and adds to list.
 	 */
 	public void createProject() {
-		
-		//spawn gui	
-			URL test = getClass().getResource("../view/create_project.fxml");
-		    FXMLLoader fxmlLoader = new FXMLLoader(test);
-		    fxmlLoader.setController(this);
-		    fxmlLoader.setRoot(this);
-		    fxmlLoader.setController(new ProjectController());
-		    try {
-		        fxmlLoader.load();
-		    } catch (Exception ex) {
-		        throw new RuntimeException(ex);
-		    }
-		
-		
-		    
-		//use variables
-		//
+
+		//todo tag handling
 		project = Project.newProject(p -> {
 			p.setName(projectName);
 			p.setDescription(projectDescription);
@@ -104,6 +105,26 @@ public class MainController extends AbstractController implements Initializable 
 		}
 	}
 	
+	public void createPopUp()
+	{
+//		System.out.println("make se gui");
+//		//spawn gui	
+//		   stage = new Stage();
+//		   try {
+//			root = FXMLLoader.load(getClass().getResource("../view/create_project.fxml"));
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		   stage.setScene(new Scene(root));
+//		   stage.setTitle("Create Project");
+//		   stage.initModality(Modality.APPLICATION_MODAL);
+//		   //stage.initOwner(btn1.getScene().getWindow());
+//		   
+//		   stage.showAndWait();
+		
+	}
+
 	/*
 	 * Getter and Setter
 	 */
@@ -155,7 +176,7 @@ public class MainController extends AbstractController implements Initializable 
 	    
 	    if(projectList.getSelectionModel().getSelectedItem() == "+ new Project")
 	    {
-	    	createProject();
+	    	popup = new PopUpHandler();
 	    }
 	    else
 	    {

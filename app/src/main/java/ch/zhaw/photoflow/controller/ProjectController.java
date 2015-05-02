@@ -41,8 +41,8 @@ public class ProjectController extends Pane implements Initializable {
 	
 	public ProjectController() {
 		this(Main.photoFlow.getProjectDao(), Main.photoFlow.getPhotoDao(), Main.photoFlow.getProjectWorkflow(), Main.photoFlow.getPhotoWorkflow());
-		URL test = getClass().getResource("../view/project.fxml");
-	    FXMLLoader fxmlLoader = new FXMLLoader(test);
+		URL gui = getClass().getResource("../view/project.fxml");
+	    FXMLLoader fxmlLoader = new FXMLLoader(gui);
 	    fxmlLoader.setController(this);
 	    fxmlLoader.setRoot(this);
 	    fxmlLoader.setController(this);
