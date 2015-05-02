@@ -2,13 +2,17 @@ package ch.zhaw.photoflow.controller;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
@@ -22,6 +26,9 @@ public class MainController extends AbstractController implements Initializable 
 	
 	@FXML
 	private ProjectController projectController;
+	
+	@FXML
+    private ListView projectList;
 
 	
 	private String projectName;
@@ -48,6 +55,21 @@ public class MainController extends AbstractController implements Initializable 
 	 * Processes stuff for object {@link Project} and adds to list.
 	 */
 	public void createProject() {
+		
+		//spawn gui	
+			URL test = getClass().getResource("../view/create_project.fxml");
+		    FXMLLoader fxmlLoader = new FXMLLoader(test);
+		    fxmlLoader.setController(this);
+		    fxmlLoader.setRoot(this);
+		    fxmlLoader.setController(new ProjectController());
+		    try {
+		        fxmlLoader.load();
+		    } catch (Exception ex) {
+		        throw new RuntimeException(ex);
+		    }
+		
+		
+		    
 		//use variables
 		//
 		project = Project.newProject(p -> {
@@ -119,8 +141,26 @@ public class MainController extends AbstractController implements Initializable 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 		
+		//add "new Project" entry
+		List<String> values = Arrays.asList("+ new Project");
+		projectList.setItems(FXCollections.observableList(values));
+
+		//handle selecting Mouse Selection
+		projectList.setOnMouseClicked(this::handleMouseClick);
+	}
+	
+	public void handleMouseClick(MouseEvent arg0) {
+	    System.out.println("clicked on " + projectList.getSelectionModel().getSelectedItem());
+	    
+	    if(projectList.getSelectionModel().getSelectedItem() == "+ new Project")
+	    {
+	    	createProject();
+	    }
+	    else
+	    {
+	    	//loadProject( projectList.getSelectionModel().getSelectedItem());
+	    }
 	}
 	
 }

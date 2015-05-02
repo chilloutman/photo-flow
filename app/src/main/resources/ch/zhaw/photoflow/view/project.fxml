@@ -29,7 +29,7 @@
 	      	</Pane>
 	      </top>
 	      <center>
-	      	<TilePane fx:id="projectTilePane" layoutY="75.0" prefHeight="325.0" prefWidth="936.0" style="-fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+	      	<TilePane fx:id="projectTilePane" layoutY="75.0" prefHeight="725" prefWidth="936.0" minHeight="-Infinity" style="-fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
 		</center>
 		<right>
 			<PhotoController fx:id="PhotoPane"/>

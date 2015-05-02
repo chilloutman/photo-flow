@@ -169,10 +169,11 @@ public class ProjectController extends Pane implements Initializable {
 		workflowNextButton.setOnAction(this::test);
 		
 	}
-
+	
 
 	public void test(ActionEvent event)
 	{
 		
 	}
+	
 }
