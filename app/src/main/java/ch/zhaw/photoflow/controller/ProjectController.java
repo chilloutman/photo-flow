@@ -10,8 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
@@ -25,7 +25,7 @@ import ch.zhaw.photoflow.core.domain.ProjectState;
 import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 
 public class ProjectController extends Pane implements Initializable {
-	private final ProjectWorkflow workflow;
+	private final ProjectWorkflow projectWorkflow;
 	private final PhotoWorkflow photoWorkflow;
 	ProjectDao projectDao;
 	PhotoDao photoDao;
@@ -34,9 +34,10 @@ public class ProjectController extends Pane implements Initializable {
 	
 	@FXML
 	TextField projectNameField;
-	
 	@FXML
-	Button workflowNextButton;
+	Button workflowNextButton, workflowPauseButton, workflowBackButton, archiveProjectButton;
+	@FXML
+	MenuButton todoButton;
 	
 	
 	public ProjectController() {
@@ -54,19 +55,11 @@ public class ProjectController extends Pane implements Initializable {
 	}
 	
 	public ProjectController(ProjectDao projectDao, PhotoDao photoDao, ProjectWorkflow workflow, PhotoWorkflow photoWorkflow) {
-		this.workflow = workflow;
+		this.projectWorkflow = workflow;
 		this.photoWorkflow = photoWorkflow;
 		this.photos = new ArrayList<Photo>();
 		this.projectDao = projectDao;
 		this.photoDao = photoDao;
-	}
-	
-	public Project getProject() {
-		return project;
-	}
-	
-	public void setProject(Project project) {
-		this.project = project;
 	}
 	
 	public void loadPhotos(Project project) {
@@ -113,8 +106,7 @@ public class ProjectController extends Pane implements Initializable {
 	 * @param projectStatus
 	 */
 	public void transistState(Project project, ProjectState projectState) {
-
-		workflow.transition(project, this.photos, projectState);
+		projectWorkflow.transition(project, this.photos, projectState);
 		try {
 			this.projectDao.save(project);
 			try {
@@ -133,24 +125,22 @@ public class ProjectController extends Pane implements Initializable {
 	 * Sets the status of the specified {@link Photo} object to {@link PhotoState.Flagged}.
 	 * @param photo
 	 */
-	public void flagPhoto(Photo photo) {
+	public void flagPhoto(Photo photo) {	
 		this.photos.remove(photo);
 		photoWorkflow.transition(this.project, photo, PhotoState.FLAGGED);
 		this.photos.add(photo);
-	}
-	
-	/*
-	 * Getter and Setter
-	 */
-	public List<Photo> getPhotos() {
-		return photos;
 	}
 	
 	
 	@FXML
 	public void syso()
 	{
-		System.out.println("klicked");
+		System.out.println("Pause klicked (over @FXML Annotation)");
+	}
+	
+	
+	public void archiveProject(ActionEvent event){
+		System.out.println("Project archived!");
 	}
 
 	
@@ -168,12 +158,30 @@ public class ProjectController extends Pane implements Initializable {
 		//external method
 		workflowNextButton.setOnAction(this::test);
 		
+		archiveProjectButton.setOnAction(this::archiveProject);
+		
 	}
 	
 
 	public void test(ActionEvent event)
 	{
 		
+	}
+	
+	
+	/*
+	 * Getter and Setter
+	 */
+	public List<Photo> getPhotos() {
+		return photos;
+	}
+	
+	public Project getProject() {
+		return project;
+	}
+	
+	public void setProject(Project project) {
+		this.project = project;
 	}
 	
 }
