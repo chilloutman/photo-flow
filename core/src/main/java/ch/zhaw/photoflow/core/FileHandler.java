@@ -22,19 +22,18 @@ public class FileHandler {
 	private static final String PHOTO_FLOW = "PhotoFlow";
 	private static String userHomePath = System.getProperty("user.home")+"/";
 	private static String workingPath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/";
+	private static String archivePath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/Archive/";
 	private static String sqlitePath = System.getProperty("user.home")+"\\"+PHOTO_FLOW+"\\DB\\photoFlow.db";
 	private static File sqliteFile = new File(sqlitePath);
 	private String projectPath;
-	
-	public FileHandler() {
-		
-	}
+	private Project project;
 	
 	/**
 	 * Constructor initializes userhome and workingPath
 	 * @throws FotoHandlerException 
 	 */
 	public FileHandler(Project project) throws FileHandlerException{
+		this.project = project;
 		System.out.println("UserHomePath: "+getUserHomePath());
 		if(!createWorkingPath()){
 			throw new FileHandlerException("Error in creating Working Directory!");
@@ -42,19 +41,7 @@ public class FileHandler {
 		if(!createProjectPath(project)){
 			throw new FileHandlerException("Error in creating Project Directory!");
 		}
-		setProjectPath(getWorkingPath()+project.getId().get()+"/");
-	}
-
-	/**
-	 * Creates sqlite db path, where the actual sqlite db is stored.
-	 * @return true, if directory can be created, false, if it already exists
-	 */
-	public boolean createSQLitePath(){
-		File f = new File(getSQLitePath());
-		if(f.exists() && f.isDirectory()){
-			return true;
-		}
-		return f.getParentFile().mkdirs();
+		setProjectPath(getWorkingPath()+project.getId().get().toString()+"/");
 	}
 	
 	/**
@@ -83,7 +70,7 @@ public class FileHandler {
 	}
 	
 	/**
-	 * Function used to import a physical Photo to the Project-Directory and set Photo parameters.
+	 * Method used to import a physical Photo to the Project-Directory and set Photo parameters.
 	 * @param photo Logical representation of a Photo.
 	 * @param file Physical Photo-File.
 	 * @return Photo Updated logical representation of a Photo.
@@ -172,6 +159,21 @@ public class FileHandler {
 	
 			zos.closeEntry();
 		}		
+	}
+	
+	
+	public void archiveProject() throws IOException, FileHandlerException {
+		File archiveDir = new File(archivePath);
+		File projectDir = new File(projectPath);
+		File targetDir = new File(archivePath+project.getId().get().toString()+"/");
+		if(!archiveDir.exists()){
+			archiveDir.mkdir();
+		}
+		if(!targetDir.exists()){
+			Files.move(projectDir, targetDir);	
+		}else{
+			throw new FileHandlerException("Project already in Archive!");
+		}
 	}
 	
 

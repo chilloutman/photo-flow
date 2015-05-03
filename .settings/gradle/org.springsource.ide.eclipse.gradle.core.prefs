@@ -1,5 +1,10 @@
 #org.springsource.ide.eclipse.gradle.core.preferences.GradleProjectPreferences
+<<<<<<< HEAD
 #Wed Apr 22 19:15:55 CEST 2015
 build.family.org.gradle.tooling.model.eclipse.HierarchicalEclipseProject=;app;core;
 org.springsource.ide.eclipse.gradle.linkedresources=
+=======
+#Thu Apr 16 10:08:27 CEST 2015
+build.family.org.gradle.tooling.model.eclipse.HierarchicalEclipseProject=;app;core;
+>>>>>>> branch 'master' of https://github.com/chilloutman/photo-flow
 org.springsource.ide.eclipse.gradle.rootprojectloc=

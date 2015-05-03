@@ -1,6 +1,8 @@
 # photo-flow
 ZHAW project: Photography Workflow Application
 
+[![Build Status](https://travis-ci.org/chilloutman/photo-flow.svg?branch=master)](https://travis-ci.org/chilloutman/photo-flow)
+
 ## Getting Started
 
 ### Without Eclipse Gradle Plugin

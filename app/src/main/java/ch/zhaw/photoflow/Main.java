@@ -32,8 +32,6 @@ public class Main extends Application {
 		
 		//View
 		try {
-			
-	
 			//main View
 			 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("view/main_gui.fxml"));
 			    fxmlLoader.setController(new MainController(photoFlow.getProjectDao()));
