@@ -28,6 +28,10 @@ public class FileHandler {
 	private String projectPath;
 	private Project project;
 	
+	public FileHandler() {
+		
+	}
+	
 	/**
 	 * Constructor initializes userhome and workingPath
 	 * @throws FotoHandlerException 
@@ -54,6 +58,18 @@ public class FileHandler {
 			return true;
 		}
 		return f.mkdir();
+	}
+	
+	/**
+	 * Creates sqlite db path, where the actual sqlite db is stored.
+	 * @return true, if directory can be created, false, if it already exists
+	 */
+	public boolean createSQLitePath(){
+		File f = new File(getSQLitePath());
+		if(f.exists() && f.isDirectory()){
+			return true;
+		}
+		return f.getParentFile().mkdirs();
 	}
 
 	/**
