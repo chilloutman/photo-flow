@@ -24,7 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class PopUpHandler extends AbstractController implements Initializable {
+public class PopUpHandler extends AbstractController {
 
 	private Stage stage; 
 	private FXMLLoader root;
@@ -113,13 +113,6 @@ public class PopUpHandler extends AbstractController implements Initializable {
 			setTags(ArrayList.get(2).toString());
 		});
 	
-	}
-
-
-
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		// TODO Auto-generated method stub
 	}
 	
 	

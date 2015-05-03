@@ -32,7 +32,6 @@ public class ProjectTest {
 			p.setDescription(DESCRIPTION);
 			TODOS.forEach(p::addTodo);
 		}));
-
 	}
 	
 	@Test

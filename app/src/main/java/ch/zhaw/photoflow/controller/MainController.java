@@ -75,11 +75,11 @@ public class MainController extends AbstractController implements Initializable 
 	/**
 	 * Processes stuff for object {@link Project} and adds to list.
 	 */
-	public void createProject() {
+	public Project createProject() {
 		//todo tag handling
 		
-		projectName = popup.getName();
-		projectDescription = popup.getDesc();
+		setProjectName(popup.getName());
+		setProjectDescription(popup.getDesc());
 		//tags = popup.getTags();
 		
 		
@@ -95,9 +95,10 @@ public class MainController extends AbstractController implements Initializable 
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return project;
 	}
 	
-	private void addProject(Project project) {
+	public void addProject(Project project) {
 		try {
 			projectDao.save(project);
 			this.projects.add(project);
