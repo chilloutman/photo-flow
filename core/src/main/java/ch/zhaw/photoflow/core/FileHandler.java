@@ -23,7 +23,7 @@ public class FileHandler {
 	private static String userHomePath = System.getProperty("user.home")+"/";
 	private static String workingPath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/";
 	private static String archivePath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/Archive/";
-	private static String sqlitePath = System.getProperty("user.home")+"\\"+PHOTO_FLOW+"\\DB\\photoFlow.db";
+	private static String sqlitePath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/DB/photoFlow.db";
 	private static File sqliteFile = new File(sqlitePath);
 	private String projectPath;
 	private Project project;

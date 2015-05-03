@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -20,6 +23,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -71,8 +76,13 @@ public class MainController extends AbstractController implements Initializable 
 	 * Processes stuff for object {@link Project} and adds to list.
 	 */
 	public void createProject() {
-
 		//todo tag handling
+		
+		projectName = popup.getName();
+		projectDescription = popup.getDesc();
+		//tags = popup.getTags();
+		
+		
 		project = Project.newProject(p -> {
 			p.setName(projectName);
 			p.setDescription(projectDescription);
@@ -91,6 +101,7 @@ public class MainController extends AbstractController implements Initializable 
 		try {
 			projectDao.save(project);
 			this.projects.add(project);
+			System.out.println(this.projects);
 		} catch (DaoException e) {
 			// TODO: Warn user
 		}
@@ -105,26 +116,18 @@ public class MainController extends AbstractController implements Initializable 
 		}
 	}
 	
-	public void createPopUp()
+	public void updateList()
 	{
-//		System.out.println("make se gui");
-//		//spawn gui	
-//		   stage = new Stage();
-//		   try {
-//			root = FXMLLoader.load(getClass().getResource("../view/create_project.fxml"));
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		   stage.setScene(new Scene(root));
-//		   stage.setTitle("Create Project");
-//		   stage.initModality(Modality.APPLICATION_MODAL);
-//		   //stage.initOwner(btn1.getScene().getWindow());
-//		   
-//		   stage.showAndWait();
+		//add "new Project" entry
+		List<String> np = Arrays.asList("+ new Project");
+		List<String> values = projects.stream().map((project)->{return project.getName();}).collect(Collectors.toList());
+		List<String> newList = new ArrayList<String>();
+		newList.addAll(np);
+		newList.addAll(values);
 		
+		projectList.setItems(FXCollections.observableList(newList));
 	}
-
+	
 	/*
 	 * Getter and Setter
 	 */
@@ -162,13 +165,10 @@ public class MainController extends AbstractController implements Initializable 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
-		//add "new Project" entry
-		List<String> values = Arrays.asList("+ new Project");
-		projectList.setItems(FXCollections.observableList(values));
-
-		//handle selecting Mouse Selection
+		updateList();
+		//handle selecting by mouse or keyboard
 		projectList.setOnMouseClicked(this::handleMouseClick);
+		projectList.setOnKeyPressed(this::handleEnter);
 	}
 	
 	public void handleMouseClick(MouseEvent arg0) {
@@ -177,11 +177,35 @@ public class MainController extends AbstractController implements Initializable 
 	    if(projectList.getSelectionModel().getSelectedItem() == "+ new Project")
 	    {
 	    	popup = new PopUpHandler();
+	    	createProject();
+	    	updateList();
 	    }
 	    else
 	    {
+	    	//todo
 	    	//loadProject( projectList.getSelectionModel().getSelectedItem());
 	    }
 	}
+	
+	//work in Progess!
+	public void handleEnter(KeyEvent arg0) {
+		if(arg0.getCharacter() == KeyCode.ENTER.toString())
+		{
+		    System.out.println("selected on " + projectList.getSelectionModel().getSelectedItem());
+		    
+		    if(projectList.getSelectionModel().getSelectedItem() == "+ new Project")
+		    {
+		    	popup = new PopUpHandler();
+		    	createProject();
+		    	updateList();
+		    }
+		    else
+		    {
+		    	//todo
+		    	//loadProject( projectList.getSelectionModel().getSelectedItem());
+		    }
+		}
+	}
+	
 	
 }
