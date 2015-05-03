@@ -106,18 +106,24 @@ public class ProjectController extends Pane implements Initializable {
 	 * @param projectStatus
 	 */
 	public void transistState(Project project, ProjectState projectState) {
-		projectWorkflow.transition(project, this.photos, projectState);
-		try {
-			this.projectDao.save(project);
+		if (projectWorkflow.canTransition(project, this.photos, projectState)) {
+			projectWorkflow.transition(project, this.photos, projectState);
+			
 			try {
-				this.project = projectDao.load(project.getId().get()).get();			
+				this.projectDao.save(project);
+				try {
+					this.project = projectDao.load(project.getId().get()).get();			
+				}
+				catch (DaoException e) {
+					//TODO: Warn user that rollback failed
+				}
+			} catch (DaoException e) {
+				// TODO: Inform user that saving failed
+				//TODO: ROLLBACK REQUIRED. Project Model is now in a wrong state.
 			}
-			catch (DaoException e) {
-				//TODO: Warn user that rollback failed
-			}
-		} catch (DaoException e) {
-			// TODO: Inform user that saving failed
-			//TODO: ROLLBACK REQUIRED. Project Model is now in a wrong state.
+		}
+		else {
+			//Inform User
 		}
 	}
 	
@@ -126,9 +132,14 @@ public class ProjectController extends Pane implements Initializable {
 	 * @param photo
 	 */
 	public void flagPhoto(Photo photo) {	
-		this.photos.remove(photo);
-		photoWorkflow.transition(this.project, photo, PhotoState.FLAGGED);
-		this.photos.add(photo);
+		if (photoWorkflow.canTransition(this.project, photo, PhotoState.FLAGGED)) {
+			this.photos.remove(photo);
+			photoWorkflow.transition(this.project, photo, PhotoState.FLAGGED);			
+			this.photos.add(photo);
+		}
+		else {
+			//Inform user
+		}
 	}
 	
 	
