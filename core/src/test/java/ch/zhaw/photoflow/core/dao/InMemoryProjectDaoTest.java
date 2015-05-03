@@ -7,13 +7,13 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
-import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectTest;
 
@@ -50,6 +50,11 @@ public class InMemoryProjectDaoTest {
 		projects.clear();
 	}
 	
+	@Test
+	public void loadAbsentProject () throws DaoException {
+		assertThat(dao.load(300), is(Optional.empty()));
+	}
+	
 	/**
 	 * Changing the description here does not change the actual project instance without calling save().
 	 */
@@ -67,6 +72,11 @@ public class InMemoryProjectDaoTest {
 		assertThat(dao.load(project.getId().get()).get().getDescription(), is(ProjectTest.DESCRIPTION));
 	}
 	
+	@Test(expected = NullPointerException.class)
+	public void saveProjectNull() throws DaoException {
+		dao.save(null);
+	}
+	
 	@Test
 	public void deleteProject () throws DaoException {
 		Integer id = dao.loadAll().get(0).getId().get();
@@ -74,6 +84,16 @@ public class InMemoryProjectDaoTest {
 			p.setId(id);
 		}));
 		assertThat(dao.loadAll(), hasSize(2));
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void deleteNull () throws DaoException {
+		dao.delete(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void deleteWithMissingId () throws DaoException {
+		dao.delete(Project.newProject());
 	}
 	
 }

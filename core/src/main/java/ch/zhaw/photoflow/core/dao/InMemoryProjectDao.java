@@ -11,6 +11,7 @@ import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 public class InMemoryProjectDao implements ProjectDao {
@@ -61,6 +62,8 @@ public class InMemoryProjectDao implements ProjectDao {
 
 	@Override
 	public void delete(Project project) {
+		Preconditions.checkNotNull(project);
+		Preconditions.checkArgument(project.getId().isPresent());
 		projects.remove(project);
 	}
 
