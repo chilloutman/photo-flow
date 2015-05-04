@@ -31,6 +31,9 @@ public class PhotoFlow {
 				DummyData.addPhotos(photoDao, projectDao.loadAll().stream().findAny().get());
 			} catch (DaoException e) { throw new RuntimeException(e); }
 		} else {
+			//SQLite Initializer
+			SQLiteInitialize.initialize();
+			
 			photoDao = new SqlitePhotoDao();
 			projectDao = new SqliteProjectDao();
 		}

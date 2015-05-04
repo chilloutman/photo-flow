@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import ch.zhaw.photoflow.controller.MainController;
 import ch.zhaw.photoflow.controller.ProjectController;
 import ch.zhaw.photoflow.core.PhotoFlow;
-import ch.zhaw.photoflow.core.SQLiteInitialize;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,8 +26,6 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		//SQLite Initializer
-//		SQLiteInitialize.initialize();
 		
 		//View
 		try {

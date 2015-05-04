@@ -15,19 +15,28 @@ public class SQLiteInitialize {
 	    Connection c = null;
 	    Statement stmt = null;
 	    try {
-	      Class.forName("org.sqlite.JDBC");
+	    	
+	      //Folders
 	      FileHandler filehandler = new FileHandler();
 	      filehandler.createSQLitePath();
 	      String sqlitePath = filehandler.getSQLitePath();
+	      
+	      //Open Connection
+	      Class.forName("org.sqlite.JDBC");
 	      c = DriverManager.getConnection("jdbc:sqlite:" + sqlitePath);
 	      System.out.println("Opened database successfully");
 
-	      stmt = c.createStatement();
+	      //Load dbscript
 	      URL dbScriptURL = SQLiteInitialize.class.getResource(("SQLite/db_schema_script.db"));
 	      Path dbScriptPath = Paths.get(dbScriptURL.toURI());
 	      String sqlCreateScript = new String(Files.readAllBytes(dbScriptPath));
+
+	      //Execute dbscript
+	      stmt = c.createStatement();
 	      stmt.executeUpdate(sqlCreateScript);
 	      stmt.close();
+	      
+	      //close connection
 	      c.close();
 	    } catch ( Exception e ) {
 	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
