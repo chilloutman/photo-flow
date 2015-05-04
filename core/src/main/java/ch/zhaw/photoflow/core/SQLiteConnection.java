@@ -4,13 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.sqlite.SQLiteConfig;
+
 public class SQLiteConnection {
 
 	private static SQLiteConnection instance = new SQLiteConnection();
 	
-    public static final String URL = "jdbc:mysql://localhost/jdbcdb";
-    public static final String USER = "YOUR_DATABASE_USERNAME";
-    public static final String PASSWORD = " YOUR_DATABASE_PASSWORD";
+	public static final String DB_BASE_URL = "jdbc:sqlite:";
     public static final String DRIVER_CLASS = "org.sqlite.JDBC";
     
     private Connection connection = null;
@@ -19,6 +19,7 @@ public class SQLiteConnection {
     private SQLiteConnection() {
 	    FileHandler filehandler = new FileHandler();
 	    this.sqlitePath = filehandler.getSQLitePath();
+	    
 	    
         try {
             Class.forName(DRIVER_CLASS);
@@ -29,7 +30,10 @@ public class SQLiteConnection {
     
     private Connection createConnection() throws SQLException {
     	if (this.connection == null) {
-    		this.connection = DriverManager.getConnection("jdbc:sqlite:" + sqlitePath);
+    		SQLiteConfig config = new SQLiteConfig();  
+            config.enforceForeignKeys(true);
+            
+    		this.connection = DriverManager.getConnection(DB_BASE_URL + sqlitePath, config.toProperties());
     	}
     	
    		return connection;
