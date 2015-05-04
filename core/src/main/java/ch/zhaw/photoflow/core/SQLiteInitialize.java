@@ -19,11 +19,9 @@ public class SQLiteInitialize {
 	      //Folders
 	      FileHandler filehandler = new FileHandler();
 	      filehandler.createSQLitePath();
-	      String sqlitePath = filehandler.getSQLitePath();
 	      
 	      //Open Connection
-	      Class.forName("org.sqlite.JDBC");
-	      c = DriverManager.getConnection("jdbc:sqlite:" + sqlitePath);
+	      c = SQLiteConnection.getConnection();
 	      System.out.println("Opened database successfully");
 
 	      //Load dbscript
