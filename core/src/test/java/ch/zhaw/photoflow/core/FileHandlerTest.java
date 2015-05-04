@@ -24,15 +24,13 @@ public class FileHandlerTest {
 	private Photo photo1, photo2, photo3, photo4;
 	private List<Photo> pList;
 	private static String userHome = System.getProperty("user.home");
-	private File file = new File(userHome+"/Test/test.jpg");
-	private File file2 = new File(userHome+"/Test/test2.jpg");
-	private File file3 = new File(userHome+"/Test/test.jpg");
-	private File file4 = new File(userHome+"/Test/test3.jpg");
+	private File file, file2, file3, file4;
 	private static boolean cleanUpDone = false;
 	
 	@Before
 	public void before() throws IOException {
 		
+		// Working directories
 		File f = new File(userHome+"/Test/");
 		File f2 = new File(userHome+"/PhotoFlow/");
 		
@@ -48,19 +46,24 @@ public class FileHandlerTest {
 			// SetUp only Once
 			cleanUpDone = true;
 		}
-					
+		
+		// Prepare Test with dummy Testdata
 		project = Project.newProject();
 		project.setId(1234);
 		try {
 			fileHandler = new FileHandler(project);
 		} catch (FileHandlerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		// Prepare Test
+		// Test directory(For Zip and Import) and PhotoFlow directory
 		f.mkdir();
 		f2.mkdir();
+		
+		file = new File(userHome+"/Test/test.jpg");
+		file2 = new File(userHome+"/Test/test2.jpg");
+		file3 = new File(userHome+"/Test/test.jpg");
+		file4 = new File(userHome+"/Test/test3.jpg");
 		file.createNewFile();
 		file2.createNewFile();
 		file3.createNewFile();
@@ -69,6 +72,9 @@ public class FileHandlerTest {
 		photo2 = Photo.newPhoto();
 		photo3 = Photo.newPhoto();
 		photo4 = Photo.newPhoto();
+		photo1.setFilePath(userHome+"/Test/test.jpg");
+		photo2.setFilePath(userHome+"/Test/test2.jpg");
+		photo3.setFilePath(userHome+"/Test/test3.jpg");
 		photo4.setFilePath(userHome+"/Test/testNotExist.jpg");
 		pList = new ArrayList<Photo>();
 		pList.add(photo1);
@@ -76,6 +82,9 @@ public class FileHandlerTest {
 		pList.add(photo3);
 	}
 	
+	/**
+	 * Checks that after the FileHandler is created, the corresponding Working Directories are created.
+	 */
 	@Test
 	public void checkDirectoriesCreated() {
 		assertTrue(fileHandler.getUserHomePath() != null);
@@ -86,19 +95,31 @@ public class FileHandlerTest {
 		assertFalse(fileHandler.getProjectPath().isEmpty());
 	}
 	
+	/**
+	 * Checks that the Zip File could be generated.
+	 * @throws FileNotFoundException If one of the Photo's in the List cannot be found (physically).
+	 * @throws IOException
+	 */
 	@Test
 	public void checkExportZip() throws FileNotFoundException, IOException {
-		photo1.setFilePath(userHome+"/Test/test.jpg");
-		photo2.setFilePath(userHome+"/Test/test2.jpg");
-		photo3.setFilePath(userHome+"/Test/test3.jpg");
 		assertTrue(fileHandler.exportZip(userHome+"/Test/test.zip", pList).isFile());
 	}
 	
+	/**
+	 * Loads a Photo-File according the Photo-Object. Checks that exception is thrown if File cannot be found.
+	 * @throws FileNotFoundException
+	 */
 	@Test(expected=FileNotFoundException.class)
 	public void checkLoadPhoto() throws FileNotFoundException {
+		assertTrue(fileHandler.loadPhoto(photo3).isFile());
 		fileHandler.loadPhoto(photo4);
 	}
 	
+	/**
+	 * Checks import of new photos. Throws an exception if the file already exists.
+	 * @throws IOException
+	 * @throws FileHandlerException 
+	 */
 	@Test(expected=FileAlreadyExistsException.class)
 	public void checkImportPhoto() throws IOException, FileHandlerException {
 		assertThat(fileHandler.importPhoto(photo1, file).getCreationDate(), notNullValue());
@@ -107,6 +128,12 @@ public class FileHandlerTest {
 		assertTrue(returnPhoto == null);
 	}
 	
+	/**
+	 * Checks the archive functionality.
+	 * Project Folder is moved to Archive Folder and should not be existing in old Directory anymore.
+	 * @throws IOException
+	 * @throws FileHandlerException
+	 */
 	@Test
 	public void checkArchiveProject() throws IOException, FileHandlerException {
 		fileHandler.importPhoto(photo1, file);
@@ -120,6 +147,11 @@ public class FileHandlerTest {
 		}
 	}
 	
+	/**
+	 * Private method used to cleanup Testdata Directories and Files
+	 * @param path
+	 * @return
+	 */
 	private boolean deleteDirectory(File path) {
 	    if (path.exists()) {
 	        File[] files = path.listFiles();

@@ -38,7 +38,6 @@ public class FileHandler {
 	 */
 	public FileHandler(Project project) throws FileHandlerException{
 		this.project = project;
-		System.out.println("UserHomePath: "+getUserHomePath());
 		if(!createWorkingPath()){
 			throw new FileHandlerException("Error in creating Working Directory!");
 		}
