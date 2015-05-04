@@ -1,5 +1,6 @@
 package ch.zhaw.photoflow;
 
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,7 +36,9 @@ public class Main extends Application {
 			    
 				Scene scene = new Scene(root);
 				primaryStage.setScene(scene);
-				primaryStage.getIcons().add(new Image("file:resources/app_icon_32.png"));
+				URL imagepath = getClass().getResource("app_icon_32.png");
+				Image image = new Image(imagepath.toString());
+				primaryStage.getIcons().add(image);
 				primaryStage.setTitle("Photo Flow");
 				
 				primaryStage.show();	
