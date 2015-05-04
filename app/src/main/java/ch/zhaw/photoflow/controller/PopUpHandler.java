@@ -1,17 +1,13 @@
 package ch.zhaw.photoflow.controller;
 
-import java.lang.reflect.Array;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -22,17 +18,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
+import ch.zhaw.photoflow.core.domain.Tag;
 
 public class PopUpHandler extends AbstractController {
 
-	private Stage stage; 
-	private FXMLLoader root;
-
-
 	private String name;
 	private String desc;
-	private String tags;
+	private List<Tag> tags;
 	
 	@FXML
 	private TextField textfieldProjectName;
@@ -52,7 +44,7 @@ public class PopUpHandler extends AbstractController {
 	
 	public PopUpHandler()
 	{		
-		Dialog<ArrayList> dialog = new Dialog<>();
+		Dialog<List<String>> dialog = new Dialog<>();
 		dialog.setTitle("Create Project");
 
 		// Set the button types.
@@ -83,7 +75,7 @@ public class PopUpHandler extends AbstractController {
 		Node loginButton = dialog.getDialogPane().lookupButton(createButtonType);
 		loginButton.setDisable(true);
 
-		// Do some validation (using the Java 8 lambda syntax).
+		// Check if project name entered and disable create button until then
 		projectName.textProperty().addListener((observable, oldValue, newValue) -> {
 		    loginButton.setDisable(newValue.trim().isEmpty());
 		});
@@ -96,25 +88,32 @@ public class PopUpHandler extends AbstractController {
 		// Convert the result to a an arraylist when create button is clicked.
 		dialog.setResultConverter(dialogButton -> {
 		    if (dialogButton == createButtonType) {
-		    	ArrayList<Object> vals = new ArrayList<Object>();
+		    	List<String> vals = new ArrayList<>();
 		    	vals.add(projectName.getText());
 		    	vals.add(projectDescription.getText());
 		    	vals.add(projectTags.getText());
 		    	return vals;
 		    }
+
 		    return null;
 		});
 
-		Optional<ArrayList> result = dialog.showAndWait();
+		Optional<List<String>> result = dialog.showAndWait();
 
 		result.ifPresent(ArrayList -> {
 			setName(ArrayList.get(0).toString());
 			setDesc(ArrayList.get(1).toString());
-			setTags(ArrayList.get(2).toString());
+			setTags(sliceTags(ArrayList.get(2).toString()));
 		});
 	
 	}
 	
+	private List<Tag> sliceTags(String tagsEnBloque)
+	{
+		List<String> temp = Arrays.asList(tagsEnBloque.split(";"));
+		
+		return temp.stream().map(s -> s.trim()).map(s -> new Tag(s)).collect(Collectors.toList());
+	}
 	
 	public String getName() {
 		return name;
@@ -140,14 +139,14 @@ public class PopUpHandler extends AbstractController {
 
 
 
-	public String getTags() {
+	public List<Tag> getTags() {
 		return tags;
 	}
 
 
 
-	public void setTags(String tags) {
-		this.tags = tags;
+	public void setTags(List<Tag> slicedTags) {
+		this.tags = slicedTags;
 	}
 	
 

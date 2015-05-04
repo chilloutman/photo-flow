@@ -1,34 +1,21 @@
 package ch.zhaw.photoflow.controller;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
@@ -48,7 +35,7 @@ public class MainController extends AbstractController implements Initializable 
 	private ProjectController projectController;
 	
 	@FXML
-    private ListView projectList;
+    private ListView<String> projectList;
 
 	
 	
@@ -75,27 +62,30 @@ public class MainController extends AbstractController implements Initializable 
 	/**
 	 * Processes stuff for object {@link Project} and adds to list.
 	 */
-	public Project createProject() {
+	public void createProject() {
 		//todo tag handling
-		
-		setProjectName(popup.getName());
-		setProjectDescription(popup.getDesc());
-		//tags = popup.getTags();
-		
-		
-		project = Project.newProject(p -> {
-			p.setName(projectName);
-			p.setDescription(projectDescription);
-			p.setTags(tags);
-		});
-		addProject(project);
-		try {
-			projectDao.save(project);
-		} catch (DaoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(popup.getName() != null)
+		{
+			setProjectName(popup.getName());
+			setProjectDescription(popup.getDesc());
+			tags = popup.getTags();
+			
+			System.out.println("Tags = "+tags);
+			
+			
+			project = Project.newProject(p -> {
+				p.setName(projectName);
+				p.setDescription(projectDescription);
+				p.setTags(tags);
+			});
+			addProject(project);
+			System.out.println("project created");
 		}
-		return project;
+		else
+		{
+			System.out.println("canceled project creation");
+		}
+		
 	}
 	
 	public void addProject(Project project) {

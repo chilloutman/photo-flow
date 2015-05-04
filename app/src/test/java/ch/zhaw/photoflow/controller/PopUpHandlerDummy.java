@@ -1,23 +1,19 @@
 package ch.zhaw.photoflow.controller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.List;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import ch.zhaw.photoflow.core.domain.Tag;
 
 public class PopUpHandlerDummy extends PopUpHandler{
 
-	private Stage stage; 
-	private FXMLLoader root;
 	
 	private String name;
 	private String desc;
-	private String tags;
+	private List<Tag> tags;
 	
 	
 	@FXML
@@ -36,7 +32,7 @@ public class PopUpHandlerDummy extends PopUpHandler{
 	private Button buttonCancelProject;
 	
 	
-	public PopUpHandlerDummy(String name, String desc, String tags)
+	public PopUpHandlerDummy(String name, String desc, List<Tag> tags)
 	{		
 		setName(name);
 		setDesc(desc);
@@ -68,13 +64,13 @@ public class PopUpHandlerDummy extends PopUpHandler{
 
 
 
-	public String getTags() {
+	public List<Tag> getTags() {
 		return tags;
 	}
 
 
 
-	public void setTags(String tags) {
+	public void setTags(List<Tag> tags) {
 		this.tags = tags;
 	}
 	

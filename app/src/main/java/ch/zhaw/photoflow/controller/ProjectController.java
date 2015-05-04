@@ -159,7 +159,7 @@ public class ProjectController extends Pane implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		//direct connection to TextField in FXML GUI
-		projectNameField.setText("I think I spider");
+		projectNameField.setText("new Project");
 		
 		//inline
 		workflowNextButton.setOnAction(event ->{
