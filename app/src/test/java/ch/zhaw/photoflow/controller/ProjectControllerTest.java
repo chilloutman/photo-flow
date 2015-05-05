@@ -81,7 +81,7 @@ public class ProjectControllerTest {
 	@Test
 	public void loadPhotos() {
 		//Load photos
-		projectController.loadPhotos(project1);
+		projectController.setProject(project1);
 		List<Photo> effectiveLoadedPhotos = projectController.getPhotos();
 		
 		//Tests
@@ -125,7 +125,6 @@ public class ProjectControllerTest {
 		});		
 		
 		projectController.setProject(project1);
-		projectController.loadPhotos(project1);
 		
 		projectController.flagPhoto(photo);
 		assertEquals("Photo has not been flagged(Illegal Project State)", PhotoState.NEW, photo.getState());

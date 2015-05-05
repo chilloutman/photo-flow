@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,31 +29,30 @@ import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 public class ProjectController extends Pane implements Initializable {
 	private final ProjectWorkflow projectWorkflow;
 	private final PhotoWorkflow photoWorkflow;
-	ProjectDao projectDao;
-	PhotoDao photoDao;
-	Project project;
-	List<Photo> photos;
-	
+	private final ProjectDao projectDao;
+	private final PhotoDao photoDao;
+	private Project project;
+	private List<Photo> photos;
+
 	@FXML
 	TextField projectNameField;
 	@FXML
 	Button workflowNextButton, workflowPauseButton, workflowBackButton, archiveProjectButton;
 	@FXML
 	MenuButton todoButton;
-	
-	
+
 	public ProjectController() {
 		this(Main.photoFlow.getProjectDao(), Main.photoFlow.getPhotoDao(), Main.photoFlow.getProjectWorkflow(), Main.photoFlow.getPhotoWorkflow());
 		URL gui = getClass().getResource("../view/project.fxml");
-	    FXMLLoader fxmlLoader = new FXMLLoader(gui);
-	    fxmlLoader.setController(this);
-	    fxmlLoader.setRoot(this);
-	    fxmlLoader.setController(this);
-	    try {
-	        fxmlLoader.load();
-	    } catch (Exception ex) {
-	        throw new RuntimeException(ex);
-	    }
+		FXMLLoader fxmlLoader = new FXMLLoader(gui);
+		fxmlLoader.setController(this);
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
+		try {
+			fxmlLoader.load();
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 	
 	public ProjectController(ProjectDao projectDao, PhotoDao photoDao, ProjectWorkflow workflow, PhotoWorkflow photoWorkflow) {
@@ -62,137 +63,137 @@ public class ProjectController extends Pane implements Initializable {
 		this.photoDao = photoDao;
 	}
 	
-	public void loadPhotos(Project project) {
-		List<Photo> tempPhotos = new ArrayList<Photo>(this.photos);
+	public void setProject(Project project) {
+		this.project = project;
+		loadPhotos();
+		displayPhotos();
+	}
+	
+	private void loadPhotos() {
 		try {
+			List<Photo> loadedPhotos = this.photoDao.loadAll(project.getId().get());
 			this.photos.clear();
-			this.photos.addAll(this.photoDao.loadAll(project.getId().get()));
+			this.photos.addAll(loadedPhotos);
 		} catch (DaoException e) {
-			//TODO: Inform user that loading failed
-			this.photos = tempPhotos;
+			// TODO: Inform user that loading failed
 		}
 	}
 	
+	private void displayPhotos() {
+		
+	}
+
 	public void addPhoto(Photo photo) {
 		photos.remove(photo);
 		photo.setProjectId(this.project.getId().get());
-		photos.add(photo);
 		try {
 			photoDao.save(photo);
+			photos.add(photo);
 		} catch (DaoException e) {
-			photos.remove(photo);
-			//TODO: Inform user that photo could not be added to the actual project
+			// TODO: Inform user that photo could not be added to the actual
+			// project
 		}
 	}
-	
+
 	public void importPhotos() {
-		//TODO: Usecase Import photos
+		// TODO: Usecase Import photos
 	}
-	
+
 	public void deletePhoto(Photo photo) {
-		this.photos.remove(photo);
-		
 		try {
 			photoDao.delete(photo);
+			photos.remove(photo);
 		} catch (DaoException e) {
-			this.photos.add(photo);
-			//TODO: Inform user that deletion failed
+			
+			// TODO: Inform user that deletion failed
 		}
 	}
-	
+
 	/**
-	 * Sets the state of the specified @{link Project} object to the given projectState.
+	 * Sets the state of the specified @{link Project} object to the given
+	 * projectState.
+	 * 
 	 * @param project
 	 * @param projectStatus
 	 */
 	public void transistState(Project project, ProjectState projectState) {
 		if (projectWorkflow.canTransition(project, this.photos, projectState)) {
 			projectWorkflow.transition(project, this.photos, projectState);
-			
+
 			try {
 				this.projectDao.save(project);
 				try {
-					this.project = projectDao.load(project.getId().get()).get();			
-				}
-				catch (DaoException e) {
-					//TODO: Warn user that rollback failed
+					this.project = projectDao.load(project.getId().get()).get();
+				} catch (DaoException e) {
+					// TODO: Warn user that rollback failed
 				}
 			} catch (DaoException e) {
 				// TODO: Inform user that saving failed
-				//TODO: ROLLBACK REQUIRED. Project Model is now in a wrong state.
+				// TODO: ROLLBACK REQUIRED. Project Model is now in a wrong
+				// state.
 			}
 		}
 		else {
-			//Inform User
+			// Inform User
 		}
 	}
-	
+
 	/**
-	 * Sets the status of the specified {@link Photo} object to {@link PhotoState.Flagged}.
+	 * Sets the status of the specified {@link Photo} object to
+	 * {@link PhotoState.Flagged}.
+	 * 
 	 * @param photo
 	 */
-	public void flagPhoto(Photo photo) {	
+	public void flagPhoto(Photo photo) {
 		if (photoWorkflow.canTransition(this.project, photo, PhotoState.FLAGGED)) {
 			this.photos.remove(photo);
-			photoWorkflow.transition(this.project, photo, PhotoState.FLAGGED);			
+			photoWorkflow.transition(this.project, photo, PhotoState.FLAGGED);
 			this.photos.add(photo);
 		}
 		else {
-			//Inform user
+			// Inform user
 		}
 	}
-	
-	
+
 	@FXML
-	public void syso()
-	{
+	public void syso() {
 		System.out.println("Pause klicked (over @FXML Annotation)");
 	}
-	
-	
-	public void archiveProject(ActionEvent event){
+
+	public void archiveProject(ActionEvent event) {
 		System.out.println("Project archived!");
 	}
 
-	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
-		//direct connection to TextField in FXML GUI
+
+		// direct connection to TextField in FXML GUI
 		projectNameField.setText("new Project");
-		
-		//inline
-		workflowNextButton.setOnAction(event ->{
+
+		// inline
+		workflowNextButton.setOnAction(event -> {
 			System.out.println("clicked Next");
 		});
-		
-		//external method
-		workflowNextButton.setOnAction(this::test);
-		
-		archiveProjectButton.setOnAction(this::archiveProject);
-		
-	}
-	
 
-	public void test(ActionEvent event)
-	{
-		
+		// external method
+		workflowNextButton.setOnAction(this::test);
+
+		archiveProjectButton.setOnAction(this::archiveProject);
+
+	}
+
+	public void test(ActionEvent event) {
+
 	}
 	
-	
-	/*
-	 * Getter and Setter
-	 */
-	public List<Photo> getPhotos() {
+	@VisibleForTesting
+	protected List<Photo> getPhotos() {
 		return photos;
 	}
 	
-	public Project getProject() {
+	@VisibleForTesting
+	protected Project getProject() {
 		return project;
 	}
-	
-	public void setProject(Project project) {
-		this.project = project;
-	}
-	
+
 }
