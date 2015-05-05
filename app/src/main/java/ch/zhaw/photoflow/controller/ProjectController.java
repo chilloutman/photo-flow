@@ -1,5 +1,7 @@
 package ch.zhaw.photoflow.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +10,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,8 +22,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
+import ch.zhaw.photoflow.core.FileHandler;
+import ch.zhaw.photoflow.core.FileHandlerException;
 import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Photo;
@@ -45,6 +50,9 @@ public class ProjectController extends BorderPane implements Initializable {
 	private final ExecutorService background;
 
 	@FXML
+	private PhotoController photoController;
+	
+	@FXML
 	TextField projectNameField;
 	@FXML
 	Button workflowNextButton, workflowPauseButton, workflowBackButton, archiveProjectButton;
@@ -52,6 +60,8 @@ public class ProjectController extends BorderPane implements Initializable {
 	MenuButton todoButton;
 	@FXML
 	TilePane photosPane;
+	@FXML
+	Button importPhotoButton;
 
 	public ProjectController() {
 		this(Main.photoFlow.getProjectDao(), Main.photoFlow.getPhotoDao(), Main.photoFlow.getProjectWorkflow(), Main.photoFlow.getPhotoWorkflow());
@@ -135,8 +145,46 @@ public class ProjectController extends BorderPane implements Initializable {
 		}
 	}
 
-	public void importPhotos() {
-		// TODO: Usecase Import photos
+	public void importPhotos(ActionEvent event) {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Import Photos");
+		
+		ExtensionFilter imageFilter = new ExtensionFilter("Image Files", "*.png", "*.jpg");
+		fileChooser.getExtensionFilters().add(imageFilter);
+
+		List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
+		
+		FileHandler filehandler;
+		try {
+			filehandler = new FileHandler(this.project);
+			
+			Photo photo;
+			for (File file : selectedFiles) {
+				photo = Photo.newPhoto();
+				
+				try {
+					filehandler.importPhoto(photo, file);
+					photoDao.save(photo);
+				} catch (IOException e) {
+					System.out.println("IOEXCEPTION");
+					// TODO Inform User (FileHandler)
+					e.printStackTrace();
+				} catch (FileHandlerException e) {
+					System.out.println("FILEHANDLEREXCEPTION");
+					// TODO Inform User (FileHandler)
+					e.printStackTrace();
+				} catch (DaoException e) {
+					System.out.println("DAOEXCEPTION");
+					// TODO Inform User (DAO)
+					e.printStackTrace();
+				}
+				
+			}
+		} catch (FileHandlerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 	}
 
 	public void deletePhoto(Photo photo) {
@@ -218,6 +266,7 @@ public class ProjectController extends BorderPane implements Initializable {
 		workflowNextButton.setOnAction(this::test);
 
 		archiveProjectButton.setOnAction(this::archiveProject);
+		importPhotoButton.setOnAction(this::importPhotos);
 
 	}
 

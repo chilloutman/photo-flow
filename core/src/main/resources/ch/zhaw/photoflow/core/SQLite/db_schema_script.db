@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS project (
 	ID INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
-    description TEXT NOT NULL, 
+    description TEXT, 
 	status TEXT NOT NULL,
 	CHECK(status IN ("New", "In Work", "Paused", "Done", "Archived"))
 );
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS tag (
 CREATE TABLE IF NOT EXISTS photo (
 	ID INTEGER PRIMARY KEY,
 	project_fk INT NOT NULL,
-	photographer_fk INT NOT NULL,
+	photographer_fk INT,
 	file_path_to_original TEXT NOT NULL,
 	file_size TEXT,
 	file_format TEXT,
