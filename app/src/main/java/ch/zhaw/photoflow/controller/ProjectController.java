@@ -55,13 +55,11 @@ public class ProjectController extends BorderPane implements Initializable {
 	@FXML
 	TextField projectNameField;
 	@FXML
-	Button workflowNextButton, workflowPauseButton, workflowBackButton, archiveProjectButton;
+	Button workflowNextButton, workflowPauseButton, workflowBackButton, importPhotoButton, archiveProjectButton, exportProjectButton;
 	@FXML
 	MenuButton todoButton;
 	@FXML
 	TilePane photosPane;
-	@FXML
-	Button importPhotoButton;
 
 	public ProjectController() {
 		this(Main.photoFlow.getProjectDao(), Main.photoFlow.getPhotoDao(), Main.photoFlow.getProjectWorkflow(), Main.photoFlow.getPhotoWorkflow());
@@ -92,6 +90,8 @@ public class ProjectController extends BorderPane implements Initializable {
 	}
 	
 	public void setProject(Project project) {
+		this.setDisable(false);
+		projectNameField.setText(project.getName());
 		System.out.println("Project \"" + project.getName() + "\" has been selected.");
 		this.project = project;
 		loadPhotos();
@@ -154,6 +154,10 @@ public class ProjectController extends BorderPane implements Initializable {
 
 		List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
 		
+		if (selectedFiles == null) {
+			return;
+		}
+		
 		FileHandler filehandler;
 		try {
 			filehandler = new FileHandler(this.project);
@@ -168,15 +172,12 @@ public class ProjectController extends BorderPane implements Initializable {
 				} catch (IOException e) {
 					System.out.println("IOEXCEPTION");
 					// TODO Inform User (FileHandler)
-					e.printStackTrace();
 				} catch (FileHandlerException e) {
 					System.out.println("FILEHANDLEREXCEPTION");
 					// TODO Inform User (FileHandler)
-					e.printStackTrace();
 				} catch (DaoException e) {
 					System.out.println("DAOEXCEPTION");
 					// TODO Inform User (DAO)
-					e.printStackTrace();
 				}
 				
 			}
@@ -256,6 +257,9 @@ public class ProjectController extends BorderPane implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		// direct connection to TextField in FXML GUI
 		projectNameField.setText("new Project");
+		
+		//Disable first
+		this.setDisable(true);
 
 		// inline
 		workflowNextButton.setOnAction(event -> {
