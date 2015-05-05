@@ -3,10 +3,13 @@ package ch.zhaw.photoflow.controller;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import com.google.common.annotations.VisibleForTesting;
-
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,7 +17,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.TilePane;
 import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.PhotoDao;
@@ -26,13 +32,17 @@ import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
 import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 
-public class ProjectController extends Pane implements Initializable {
+import com.google.common.annotations.VisibleForTesting;
+
+public class ProjectController extends BorderPane implements Initializable {
 	private final ProjectWorkflow projectWorkflow;
 	private final PhotoWorkflow photoWorkflow;
 	private final ProjectDao projectDao;
 	private final PhotoDao photoDao;
 	private Project project;
 	private List<Photo> photos;
+	/** Daemon threads for background task execution */
+	private final ExecutorService background;
 
 	@FXML
 	TextField projectNameField;
@@ -40,6 +50,8 @@ public class ProjectController extends Pane implements Initializable {
 	Button workflowNextButton, workflowPauseButton, workflowBackButton, archiveProjectButton;
 	@FXML
 	MenuButton todoButton;
+	@FXML
+	TilePane photosPane;
 
 	public ProjectController() {
 		this(Main.photoFlow.getProjectDao(), Main.photoFlow.getPhotoDao(), Main.photoFlow.getProjectWorkflow(), Main.photoFlow.getPhotoWorkflow());
@@ -61,6 +73,12 @@ public class ProjectController extends Pane implements Initializable {
 		this.photos = new ArrayList<Photo>();
 		this.projectDao = projectDao;
 		this.photoDao = photoDao;
+		
+		this.background = Executors.newFixedThreadPool(5, runnable -> {
+			Thread thread = Executors.defaultThreadFactory().newThread(runnable);
+			thread.setDaemon(true);
+			return thread;
+		});
 	}
 	
 	public void setProject(Project project) {
@@ -81,7 +99,28 @@ public class ProjectController extends Pane implements Initializable {
 	}
 	
 	private void displayPhotos() {
+		photosPane.getChildren().clear();
 		
+		// Asynchronously load Images and display them
+		Random random = new Random();
+		for (int i = 0; i < 100; i++) {
+			Task<Image> imageTask = new Task<Image>() {
+				@Override
+				protected Image call() throws Exception {
+					int width = (random.nextInt(15) + 10) * 10;
+					int height = (random.nextInt(15) + 10) * 10;
+					return new Image("http://lorempixel.com/" + width + "/" + height + "/");
+				}
+			};
+			
+			imageTask.valueProperty().addListener((observable, oldImage, image) ->{
+				photosPane.getChildren().add(new ImageView(image));
+			});
+			
+			//imageTask.onFailedProperty().addListener(TODO);
+			
+			background.execute(imageTask);
+		}
 	}
 
 	public void addPhoto(Photo photo) {
@@ -167,7 +206,6 @@ public class ProjectController extends Pane implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
 		// direct connection to TextField in FXML GUI
 		projectNameField.setText("new Project");
 

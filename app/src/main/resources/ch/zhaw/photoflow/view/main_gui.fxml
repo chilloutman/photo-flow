@@ -15,14 +15,14 @@
 
 
 
-<AnchorPane maxHeight="800" maxWidth="1280" minHeight="800" minWidth="1280" prefHeight="800" prefWidth="1280" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" >
+<AnchorPane prefHeight="800" prefWidth="1280" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" >
    <children>
-      <BorderPane prefHeight="203.0" prefWidth="218.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
          <left>
-            <ListView fx:id="projectList" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="150.0" BorderPane.alignment="CENTER" />
-         </left>	
+            <ListView fx:id="projectList"/>
+         </left>
          <center>
-            <ProjectController fx:id="projectController" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0"/>
+            <ProjectController fx:id="projectController"/>
          </center>
       </BorderPane>
    </children>
