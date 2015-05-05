@@ -49,6 +49,9 @@ public class MainController extends AbstractController implements Initializable 
 		loadProjects();
 	}
 	
+	/**
+	 * Loads all the saved projects and adds them to the local list
+	 */
 	private void loadProjects() {
 		List<Project> tempProjects = new ArrayList<Project>(projects);
 		try {
@@ -88,6 +91,10 @@ public class MainController extends AbstractController implements Initializable 
 		
 	}
 	
+	/**
+	 * Adds a project using the ProjectDao. Also saves the project to the local list
+	 * @param project	the project to add
+	 */
 	public void addProject(Project project) {
 		try {
 			projectDao.save(project);
@@ -98,6 +105,10 @@ public class MainController extends AbstractController implements Initializable 
 		}
 	}
 	
+	/**
+	 * Deletes a project within the ProjectDao an the local list
+	 * @param project	the project to be deleted
+	 */
 	public void deleteProject(Project project) {
 		try {
 			projectDao.delete(project);
@@ -107,6 +118,9 @@ public class MainController extends AbstractController implements Initializable 
 		}
 	}
 	
+	/**
+	 * Updates projectList on the main_gui left side
+	 */
 	public void updateList()
 	{
 		//add "new Project" entry
@@ -162,6 +176,10 @@ public class MainController extends AbstractController implements Initializable 
 		projectList.setOnKeyPressed(this::handleEnter);
 	}
 	
+	/**
+	 * Opens Project / Create new Project on Mouse selection  
+	 * @param arg0 Click Event from projectlist
+	 */
 	public void handleMouseClick(MouseEvent arg0) {
 	    System.out.println("clicked on " + projectList.getSelectionModel().getSelectedItem());
 	    
@@ -178,9 +196,12 @@ public class MainController extends AbstractController implements Initializable 
 	    }
 	}
 	
-	//work in Progess!
+	/**
+	 * Opens Project / Create new Project on Keyboard selection and Enter-Key pressed
+	 * @param arg0 Key Event from projectlist
+	 */
 	public void handleEnter(KeyEvent arg0) {
-		if(arg0.getCharacter() == KeyCode.ENTER.toString())
+		if(arg0.getCode() == KeyCode.ENTER)
 		{
 		    System.out.println("selected on " + projectList.getSelectionModel().getSelectedItem());
 		    

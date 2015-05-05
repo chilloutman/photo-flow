@@ -41,7 +41,9 @@ public class PopUpHandler extends AbstractController {
 	@FXML
 	private Button buttonCancelProject;
 	
-	
+	/**
+	 * Default constructor creates a JavaFX 8 Dialog with three input fields for project details
+	 */
 	public PopUpHandler()
 	{		
 		Dialog<List<String>> dialog = new Dialog<>();
@@ -108,6 +110,11 @@ public class PopUpHandler extends AbstractController {
 	
 	}
 	
+	/**
+	 * Cuts the received String in to single Tags and collects them in a List
+	 * @param tagsEnBloque	A String containing Tags semicolon-separated
+	 * @return	List of tags
+	 */
 	private List<Tag> sliceTags(String tagsEnBloque)
 	{
 		List<String> temp = Arrays.asList(tagsEnBloque.split(";"));
@@ -119,35 +126,23 @@ public class PopUpHandler extends AbstractController {
 		return name;
 	}
 
-
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
 
 	public String getDesc() {
 		return desc;
 	}
 
-
-
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-
-
 
 	public List<Tag> getTags() {
 		return tags;
 	}
 
-
-
 	public void setTags(List<Tag> slicedTags) {
 		this.tags = slicedTags;
 	}
-	
-
 }
