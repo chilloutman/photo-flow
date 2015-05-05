@@ -82,7 +82,7 @@ public class MainController extends AbstractController implements Initializable 
 				projectList.getSelectionModel().select(newProject.orElse(null));
 			});
 		} else {
-			//projectController.setProject(selectedProject);
+			projectController.setProject(selectedProject);
 		}
 	}
 

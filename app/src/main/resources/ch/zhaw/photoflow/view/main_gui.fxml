@@ -22,7 +22,7 @@
             <ListView fx:id="projectList" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="150.0" BorderPane.alignment="CENTER" />
          </left>	
          <center>
-            <ProjectController fx:id="ProjectPane" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0"/>
+            <ProjectController fx:id="projectController" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" AnchorPane.rightAnchor="0.0" AnchorPane.bottomAnchor="0"/>
          </center>
       </BorderPane>
    </children>

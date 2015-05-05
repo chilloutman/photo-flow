@@ -64,6 +64,7 @@ public class ProjectController extends Pane implements Initializable {
 	}
 	
 	public void setProject(Project project) {
+		System.out.println("Project \"" + project.getName() + "\" has been selected.");
 		this.project = project;
 		loadPhotos();
 		displayPhotos();
