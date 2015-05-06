@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import ch.zhaw.photoflow.controller.PhotoController ?>
+<?import javafx.geometry.Insets?>
 
 
 <fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml">
@@ -32,10 +33,12 @@
 		</Pane>
 	</top>
 	<center>
-		<ScrollPane style="-fx-background-color: red;" hbarPolicy="NEVER" fitToWidth="true">
+		<ScrollPane hbarPolicy="NEVER" fitToWidth="true">
 			<!-- <TilePane fx:id="photosPane" layoutY="75.0" prefHeight="725" prefWidth="936.0" minHeight="-Infinity" style="-fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" /> -->
 			<content>
-				<TilePane fx:id="photosPane" tileAlignment="CENTER" alignment="CENTER"/>
+				<TilePane fx:id="photosPane" alignment="TOP_LEFT" tileAlignment="CENTER" hgap="25" vgap="25">
+					<padding><Insets top="25" left="25" bottom="25" right="25"/></padding>
+				</TilePane>
 			</content>
 		</ScrollPane>
 	</center>

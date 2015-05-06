@@ -1,10 +1,11 @@
 package ch.zhaw.photoflow.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -82,7 +83,7 @@ public class ProjectController extends BorderPane implements Initializable {
 		this.projectDao = projectDao;
 		this.photoDao = photoDao;
 		
-		this.background = Executors.newFixedThreadPool(5, runnable -> {
+		this.background = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), runnable -> {
 			Thread thread = Executors.defaultThreadFactory().newThread(runnable);
 			thread.setDaemon(true);
 			return thread;
@@ -116,26 +117,16 @@ public class ProjectController extends BorderPane implements Initializable {
 	private void displayPhotos() {
 		photosPane.getChildren().clear();
 		
-		// Asynchronously load Images and display them
-		Random random = new Random();
-		for (int i = 0; i < 100; i++) {
-			Task<Image> imageTask = new Task<Image>() {
-				@Override
-				protected Image call() throws Exception {
-					int width = (random.nextInt(15) + 10) * 10;
-					int height = (random.nextInt(15) + 10) * 10;
-					return new Image("http://lorempixel.com/" + width + "/" + height + "/");
-				}
-			};
-			
-			imageTask.valueProperty().addListener((observable, oldImage, image) ->{
+		photos.stream().forEach(photo -> {
+			Task<Image> task = new ImageLoadingTask(photo, fileHandler);
+			task.valueProperty().addListener((observable, oldImage, image) ->{
 				photosPane.getChildren().add(new ImageView(image));
 			});
 			
 			//imageTask.onFailedProperty().addListener(TODO);
 			
-			background.execute(imageTask);
-		}
+			background.execute(task);
+		});
 	}
 
 	public void addPhoto(Photo photo) {
@@ -242,11 +233,6 @@ public class ProjectController extends BorderPane implements Initializable {
 		}
 	}
 
-	@FXML
-	public void syso() {
-		System.out.println("Pause klicked (over @FXML Annotation)");
-	}
-
 	public void archiveProject(ActionEvent event) {
 		try {
 			fileHandler.archiveProject();
@@ -293,6 +279,25 @@ public class ProjectController extends BorderPane implements Initializable {
 
 	public void test(ActionEvent event) {
 
+	}
+	
+	private static class ImageLoadingTask extends Task<Image> {
+		
+		private final Photo photo;
+		private final FileHandler fileHandler;
+		
+		public ImageLoadingTask(Photo photo, FileHandler fileHandler) {
+			this.photo = photo;
+			this.fileHandler = fileHandler;
+		}
+
+		@Override
+		protected Image call() throws FileNotFoundException {
+			System.out.println("Loading photo: " + photo);
+			File file = fileHandler.loadPhoto(photo);
+			Image image = new Image(new FileInputStream(file), 200, 200, true, true);
+			return image;
+		}
 	}
 	
 	@VisibleForTesting
