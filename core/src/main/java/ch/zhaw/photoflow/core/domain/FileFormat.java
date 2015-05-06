@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import ch.zhaw.photoflow.core.util.GuavaCollectors;
+
+import com.google.common.collect.ImmutableList;
+
 /**
  * Picture file formats.
  */
@@ -26,4 +30,11 @@ public enum FileFormat {
 		
 		return s.findFirst();
 	}
+	
+	public static ImmutableList<String> getAllFileExtensions () {
+		return Arrays.stream(values())
+			.flatMap(fileFormat -> Arrays.stream(fileFormat.extensions))
+			.collect(GuavaCollectors.toImmutableList());
+	}
+	
 }
