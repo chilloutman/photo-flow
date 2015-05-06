@@ -49,7 +49,7 @@ public class ProjectController extends BorderPane implements Initializable {
 	private List<Photo> photos;
 	private FileHandler fileHandler;
 	/** Daemon threads for background task execution */
-	private final ExecutorService background;
+	private ExecutorService imageLoaderService;
 
 	@FXML
 	private PhotoController photoController;
@@ -83,12 +83,6 @@ public class ProjectController extends BorderPane implements Initializable {
 		this.photos = new ArrayList<Photo>();
 		this.projectDao = projectDao;
 		this.photoDao = photoDao;
-		
-		this.background = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), runnable -> {
-			Thread thread = Executors.defaultThreadFactory().newThread(runnable);
-			thread.setDaemon(true);
-			return thread;
-		});
 	}
 	
 	public void setProject(Project project) {
@@ -116,6 +110,11 @@ public class ProjectController extends BorderPane implements Initializable {
 	}
 	
 	private void displayPhotos() {
+		if (imageLoaderService != null) {
+			imageLoaderService.shutdownNow();
+		}
+		imageLoaderService = newImageLoaderService();
+		
 		photosPane.getChildren().clear();
 		
 		photos.stream().forEach(photo -> {
@@ -132,7 +131,16 @@ public class ProjectController extends BorderPane implements Initializable {
 			
 			//imageTask.onFailedProperty().addListener(TODO);
 			
-			background.execute(task);
+			imageLoaderService.execute(task);
+		});
+	}
+	
+	private ExecutorService newImageLoaderService () {
+		
+		return Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), runnable -> {
+			Thread thread = Executors.defaultThreadFactory().newThread(runnable);
+			thread.setDaemon(true);
+			return thread;
 		});
 	}
 
