@@ -137,11 +137,11 @@ public class ProjectControllerTest {
 	public void transistState() {
 		projectController.setProject(project1);
 		
-		projectController.transistState(project1,  ProjectState.DONE);
+		projectController.transitionState(project1,  ProjectState.DONE);
 		
 		assertEquals("Transist to DONE should fail(Not Legal)", projectController.getProject().getState(), ProjectState.NEW);
 
-		projectController.transistState(project1,  ProjectState.IN_WORK);
+		projectController.transitionState(project1,  ProjectState.IN_WORK);
 		assertEquals("Transist to IN_WORK(Legal)", projectController.getProject().getState(), ProjectState.IN_WORK);
 		
 	}
