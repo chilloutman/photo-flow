@@ -163,7 +163,9 @@ public class ProjectController extends BorderPane implements Initializable {
 			
 			Photo photo;
 			for (File file : selectedFiles) {
-				photo = Photo.newPhoto();
+				photo = Photo.newPhoto( p -> {
+					p.setProjectId(project.getId().get());
+				});
 				
 				try {
 					filehandler.importPhoto(photo, file);
@@ -171,11 +173,14 @@ public class ProjectController extends BorderPane implements Initializable {
 				} catch (IOException e) {
 					System.out.println("IOEXCEPTION");
 					// TODO Inform User (FileHandler)
+					e.printStackTrace();
 				} catch (FileHandlerException e) {
 					System.out.println("FILEHANDLEREXCEPTION");
+					e.printStackTrace();
 					// TODO Inform User (FileHandler)
 				} catch (DaoException e) {
 					System.out.println("DAOEXCEPTION");
+					e.printStackTrace();
 					// TODO Inform User (DAO)
 				}
 				

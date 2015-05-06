@@ -13,7 +13,7 @@ import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 public class PhotoFlow {
 	
 	// TODO: Maybe read this from The environment.
-	private final boolean DEBUG = true;
+	private final boolean DEBUG = false;
 	
 	private final PhotoDao photoDao;
 	private final ProjectDao projectDao;

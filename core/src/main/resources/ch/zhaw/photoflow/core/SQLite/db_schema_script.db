@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS photo (
 	project_fk INT NOT NULL,
 	photographer_fk INT,
 	file_path_to_original TEXT NOT NULL,
-	file_size TEXT,
+	file_size INT,
 	file_format TEXT,
 	timestamp TEXT DEFAULT CURRENT_TIMESTAMP,
 	location_lat REAL,

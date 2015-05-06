@@ -30,12 +30,13 @@ public class SqliteProjectDao implements ProjectDao {
 	@Override
 	public ImmutableList<Project> loadAll() {
 		
+		ImmutableList<Project> projectList = ImmutableList.of();
+
 		try {
 			Connection sqliteConnection = SQLiteConnection.getConnection();
 			sqliteConnection.setAutoCommit(false);
 			
 			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
-			ImmutableList<Project> projectList;
 
 			//Load Data and create ImmutableList<Project>
 			projectList = create.select().from("project").fetch().stream().<Project>map(record -> {
@@ -47,14 +48,12 @@ public class SqliteProjectDao implements ProjectDao {
 				});
 			}).collect(toImmutableList());
 			
-			return projectList;
-			
 		} catch (SQLException e) {
 			System.out.println("Could not connect to the database.");
 			e.printStackTrace();
 		}
 		
-		return null;
+		return projectList;
 	}
 
 	@Override
@@ -81,7 +80,7 @@ public class SqliteProjectDao implements ProjectDao {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return Optional.empty();
 	}
 	
 	@Override
@@ -125,7 +124,7 @@ public class SqliteProjectDao implements ProjectDao {
 			e.printStackTrace();
 		}
 		
-		return null;
+		return project;
 	}
 
 	@Override

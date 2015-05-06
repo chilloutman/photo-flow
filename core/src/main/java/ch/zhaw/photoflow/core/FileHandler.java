@@ -13,6 +13,7 @@ import java.util.zip.ZipOutputStream;
 
 import com.google.common.io.Files;
 
+import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
 
@@ -100,8 +101,9 @@ public class FileHandler {
 			File newFile = new File(getProjectPath()+file.getName());
 			Files.copy(file, newFile);
 			photo.setFilePath(newFile.getAbsolutePath());
-			photo.setCreationDate(LocalDateTime.now());
+			photo.setFileFormat(FileFormat.JPEG);	//static at the moment
 			photo.setFileSize((int) file.length());
+			photo.setCreationDate(LocalDateTime.now());
 			return photo;
 		}else{
 			throw new FileHandlerException("File Extension is invalid!");

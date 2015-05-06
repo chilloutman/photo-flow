@@ -114,8 +114,9 @@ public class Photo implements PersistentDomainObject {
 		return state;
 	}
 
-	/** Not public, so that only the Workflow can change it. */
-	void setState(PhotoState state) {
+	/** Not public, so that only the Workflow can change it.
+	 * - Sorry Lucas :( */
+	public void setState(PhotoState state) {
 		this.state = state;
 	}
 
