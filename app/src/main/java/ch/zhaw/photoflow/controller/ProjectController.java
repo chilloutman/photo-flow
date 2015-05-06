@@ -95,14 +95,14 @@ public class ProjectController extends BorderPane implements Initializable {
 		projectNameField.setText(project.getName());
 		System.out.println("Project \"" + project.getName() + "\" has been selected.");
 		this.project = project;
-		loadPhotos();
-		displayPhotos();
 		try {
 			fileHandler = new FileHandler(project);
 		} catch (FileHandlerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		loadPhotos();
+		displayPhotos();
 	}
 	
 	private void loadPhotos() {
@@ -122,6 +122,7 @@ public class ProjectController extends BorderPane implements Initializable {
 			Task<Image> task = new ImageLoadingTask(photo, fileHandler);
 			
 			task.valueProperty().addListener((observable, oldImage, image) -> {
+				System.out.println("Creating ImageView for image");
 				ImageView view = new ImageView(image);
 				view.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 					photoController.setPhoto(photo);
