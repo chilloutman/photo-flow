@@ -144,14 +144,21 @@ public class FileHandler {
 	 * @throws FileNotFoundException If a File in the List cannot be found, this Exception is thrown.
 	 * @throws IOException
 	 */
-	public File exportZip(String zipName, List<Photo> list) throws FileNotFoundException, IOException {
+	public File exportZip(String zipName, List<Photo> list) throws FileHandlerException {
 		try(FileOutputStream fos = new FileOutputStream(zipName);
 			ZipOutputStream zos = new ZipOutputStream(fos);){
 		
 			for(Photo photo : list){
-				 addToZip(photo.getFilePath(), zos);
+				 try {
+					addToZip(photo.getFilePath(), zos);
+				} catch (IOException e) {
+					throw new FileHandlerException("Could not load Photo to Zip!", e);
+				}
 			}
+		} catch (IOException e1) {
+			throw new FileHandlerException("FileHandler: Streams could not be opened!", e1);
 		}
+		System.out.println("Project exported!");
 		return new File(zipName);
 	}
 	
@@ -179,7 +186,7 @@ public class FileHandler {
 	}
 	
 	
-	public void archiveProject() throws IOException, FileHandlerException {
+	public void archiveProject() throws FileHandlerException {
 		File archiveDir = new File(archivePath);
 		File projectDir = new File(projectPath);
 		File targetDir = new File(archivePath+project.getId().get().toString()+"/");
@@ -187,10 +194,13 @@ public class FileHandler {
 			archiveDir.mkdir();
 		}
 		if(!targetDir.exists()){
-			Files.move(projectDir, targetDir);	
-		}else{
-			throw new FileHandlerException("Project already in Archive!");
+			try {
+				Files.move(projectDir, targetDir);
+			} catch (IOException e) {
+				throw new FileHandlerException("Projectfiles could not be moved to archive!",e);
+			}
 		}
+		System.out.println("Project successfully archived!");
 	}
 	
 

@@ -1,6 +1,7 @@
 package ch.zhaw.photoflow.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class ProjectController extends BorderPane implements Initializable {
 	private final PhotoDao photoDao;
 	private Project project;
 	private List<Photo> photos;
+	private FileHandler fileHandler;
 	/** Daemon threads for background task execution */
 	private final ExecutorService background;
 
@@ -95,6 +97,12 @@ public class ProjectController extends BorderPane implements Initializable {
 		this.project = project;
 		loadPhotos();
 		displayPhotos();
+		try {
+			fileHandler = new FileHandler(project);
+		} catch (FileHandlerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void loadPhotos() {
@@ -157,37 +165,29 @@ public class ProjectController extends BorderPane implements Initializable {
 			return;
 		}
 		
-		FileHandler filehandler;
-		try {
-			filehandler = new FileHandler(this.project);
+		Photo photo;
+		for (File file : selectedFiles) {
+			photo = Photo.newPhoto( p -> {
+				p.setProjectId(project.getId().get());
+			});
 			
-			Photo photo;
-			for (File file : selectedFiles) {
-				photo = Photo.newPhoto( p -> {
-					p.setProjectId(project.getId().get());
-				});
-				
-				try {
-					filehandler.importPhoto(photo, file);
-					photoDao.save(photo);
-				} catch (IOException e) {
-					System.out.println("IOEXCEPTION");
-					// TODO Inform User (FileHandler)
-					e.printStackTrace();
-				} catch (FileHandlerException e) {
-					System.out.println("FILEHANDLEREXCEPTION");
-					e.printStackTrace();
-					// TODO Inform User (FileHandler)
-				} catch (DaoException e) {
-					System.out.println("DAOEXCEPTION");
-					e.printStackTrace();
-					// TODO Inform User (DAO)
-				}
-				
+			try {
+				fileHandler.importPhoto(photo, file);
+				photoDao.save(photo);
+			} catch (IOException e) {
+				System.out.println("IOEXCEPTION");
+				// TODO Inform User (FileHandler)
+				e.printStackTrace();
+			} catch (FileHandlerException e) {
+				System.out.println("FILEHANDLEREXCEPTION");
+				e.printStackTrace();
+				// TODO Inform User (FileHandler)
+			} catch (DaoException e) {
+				System.out.println("DAOEXCEPTION");
+				e.printStackTrace();
+				// TODO Inform User (DAO)
 			}
-		} catch (FileHandlerException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			
 		}
 		
 	}
@@ -254,7 +254,21 @@ public class ProjectController extends BorderPane implements Initializable {
 	}
 
 	public void archiveProject(ActionEvent event) {
-		System.out.println("Project archived!");
+		try {
+			fileHandler.archiveProject();
+		} catch (FileHandlerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void exportProject(ActionEvent event) {
+		try {
+			fileHandler.exportZip("C:/Users/Josh/PhotoFlow/test.zip", photos);
+		} catch (FileHandlerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

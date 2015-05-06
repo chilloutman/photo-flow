@@ -54,5 +54,4 @@ public class PhotoFlow {
 	public PhotoWorkflow getPhotoWorkflow () {
 		return photoWorkflow;
 	}
-
 }
