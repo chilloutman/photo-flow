@@ -93,13 +93,17 @@ public class FileHandler {
 	 * @throws IOException Throws an Error if File already exists in Project-Directory.
 	 * @throws FileHandlerException 
 	 */
-	public Photo importPhoto(Photo photo, File file) throws IOException, FileHandlerException {
+	public Photo importPhoto(Photo photo, File file) throws FileHandlerException {
 		if(getFileExtension(file).equals("jpg")){
 			if(new File(getProjectPath()+file.getName()).exists()){
-				throw new FileAlreadyExistsException("File already exists!");
+				throw new FileHandlerException("File already exists!");
 			}
 			File newFile = new File(getProjectPath()+file.getName());
-			Files.copy(file, newFile);
+			try {
+				Files.copy(file, newFile);
+			} catch (IOException e) {
+				throw new FileHandlerException("Could not import File (Copy Fail)!",e);
+			}
 			photo.setFilePath(newFile.getAbsolutePath());
 			photo.setFileFormat(FileFormat.JPEG);	//static at the moment
 			photo.setFileSize((int) file.length());
@@ -142,7 +146,6 @@ public class FileHandler {
 	 * @param list List of physical Photos.
 	 * @return created Zip-File.
 	 * @throws FileNotFoundException If a File in the List cannot be found, this Exception is thrown.
-	 * @throws IOException
 	 */
 	public File exportZip(String zipName, List<Photo> list) throws FileHandlerException {
 		try(FileOutputStream fos = new FileOutputStream(zipName);
@@ -185,7 +188,10 @@ public class FileHandler {
 		}		
 	}
 	
-	
+	/**
+	 * 
+	 * @throws FileHandlerException
+	 */
 	public void archiveProject() throws FileHandlerException {
 		File archiveDir = new File(archivePath);
 		File projectDir = new File(projectPath);

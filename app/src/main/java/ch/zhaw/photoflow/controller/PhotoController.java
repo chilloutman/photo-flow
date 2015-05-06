@@ -41,7 +41,7 @@ public class PhotoController extends Pane {
 	 * @param project
 	 * @param photoState
 	 */
-	public void transistState(Project project, PhotoState photoState) {
+	public void transitionState(Project project, PhotoState photoState) {
 		
 		
 		workflow.transition(project, photo, photoState);

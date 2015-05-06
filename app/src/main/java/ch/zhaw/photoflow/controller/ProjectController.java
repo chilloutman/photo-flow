@@ -1,8 +1,6 @@
 package ch.zhaw.photoflow.controller;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -174,10 +172,6 @@ public class ProjectController extends BorderPane implements Initializable {
 			try {
 				fileHandler.importPhoto(photo, file);
 				photoDao.save(photo);
-			} catch (IOException e) {
-				System.out.println("IOEXCEPTION");
-				// TODO Inform User (FileHandler)
-				e.printStackTrace();
 			} catch (FileHandlerException e) {
 				System.out.println("FILEHANDLEREXCEPTION");
 				e.printStackTrace();
@@ -209,7 +203,7 @@ public class ProjectController extends BorderPane implements Initializable {
 	 * @param project
 	 * @param projectStatus
 	 */
-	public void transistState(Project project, ProjectState projectState) {
+	public void transitionState(Project project, ProjectState projectState) {
 		if (projectWorkflow.canTransition(project, this.photos, projectState)) {
 			projectWorkflow.transition(project, this.photos, projectState);
 
@@ -244,7 +238,7 @@ public class ProjectController extends BorderPane implements Initializable {
 			this.photos.add(photo);
 		}
 		else {
-			// Inform user
+			// TODO Inform user
 		}
 	}
 
@@ -256,6 +250,11 @@ public class ProjectController extends BorderPane implements Initializable {
 	public void archiveProject(ActionEvent event) {
 		try {
 			fileHandler.archiveProject();
+			if(projectWorkflow.canTransition(this.project, photos, ProjectState.ARCHIVED)) {
+				projectWorkflow.transition(this.project, photos, ProjectState.ARCHIVED);
+			}else {
+				// TODO Inform user
+			}
 		} catch (FileHandlerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
