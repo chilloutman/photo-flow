@@ -36,6 +36,11 @@ public class PhotoController extends Pane {
 		this.workflow = workflow;
 	}
 	
+	public void setPhoto(Photo photo) {
+		System.out.println("Photo has been selected: " + photo);
+		this.photo = photo;
+	}
+	
 	/**
 	 * Sets the state of the specified @{link Photo} object to the given photoState.
 	 * @param project
@@ -87,10 +92,6 @@ public class PhotoController extends Pane {
 	 */
 	public Photo getPhoto() {
 		return photo;
-	}
-
-	public void setPhoto(Photo photo) {
-		this.photo = photo;
 	}
 	
 }

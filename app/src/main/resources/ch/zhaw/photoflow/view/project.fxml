@@ -43,6 +43,6 @@
 		</ScrollPane>
 	</center>
 	<right>
-		<PhotoController fx:id="PhotoPane" maxWidth="250"/>
+		<PhotoController fx:id="photoController" maxWidth="250"/>
 	</right>
 </fx:root>

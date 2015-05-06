@@ -20,6 +20,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.FileChooser;
@@ -119,8 +120,13 @@ public class ProjectController extends BorderPane implements Initializable {
 		
 		photos.stream().forEach(photo -> {
 			Task<Image> task = new ImageLoadingTask(photo, fileHandler);
-			task.valueProperty().addListener((observable, oldImage, image) ->{
-				photosPane.getChildren().add(new ImageView(image));
+			
+			task.valueProperty().addListener((observable, oldImage, image) -> {
+				ImageView view = new ImageView(image);
+				view.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+					photoController.setPhoto(photo);
+				});
+				photosPane.getChildren().add(view);
 			});
 			
 			//imageTask.onFailedProperty().addListener(TODO);
