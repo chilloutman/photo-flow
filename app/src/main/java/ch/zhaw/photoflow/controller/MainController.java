@@ -74,6 +74,7 @@ public class MainController extends AbstractController implements Initializable 
 	public void projectSelected(Project selectedProject) {
 		if (selectedProject == ADD_NEW_PROJECT) {
 			// TODO: Could we not block the UI here and use a listener instead?
+			projectController.setDisable(true);
 			popup = new PopUpHandler();
 			Optional<Project> newProject = createProject();
 
@@ -82,6 +83,7 @@ public class MainController extends AbstractController implements Initializable 
 				projectList.getSelectionModel().select(newProject.orElse(null));
 			});
 		} else {
+			projectController.setDisable(false);
 			projectController.setProject(selectedProject);
 		}
 	}

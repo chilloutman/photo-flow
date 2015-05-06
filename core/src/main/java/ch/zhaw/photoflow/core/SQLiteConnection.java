@@ -29,7 +29,7 @@ public class SQLiteConnection {
     }
     
     private Connection createConnection() throws SQLException {
-    	if (this.connection == null) {
+    	if (this.connection == null || this.connection.isClosed()) {
     		SQLiteConfig config = new SQLiteConfig();  
             config.enforceForeignKeys(true);
             

@@ -85,7 +85,7 @@ public class Project implements PersistentDomainObject {
 	}
 	
 	/** Not public, so that only the Workflow can change it. */
-	void setState(ProjectState state) {
+	public void setState(ProjectState state) {
 		this.state = state;
 	}
 

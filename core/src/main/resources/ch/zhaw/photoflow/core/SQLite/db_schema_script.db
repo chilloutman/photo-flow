@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS project (
     name TEXT NOT NULL,
     description TEXT, 
 	status TEXT NOT NULL,
-	CHECK(status IN ("New", "In Work", "Paused", "Done", "Archived"))
+	CHECK(status IN ("NEW", "IN_WORK", "PAUSED", "DONE", "ARCHIVED"))
 );
 
 CREATE TABLE IF NOT EXISTS todo (
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS photo (
 	location_lat REAL,
 	location_lon REAL,
 	status TEXT NOT NULL,
-	CHECK(status IN ("New", "Flagged", "Editing", "Discarded")),
+	CHECK(status IN ("NEW", "FLAGGED", "EDITING", "DISCARDED")),
 	FOREIGN KEY(project_fk) REFERENCES project(ID),
 	FOREIGN KEY(photographer_fk) REFERENCES photographer(ID),
 	CONSTRAINT uniqueCombo UNIQUE (project_fk, photographer_fk)

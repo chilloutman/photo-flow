@@ -90,7 +90,6 @@ public class ProjectController extends BorderPane implements Initializable {
 	}
 	
 	public void setProject(Project project) {
-		this.setDisable(false);
 		projectNameField.setText(project.getName());
 		System.out.println("Project \"" + project.getName() + "\" has been selected.");
 		this.project = project;

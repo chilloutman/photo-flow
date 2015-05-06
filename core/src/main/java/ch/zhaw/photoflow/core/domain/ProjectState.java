@@ -54,7 +54,7 @@ public enum ProjectState implements State<ProjectState> {
 			return ImmutableSet.of(PhotoState.FLAGGED, PhotoState.DISCARDED);
 		}
 	},
-	ARCHIEVED("Archived") {
+	ARCHIVED("Archived") {
 		@Override
 		Collection<ProjectState> nextStates() {
 			return ImmutableSet.of(IN_WORK);
