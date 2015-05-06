@@ -94,7 +94,7 @@ public class FileHandler {
 	 * @throws FileHandlerException 
 	 */
 	public Photo importPhoto(Photo photo, File file) throws FileHandlerException {
-		if(getFileExtension(file).equals("jpg")){
+		if(FileFormat.get(file.getName()) != null){
 			if(new File(getProjectPath()+file.getName()).exists()){
 				throw new FileHandlerException("File already exists!");
 			}

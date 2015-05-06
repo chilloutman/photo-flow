@@ -101,7 +101,7 @@ public class FileHandlerTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void checkExportZip() throws FileNotFoundException, IOException {
+	public void checkExportZip() throws FileNotFoundException, FileHandlerException{
 		assertTrue(fileHandler.exportZip(userHome+"/Test/test.zip", pList).isFile());
 	}
 	
@@ -117,11 +117,10 @@ public class FileHandlerTest {
 	
 	/**
 	 * Checks import of new photos. Throws an exception if the file already exists.
-	 * @throws IOException
 	 * @throws FileHandlerException 
 	 */
-	@Test(expected=FileAlreadyExistsException.class)
-	public void checkImportPhoto() throws IOException, FileHandlerException {
+	@Test(expected=FileHandlerException.class)
+	public void checkImportPhoto() throws FileHandlerException {
 		assertThat(fileHandler.importPhoto(photo1, file).getCreationDate(), notNullValue());
 		assertThat(fileHandler.importPhoto(photo2, file2).getFilePath(), notNullValue());
 		Photo returnPhoto = fileHandler.importPhoto(photo1, file3);
