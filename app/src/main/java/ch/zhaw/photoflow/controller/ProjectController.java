@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -48,8 +50,10 @@ public class ProjectController extends BorderPane implements Initializable {
 	private Project project;
 	private List<Photo> photos;
 	private FileHandler fileHandler;
+	
 	/** Daemon threads for background task execution */
-	private ExecutorService imageLoaderService;
+	private final ExecutorService imageLoaderService;
+	private final Collection<ImageLoadingTask> imageLoadingTasks = new HashSet<>();
 
 	@FXML
 	private PhotoController photoController;
@@ -83,6 +87,7 @@ public class ProjectController extends BorderPane implements Initializable {
 		this.photos = new ArrayList<Photo>();
 		this.projectDao = projectDao;
 		this.photoDao = photoDao;
+		this.imageLoaderService = newImageLoaderService();
 	}
 	
 	public void setProject(Project project) {
@@ -110,29 +115,33 @@ public class ProjectController extends BorderPane implements Initializable {
 	}
 	
 	private void displayPhotos() {
-		if (imageLoaderService != null) {
-			imageLoaderService.shutdownNow();
-		}
-		imageLoaderService = newImageLoaderService();
-		
+		// Cancel all previous tasks
+		imageLoadingTasks.forEach(task -> task.cancel(true));
+		imageLoadingTasks.clear();
 		photosPane.getChildren().clear();
 		
-		photos.stream().forEach(photo -> {
-			Task<Image> task = new ImageLoadingTask(photo, fileHandler);
+		for (Photo photo : photos) {
+			ImageLoadingTask task = new ImageLoadingTask(photo, fileHandler);
 			
 			task.valueProperty().addListener((observable, oldImage, image) -> {
-				System.out.println("Creating ImageView for image");
+				//System.out.println("Creating ImageView for image");
 				ImageView view = new ImageView(image);
 				view.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 					photoController.setPhoto(photo);
 				});
 				photosPane.getChildren().add(view);
+				imageLoadingTasks.remove(task);
 			});
 			
-			//imageTask.onFailedProperty().addListener(TODO);
+			task.onFailedProperty().addListener((observale, a, b) -> {
+				// TODO display error message
+				System.out.println("Loading photo failed: " + photo);
+				imageLoadingTasks.remove(task);
+			});
 			
+			imageLoadingTasks.add(task);
 			imageLoaderService.execute(task);
-		});
+		}
 	}
 	
 	private ExecutorService newImageLoaderService () {
@@ -271,15 +280,15 @@ public class ProjectController extends BorderPane implements Initializable {
 		
 		File selectedFile = fileChooser.showSaveDialog(this.getScene().getWindow());
 		
-		if (selectedFile == null) {
-			// TODO Exception no file selected!
-		}
-		try {
+		if (selectedFile != null) {
+			try {
 			fileHandler.exportZip(selectedFile.getAbsolutePath(), photos);
-		} catch (FileHandlerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			} catch (FileHandlerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
 	}
 
 	@Override
