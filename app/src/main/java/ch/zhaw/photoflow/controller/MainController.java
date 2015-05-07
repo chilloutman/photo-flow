@@ -147,7 +147,7 @@ public class MainController extends AbstractController implements Initializable 
 	 */
 	public void deleteProject(Project project) {
 		try {
-			FileHandler fileHandler = Main.photoFlow.getFileHandler(project);
+			FileHandler fileHandler = Main.PHOTO_FLOW.getFileHandler(project);
 			fileHandler.deleteProject();
 			projectDao.delete(project);
 			this.projects.remove(project);
