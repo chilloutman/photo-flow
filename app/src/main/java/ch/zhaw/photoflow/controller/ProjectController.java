@@ -68,7 +68,7 @@ public class ProjectController extends BorderPane implements Initializable {
 	TilePane photosPane;
 
 	public ProjectController() {
-		this(Main.photoFlow.getProjectDao(), Main.photoFlow.getPhotoDao(), Main.photoFlow.getProjectWorkflow(), Main.photoFlow.getPhotoWorkflow());
+		this(Main.PHOTO_FLOW.getProjectDao(), Main.PHOTO_FLOW.getPhotoDao(), Main.PHOTO_FLOW.getProjectWorkflow(), Main.PHOTO_FLOW.getPhotoWorkflow());
 		URL gui = getClass().getResource("../view/project.fxml");
 		FXMLLoader fxmlLoader = new FXMLLoader(gui);
 		fxmlLoader.setController(this);
@@ -321,7 +321,7 @@ public class ProjectController extends BorderPane implements Initializable {
 
 		@Override
 		protected Image call() throws FileNotFoundException {
-			System.out.println("Loading photo: " + photo);
+			//System.out.println("Loading photo: " + photo);
 			File file = fileHandler.loadPhoto(photo);
 			Image image = new Image(new FileInputStream(file), 200, 200, true, true);
 			return image;

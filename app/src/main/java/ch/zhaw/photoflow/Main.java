@@ -15,7 +15,7 @@ import ch.zhaw.photoflow.core.PhotoFlow;
 
 public class Main extends Application {
 	
-	public static final PhotoFlow photoFlow = new PhotoFlow();
+	public static final PhotoFlow PHOTO_FLOW = new PhotoFlow();
 
 
 	public static void main(String[] args) {
@@ -29,7 +29,7 @@ public class Main extends Application {
 		try {
 			//main View
 			 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("view/main_gui.fxml"));
-			    fxmlLoader.setController(new MainController(photoFlow.getProjectDao()));
+			    fxmlLoader.setController(new MainController(PHOTO_FLOW.getProjectDao()));
 			   // fxmlLoader.setRoot(this);
 			    Parent root = (Parent)fxmlLoader.load();
 
