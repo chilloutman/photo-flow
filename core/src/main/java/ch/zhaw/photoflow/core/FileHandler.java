@@ -189,7 +189,7 @@ public class FileHandler {
 	}
 	
 	/**
-	 * 
+	 * Method used to archive a Project, move all Files to Archive-Folder
 	 * @throws FileHandlerException
 	 */
 	public void archiveProject() throws FileHandlerException {

@@ -263,8 +263,19 @@ public class ProjectController extends BorderPane implements Initializable {
 	}
 	
 	public void exportProject(ActionEvent event) {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Export Project (ZIP)");
+		
+		ExtensionFilter imageFilter = new ExtensionFilter("Zip Files", "*.zip");
+		fileChooser.getExtensionFilters().add(imageFilter);
+		
+		File selectedFile = fileChooser.showSaveDialog(this.getScene().getWindow());
+		
+		if (selectedFile == null) {
+			// TODO Exception no file selected!
+		}
 		try {
-			fileHandler.exportZip("C:/Users/Josh/PhotoFlow/test.zip", photos);
+			fileHandler.exportZip(selectedFile.getAbsolutePath(), photos);
 		} catch (FileHandlerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -287,9 +298,10 @@ public class ProjectController extends BorderPane implements Initializable {
 		// external method
 		workflowNextButton.setOnAction(this::test);
 
-		archiveProjectButton.setOnAction(this::archiveProject);
 		importPhotoButton.setOnAction(this::importPhotos);
-
+		archiveProjectButton.setOnAction(this::archiveProject);
+		exportProjectButton.setOnAction(this::exportProject);
+		
 	}
 
 	public void test(ActionEvent event) {
