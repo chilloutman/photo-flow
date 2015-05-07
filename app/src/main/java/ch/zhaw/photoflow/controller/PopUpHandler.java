@@ -117,7 +117,7 @@ public class PopUpHandler extends AbstractController {
 	 */
 	private List<Tag> sliceTags(String tagsEnBloque)
 	{
-		List<String> temp = Arrays.asList(tagsEnBloque.split(";"));
+		List<String> temp = Arrays.asList(tagsEnBloque.split("[;,\\n]"));
 		
 		return temp.stream().map(s -> s.trim()).map(s -> new Tag(s)).collect(Collectors.toList());
 	}

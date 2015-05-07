@@ -33,6 +33,8 @@
 				</MenuButton>
 				<Button fx:id="archiveProjectButton" layoutX="970.0" layoutY="27.0" prefWidth="70" mnemonicParsing="false" text="Archive" />
 				<Button fx:id="exportProjectButton" layoutX="1040.0" layoutY="27.0" prefWidth="70" mnemonicParsing="false" text="Export" />
+				<Button fx:id="archiveProjectButton" layoutX="970.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
+				<Button fx:id="exportProjectButton" layoutX="1040.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
 			</children>
 		</Pane>
 	</top>
