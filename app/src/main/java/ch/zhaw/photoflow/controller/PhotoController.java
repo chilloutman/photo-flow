@@ -1,7 +1,5 @@
 package ch.zhaw.photoflow.controller;
 
-import java.sql.SQLException;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import ch.zhaw.photoflow.Main;
@@ -61,9 +59,6 @@ public class PhotoController extends Pane {
 			} catch (DaoException e1) {
 				//TODO: Warn user that photo couldn't get rolled back.
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	
@@ -76,9 +71,6 @@ public class PhotoController extends Pane {
 		} catch (DaoException e) {
 			this.photo.removeTag(tag);
 			//TODO: Inform user, that persistence failed
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 	}
@@ -92,9 +84,6 @@ public class PhotoController extends Pane {
 		} catch (DaoException e) {
 			this.photo.addTag(tag);
 			//TODO: Inform user, that persistence failed
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 

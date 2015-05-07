@@ -1,33 +1,31 @@
 package ch.zhaw.photoflow.core.dao;
 
+import static ch.zhaw.photoflow.core.util.GuavaCollectors.toImmutableList;
+
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Optional;
 
-
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-
 
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.SQLiteConnection;
 import ch.zhaw.photoflow.core.domain.Project;
-
 import ch.zhaw.photoflow.core.domain.ProjectState;
 
 import com.google.common.collect.ImmutableList;
-
-import static ch.zhaw.photoflow.core.util.GuavaCollectors.toImmutableList;
 
 
 public class SqliteProjectDao implements ProjectDao {
 
 	@Override
-	public ImmutableList<Project> loadAll() {
+	public ImmutableList<Project> loadAll() throws DaoException {
 		
 		ImmutableList<Project> projectList = ImmutableList.of();
 
@@ -48,8 +46,7 @@ public class SqliteProjectDao implements ProjectDao {
 			}).collect(toImmutableList());
 			
 		} catch (SQLException e) {
-			System.out.println("Could not connect to the database.");
-			e.printStackTrace();
+			throw new DaoException("Error in loading all elements", e);
 		}
 		
 		return projectList;
@@ -57,8 +54,9 @@ public class SqliteProjectDao implements ProjectDao {
 
 	@Override
 	public Optional<Project> load(int id) throws DaoException {
-		Connection sqliteConnection;
+
 		try {
+			Connection sqliteConnection;
 			sqliteConnection = SQLiteConnection.getConnection();
 			sqliteConnection.setAutoCommit(false);
 			
@@ -73,67 +71,79 @@ public class SqliteProjectDao implements ProjectDao {
 							p.setState(ProjectState.valueOf((String)record.getValue("status")));
 						});
 					}).findFirst();
-		return project;
+			
+			return project;
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DaoException("Error in loading", e);
 		}
 		
-		return Optional.empty();
 	}
 	
 	@Override
-	public Project save(Project project) throws SQLException {
+	public Project save(Project project) throws DaoException {
 		
-			Connection sqliteConnection = SQLiteConnection.getConnection();
-			sqliteConnection.setAutoCommit(false);
+			try {
+				Connection sqliteConnection = SQLiteConnection.getConnection();
+				sqliteConnection.setAutoCommit(false);
+				if (project.getId().isPresent()) {
+					//Update
+					
+					String updateSQL = "UPDATE project SET name = ?, description = ?, status = ? WHERE ID = ?";
+					PreparedStatement prepstmt = sqliteConnection.prepareStatement(updateSQL);
+					prepstmt.setString(1, project.getName());
+					prepstmt.setString(2, project.getDescription());
+					prepstmt.setString(3, (project.getState() == null ) ? "" : project.getState().toString());
+					prepstmt.setInt(4, project.getId().get());
+					
+					prepstmt.executeUpdate();
+					sqliteConnection.commit();
+					
+				}
+				else {
+					//Insert
+					
+					String insertSQL = "INSERT INTO project (name,description,status) VALUES(?,?,?)";
+					PreparedStatement prepstmt = sqliteConnection.prepareStatement(insertSQL);
+					prepstmt.setString(1, project.getName());
+					prepstmt.setString(2, project.getDescription());
+					String projectstate = (project.getState() == null ) ? "" : project.getState().toString();
+					prepstmt.setString(3, projectstate);
+					
+					prepstmt.executeUpdate();
+					sqliteConnection.commit();
+					
+					ResultSet rs = prepstmt.getGeneratedKeys();
+					rs.next();
+					project.setId(rs.getInt(1));
+				}
+				
+				return project;
+			} catch (SQLException e) {
+				throw new DaoException("Error in Saving", e);
+			}
 			
-			Statement stmt = sqliteConnection.createStatement();
 
-			if (project.getId().isPresent()) {
-				//Update
-				String updateSQL = "UPDATE project " +
-				" SET name = '" + project.getName() +
-				"', description = '" + project.getDescription() +
-				"', status = '" + project.getState().toString() +
-				"' WHERE ID = " + project.getId().get();
-				
-				stmt.executeUpdate(updateSQL);
-				sqliteConnection.commit();
-				
-			}
-			else {
-				//Insert
-				String insertSQL = "INSERT INTO project(name, description, status) " +
-				"VALUES( '" + project.getName() + "', '"
-				+ project.getDescription() + "', '"
-				+ project.getState().toString() + "')";
-
-				stmt.executeUpdate(insertSQL);
-				sqliteConnection.commit();
-
-				ResultSet rs = stmt.getGeneratedKeys();
-				rs.next();
-				project.setId(rs.getInt(1));
-			}
-		
-		return project;
 	}
 
 	@Override
-	public void delete(Project project) throws SQLException {
+	public void delete(Project project) throws DaoException {
 		
 			if (project.getId().isPresent()) {
-				Connection sqliteConnection = SQLiteConnection.getConnection();
-				sqliteConnection.setAutoCommit(false);
-				Statement stmt = sqliteConnection.createStatement();
-			
-				String deleteSQL = "DELETE FROM project " +
-						" WHERE ID = " + project.getId().get();
-				
-				stmt.executeUpdate(deleteSQL);
-				sqliteConnection.commit();
+				Connection sqliteConnection;
+				try {
+					sqliteConnection = SQLiteConnection.getConnection();
+					sqliteConnection.setAutoCommit(false);
+					Statement stmt = sqliteConnection.createStatement();
+					
+					String deleteSQL = "DELETE FROM project " +
+							" WHERE ID = " + project.getId().get();
+					
+					stmt.executeUpdate(deleteSQL);
+					sqliteConnection.commit();
+				} catch (SQLException e) {
+					throw new DaoException("Error in deleting", e);
+				}
 			}
 			
 	}

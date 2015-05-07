@@ -3,6 +3,7 @@ package ch.zhaw.photoflow.core.dao;
 import static ch.zhaw.photoflow.core.util.GuavaCollectors.toImmutableList;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,7 +26,7 @@ import com.google.common.collect.ImmutableList;
 public class SqlitePhotoDao implements PhotoDao {
 
 	@Override
-	public ImmutableList<Photo> loadAll(int projectId) {
+	public ImmutableList<Photo> loadAll(int projectId) throws DaoException {
 
 		ImmutableList<Photo> photoList = ImmutableList.of();
 
@@ -53,8 +54,7 @@ public class SqlitePhotoDao implements PhotoDao {
 			}).collect(toImmutableList());
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DaoException("Error in loading all photo", e);
 		}
 		
 		return photoList;
@@ -89,15 +89,13 @@ public class SqlitePhotoDao implements PhotoDao {
 			return photo;
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DaoException("Error in loading photo", e);
 		}
 		
-		return Optional.empty();
 	}
 	
 	@Override
-	public Photo save(Photo photo) {
+	public Photo save(Photo photo) throws DaoException {
 		
 		try {
 			Connection sqliteConnection = SQLiteConnection.getConnection();
@@ -107,16 +105,25 @@ public class SqlitePhotoDao implements PhotoDao {
 
 			if (photo.getId().isPresent()) {
 				//Update
-				String updateSQL = "UPDATE photo " +
-				" SET  project_fk = '" + photo.getProjectId().get() +
-				"', file_path_to_original = '" + photo.getFilePath() +
-				"', file_size = '" + photo.getFileSize() +
-				"', file_format = '" + photo.getFileFormat().toString() +
-				"', timestamp = '" + photo.getCreationDate().toString() +
-				"', status = '" + photo.getState().toString() +
-				"' WHERE ID = " + photo.getId().get();
 				
-				stmt.executeUpdate(updateSQL);
+				String updateSQL = "UPDATE photo SET project_fk = ?, "
+						+ "file_path_to_original = ?, "
+						+ "file_size = ? "
+						+ "file_format = ? "
+						+ "timestamp = ? "
+						+ "status = ? "
+						+ "WHERE ID = ?";
+				
+				PreparedStatement prepstmt = sqliteConnection.prepareStatement(updateSQL);
+				prepstmt.setInt(1, photo.getProjectId().get());
+				prepstmt.setString(2, photo.getFilePath());
+				prepstmt.setInt(3, photo.getFileSize());
+				prepstmt.setString(4, (photo.getFileFormat() == null ) ? "" : photo.getFileFormat().toString());
+				prepstmt.setString(5, (photo.getCreationDate() == null ) ? "" : photo.getCreationDate().toString());
+				prepstmt.setString(6, (photo.getState() == null ) ? "" : photo.getState().toString());
+				prepstmt.setInt(7, photo.getId().get());
+				
+				prepstmt.executeUpdate();
 				sqliteConnection.commit();
 				
 			}
@@ -127,15 +134,17 @@ public class SqlitePhotoDao implements PhotoDao {
 						+ "file_size,"
 						+ "file_format, "
 						+ "timestamp, "
-						+ "status) " +
-				"VALUES( '" + photo.getProjectId().get() + "', '"
-				+ photo.getFilePath() + "', '"
-				+ photo.getFileSize() + "', '"
-				+ photo.getFileFormat() + "', '"
-				+ photo.getCreationDate() + "', '"
-				+ photo.getState() + "')";
-
-				stmt.executeUpdate(insertSQL);
+						+ "status) "
+						+ "VALUES(?, ?, ?, ?, ?, ?)";
+				PreparedStatement prepstmt = sqliteConnection.prepareStatement(insertSQL);
+				prepstmt.setInt(1, photo.getProjectId().get());
+				prepstmt.setString(2, photo.getFilePath());
+				prepstmt.setInt(3, photo.getFileSize());
+				prepstmt.setString(4, (photo.getFileFormat() == null ) ? "" : photo.getFileFormat().toString());
+				prepstmt.setString(5, (photo.getCreationDate() == null ) ? "" : photo.getCreationDate().toString());
+				prepstmt.setString(6, (photo.getState() == null ) ? "" : photo.getState().toString());
+				
+				prepstmt.executeUpdate();
 				sqliteConnection.commit();
 
 				ResultSet rs = stmt.getGeneratedKeys();
@@ -144,15 +153,14 @@ public class SqlitePhotoDao implements PhotoDao {
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DaoException("Error in saving photo", e);
 		}
 		
 		return photo;
 	}
 
 	@Override
-	public void delete(Photo photo) {
+	public void delete(Photo photo) throws DaoException {
 		try {
 			
 			if (photo.getId().isPresent()) {
@@ -169,8 +177,7 @@ public class SqlitePhotoDao implements PhotoDao {
 			
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DaoException("Error in deleting photo", e);
 		}
 	}
 

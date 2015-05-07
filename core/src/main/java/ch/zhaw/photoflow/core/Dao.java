@@ -31,7 +31,7 @@ public interface Dao<T extends PersistentDomainObject> {
 	 * Use {@link DaoException#getCause()} to get the storage specific cause.
 	 * @throws SQLException 
 	 */
-	public T save(T object) throws DaoException, SQLException;
+	public T save(T object) throws DaoException;
 	
 	/**
 	 * @param object The object to delete.
@@ -39,6 +39,6 @@ public interface Dao<T extends PersistentDomainObject> {
 	 * Use {@link DaoException#getCause()} to get the storage specific cause.
 	 * @throws SQLException 
 	 */
-	public void delete(T object) throws DaoException, SQLException;
+	public void delete(T object) throws DaoException;
 	
 }

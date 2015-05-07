@@ -3,7 +3,6 @@ package ch.zhaw.photoflow.core;
 import static ch.zhaw.photoflow.core.domain.Photo.newPhoto;
 import static ch.zhaw.photoflow.core.domain.Project.newProject;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import ch.zhaw.photoflow.core.domain.FileFormat;
@@ -54,9 +53,6 @@ public final class DummyData {
 			try {
 					dao.save(p);
 			} catch (DaoException e) { throw new RuntimeException(e); }
-			catch (SQLException e) {
-				e.printStackTrace();
-			}
 		});
 	}
 	
@@ -66,9 +62,6 @@ public final class DummyData {
 			try {
 				dao.save(p);
 			} catch (DaoException e) { throw new RuntimeException(e); }
-			catch (SQLException e) {
-				e.printStackTrace();
-			}
 		});
 	}
 	
