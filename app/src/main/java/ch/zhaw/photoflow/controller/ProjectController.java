@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -153,6 +154,9 @@ public class ProjectController extends BorderPane implements Initializable {
 		} catch (DaoException e) {
 			// TODO: Inform user that photo could not be added to the actual
 			// project
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -186,6 +190,9 @@ public class ProjectController extends BorderPane implements Initializable {
 				System.out.println("DAOEXCEPTION");
 				e.printStackTrace();
 				// TODO Inform User (DAO)
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 		}
@@ -199,6 +206,9 @@ public class ProjectController extends BorderPane implements Initializable {
 		} catch (DaoException e) {
 			
 			// TODO: Inform user that deletion failed
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -224,6 +234,9 @@ public class ProjectController extends BorderPane implements Initializable {
 				// TODO: Inform user that saving failed
 				// TODO: ROLLBACK REQUIRED. Project Model is now in a wrong
 				// state.
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		}
 		else {

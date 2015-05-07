@@ -19,8 +19,6 @@ import ch.zhaw.photoflow.core.SQLiteConnection;
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
-import ch.zhaw.photoflow.core.domain.Project;
-import ch.zhaw.photoflow.core.domain.ProjectState;
 
 import com.google.common.collect.ImmutableList;
 

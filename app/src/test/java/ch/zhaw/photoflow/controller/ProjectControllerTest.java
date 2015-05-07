@@ -2,6 +2,7 @@ package ch.zhaw.photoflow.controller;
 
 import static org.junit.Assert.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.Before;
@@ -37,7 +38,7 @@ public class ProjectControllerTest {
 	private Photo photo3;
 	
 	@Before
-	public void before() throws DaoException {
+	public void before() throws DaoException, SQLException {
 		projectDao = new InMemoryProjectDao();
 		photoDao = new InMemoryPhotoDao();
 		projectController = new ProjectController(projectDao, photoDao, photoFlow.getProjectWorkflow(), photoFlow.getPhotoWorkflow());

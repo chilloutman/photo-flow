@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class InMemoryProjectDaoTest {
 	private ProjectDao dao;
 	
 	@Before
-	public void before() throws DaoException {
+	public void before() throws DaoException, SQLException {
 		dao = new InMemoryProjectDao();
 		
 		dao.save(newProject(p -> {
@@ -65,7 +66,7 @@ public class InMemoryProjectDaoTest {
 	}
 	
 	@Test
-	public void saveProject () throws DaoException {
+	public void saveProject () throws DaoException, SQLException {
 		Project project = dao.loadAll().get(0);
 		project.setDescription(ProjectTest.DESCRIPTION);
 		dao.save(project);
@@ -73,12 +74,12 @@ public class InMemoryProjectDaoTest {
 	}
 	
 	@Test(expected = NullPointerException.class)
-	public void saveProjectNull() throws DaoException {
+	public void saveProjectNull() throws DaoException, SQLException {
 		dao.save(null);
 	}
 	
 	@Test
-	public void deleteProject () throws DaoException {
+	public void deleteProject () throws DaoException, SQLException {
 		Integer id = dao.loadAll().get(0).getId().get();
 		dao.delete(Project.newProject(p -> {
 			p.setId(id);
@@ -87,12 +88,12 @@ public class InMemoryProjectDaoTest {
 	}
 	
 	@Test(expected = NullPointerException.class)
-	public void deleteNull () throws DaoException {
+	public void deleteNull () throws DaoException, SQLException {
 		dao.delete(null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
-	public void deleteWithMissingId () throws DaoException {
+	public void deleteWithMissingId () throws DaoException, SQLException {
 		dao.delete(Project.newProject());
 	}
 	

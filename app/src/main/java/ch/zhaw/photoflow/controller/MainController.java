@@ -1,6 +1,7 @@
 package ch.zhaw.photoflow.controller;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -126,6 +127,9 @@ public class MainController extends AbstractController implements Initializable 
 			System.out.println(this.projects);
 		} catch (DaoException e) {
 			// TODO: Warn user
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -139,6 +143,9 @@ public class MainController extends AbstractController implements Initializable 
 			this.projects.remove(project);
 		} catch (DaoException e) {
 			// TODO: Warn user
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

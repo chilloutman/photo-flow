@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 import org.jooq.DSLContext;
@@ -74,6 +73,7 @@ public class SqliteProjectDao implements ProjectDao {
 							p.setState(ProjectState.valueOf((String)record.getValue("status")));
 						});
 					}).findFirst();
+		return project;
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -84,9 +84,8 @@ public class SqliteProjectDao implements ProjectDao {
 	}
 	
 	@Override
-	public Project save(Project project) {
+	public Project save(Project project) throws SQLException {
 		
-		try {
 			Connection sqliteConnection = SQLiteConnection.getConnection();
 			sqliteConnection.setAutoCommit(false);
 			
@@ -118,20 +117,13 @@ public class SqliteProjectDao implements ProjectDao {
 				rs.next();
 				project.setId(rs.getInt(1));
 			}
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		return project;
 	}
 
 	@Override
-	public void delete(Project project) {
+	public void delete(Project project) throws SQLException {
 		
-		try {
-			
 			if (project.getId().isPresent()) {
 				Connection sqliteConnection = SQLiteConnection.getConnection();
 				sqliteConnection.setAutoCommit(false);
@@ -144,12 +136,6 @@ public class SqliteProjectDao implements ProjectDao {
 				sqliteConnection.commit();
 			}
 			
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 
 }

@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.Before;
@@ -23,7 +24,7 @@ public class InMemoryPhotoDaoTest {
 	private PhotoDao dao;
 	
 	@Before
-	public void before() throws DaoException {
+	public void before() throws DaoException, SQLException {
 		dao = new InMemoryPhotoDao();
 		
 		dao.save(Photo.newPhoto(p -> {
@@ -68,7 +69,7 @@ public class InMemoryPhotoDaoTest {
 	}
 	
 	@Test
-	public void savePhoto () throws DaoException {
+	public void savePhoto () throws DaoException, SQLException {
 		Photo photo = dao.loadAll(PROJECT_1).get(0);
 		photo.setFilePath(PhotoTest.FILE_PATH);
 		dao.save(photo);
@@ -76,7 +77,7 @@ public class InMemoryPhotoDaoTest {
 	}
 	
 	@Test
-	public void deletePhoto () throws DaoException {
+	public void deletePhoto () throws DaoException, SQLException {
 		int size = dao.loadAll(PROJECT_1).size();
 		int id = dao.loadAll(PROJECT_1).get(0).getId().get();
 		dao.delete(Photo.newPhoto(p -> {

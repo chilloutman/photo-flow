@@ -1,5 +1,6 @@
 package ch.zhaw.photoflow.core;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 import ch.zhaw.photoflow.core.domain.PersistentDomainObject;
@@ -28,14 +29,16 @@ public interface Dao<T extends PersistentDomainObject> {
 	 * @return The same as the input object.
 	 * @throws DaoException If something goes wrong with the storage layer below.
 	 * Use {@link DaoException#getCause()} to get the storage specific cause.
+	 * @throws SQLException 
 	 */
-	public T save(T object) throws DaoException;
+	public T save(T object) throws DaoException, SQLException;
 	
 	/**
 	 * @param object The object to delete.
 	 * @throws DaoException If something goes wrong with the storage layer below.
 	 * Use {@link DaoException#getCause()} to get the storage specific cause.
+	 * @throws SQLException 
 	 */
-	public void delete(T object) throws DaoException;
+	public void delete(T object) throws DaoException, SQLException;
 	
 }
