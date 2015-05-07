@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS todo (
 	ID INTEGER PRIMARY KEY,
 	project_fk INT NOT NULL,
 	description TEXT NOT NULL,
-	FOREIGN KEY(project_fk) REFERENCES project(ID)
+	FOREIGN KEY(project_fk) REFERENCES project(ID) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS photographer (
@@ -36,8 +36,8 @@ CREATE TABLE IF NOT EXISTS photo (
 	location_lon REAL,
 	status TEXT NOT NULL,
 	CHECK(status IN ("NEW", "FLAGGED", "EDITING", "DISCARDED")),
-	FOREIGN KEY(project_fk) REFERENCES project(ID),
-	FOREIGN KEY(photographer_fk) REFERENCES photographer(ID),
+	FOREIGN KEY(project_fk) REFERENCES project(ID) ON DELETE CASCADE,
+	FOREIGN KEY(photographer_fk) REFERENCES photographer(ID) ON DELETE CASCADE,
 	CONSTRAINT uniqueCombo UNIQUE (project_fk, photographer_fk)
 );
 
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS photo (
 CREATE TABLE IF NOT EXISTS photo_tag (
 	photo_fk INT NOT NULL,
 	tag_fk INT NOT NULL,
-	FOREIGN KEY(photo_fk) REFERENCES photo(ID),
-	FOREIGN KEY(tag_fk) REFERENCES tag(ID),
+	FOREIGN KEY(photo_fk) REFERENCES photo(ID) ON DELETE CASCADE,
+	FOREIGN KEY(tag_fk) REFERENCES tag(ID) ON DELETE CASCADE,
 	CONSTRAINT uniqueCombo UNIQUE (photo_fk, tag_fk)
 );

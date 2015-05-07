@@ -5,6 +5,7 @@ import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
 import ch.zhaw.photoflow.core.dao.SqlitePhotoDao;
 import ch.zhaw.photoflow.core.dao.SqliteProjectDao;
 import ch.zhaw.photoflow.core.domain.PhotoWorkflow;
+import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 
 /**
@@ -31,6 +32,7 @@ public class PhotoFlow {
 				DummyData.addPhotos(photoDao, projectDao.loadAll().stream().findAny().get());
 			} catch (DaoException e) { throw new RuntimeException(e); }
 		} else {
+			
 			//SQLite Initializer
 			SQLiteInitialize.initialize();
 			
@@ -38,7 +40,11 @@ public class PhotoFlow {
 			projectDao = new SqliteProjectDao();
 		}
 	}
-	
+
+	public FileHandler getFileHandler(Project project) throws FileHandlerException {
+		return new FileHandler(project);
+	}
+
 	public PhotoDao getPhotoDao() {
 		return photoDao;
 	}
@@ -54,4 +60,5 @@ public class PhotoFlow {
 	public PhotoWorkflow getPhotoWorkflow () {
 		return photoWorkflow;
 	}
+	
 }

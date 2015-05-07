@@ -5,17 +5,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.google.common.io.Files;
-
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
+
+import com.google.common.io.Files;
 
 
 public class FileHandler {
@@ -207,6 +206,31 @@ public class FileHandler {
 			}
 		}
 		System.out.println("Project successfully archived!");
+	}
+	
+	public void deleteProject() throws FileHandlerException {
+		File file = new File(getProjectPath());
+		
+		deleteDirectory(file);
+	}
+	
+	/**
+	 * Private method used to cleanup Testdata Directories and Files
+	 * @param path
+	 * @return
+	 */
+	private boolean deleteDirectory(File path) {
+	    if (path.exists()) {
+	        File[] files = path.listFiles();
+	        for (int i = 0; i < files.length; i++) {
+	            if (files[i].isDirectory()) {
+	                deleteDirectory(files[i]);
+	            } else {
+	                files[i].delete();
+	            }
+	        }
+	    }
+	    return (path.delete());
 	}
 	
 

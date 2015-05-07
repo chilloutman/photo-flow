@@ -16,7 +16,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.input.KeyCode;
+import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
+import ch.zhaw.photoflow.core.FileHandler;
+import ch.zhaw.photoflow.core.FileHandlerException;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Tag;
@@ -56,6 +60,14 @@ public class MainController extends AbstractController implements Initializable 
 		projectList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		projectList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			projectSelected(newValue);
+		});
+		
+		//Deletelistener
+		projectList.setOnKeyPressed((keyevent) -> {
+			if(KeyCode.DELETE.equals(keyevent.getCode())) {
+				Project project = projectList.getSelectionModel().getSelectedItem();
+				deleteProject(project);
+			}
 		});
 	}
 	
@@ -135,10 +147,15 @@ public class MainController extends AbstractController implements Initializable 
 	 */
 	public void deleteProject(Project project) {
 		try {
+			FileHandler fileHandler = Main.photoFlow.getFileHandler(project);
+			fileHandler.deleteProject();
 			projectDao.delete(project);
 			this.projects.remove(project);
 		} catch (DaoException e) {
 			// TODO: Warn user
+		} catch (FileHandlerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -164,10 +181,14 @@ public class MainController extends AbstractController implements Initializable 
 		@Override
 		public void updateItem(Project project, boolean empty) {
 			super.updateItem(project, empty);
-			if (empty) return;
-			// Bind the text property to the projects name.
+
+			textProperty().unbind();
+			if (empty){
+				setText("");
+				return;
+			}
+			
 			try {
-				textProperty().unbind();
 				StringProperty nameProperty = JavaBeanStringPropertyBuilder.create().bean(project).name("name").build();
 				textProperty().bind(nameProperty);
 			} catch (NoSuchMethodException e) {
