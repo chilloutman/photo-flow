@@ -37,8 +37,7 @@
 		</Pane>
 	</top>
 	<center>
-		<ScrollPane hbarPolicy="NEVER" fitToWidth="true">
-			<!-- <TilePane fx:id="photosPane" layoutY="75.0" prefHeight="725" prefWidth="936.0" minHeight="-Infinity" style="-fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" /> -->
+		<ScrollPane hbarPolicy="NEVER" fitToWidth="true" style="-fx-box-border: transparent; -fx-focus-color: transparent;">
 			<content>
 				<TilePane fx:id="photosPane" alignment="TOP_LEFT" tileAlignment="CENTER" hgap="25" vgap="25">
 					<padding><Insets top="25" left="25" bottom="25" right="25"/></padding>
@@ -47,6 +46,6 @@
 		</ScrollPane>
 	</center>
 	<right>
-		<PhotoController fx:id="photoController" maxWidth="250" styleClass="light-background"/>
+		<PhotoController fx:id="photoController" prefWidth="250" styleClass="light-background"/>
 	</right>
 </fx:root>

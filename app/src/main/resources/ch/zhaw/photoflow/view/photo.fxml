@@ -2,7 +2,8 @@
 
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
 
 <fx:root type="javafx.scene.layout.Pane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40">
-      <Pane fx:id="photoDetail" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="725" prefWidth="600.0" style="-fx-border-style: solid;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+	<Label text="Photo Detail"/>
 </fx:root>
