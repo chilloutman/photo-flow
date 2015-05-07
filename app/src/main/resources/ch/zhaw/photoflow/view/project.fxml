@@ -24,15 +24,13 @@
 				<Label text="______________" layoutX="535.0" layoutY="17.0" />
 				<Button fx:id="archiveButton" styleClass="workflowButton" layoutX="610.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text=""/>
 				<Label text="Archive" layoutX="612.0" layoutY="55.0" />
-				<Button fx:id="importPhotoButton" layoutX="750.0" layoutY="27.0" prefWidth="90" mnemonicParsing="false"  text="Import Photo"/>
+				<Button fx:id="importPhotoButton" layoutX="750.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
 				<MenuButton fx:id="todoButton" layoutX="850.0" layoutY="27.0" mnemonicParsing="false" prefHeight="13.0" prefWidth="80.0" text="TODO's">
 					<items>
 						<MenuItem mnemonicParsing="false" text="Action 1" />
 						<MenuItem mnemonicParsing="false" text="Action 2" />
 					</items>
 				</MenuButton>
-				<Button fx:id="archiveProjectButton" layoutX="970.0" layoutY="27.0" prefWidth="70" mnemonicParsing="false" text="Archive" />
-				<Button fx:id="exportProjectButton" layoutX="1040.0" layoutY="27.0" prefWidth="70" mnemonicParsing="false" text="Export" />
 				<Button fx:id="archiveProjectButton" layoutX="970.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
 				<Button fx:id="exportProjectButton" layoutX="1040.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
 			</children>

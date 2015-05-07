@@ -32,12 +32,19 @@
 	-fx-background-image: url('../export.png');
   	-fx-background-repeat: no-repeat;
   	-fx-background-position: center;
-  	-fx-background-size: 35px 20px;
+  	-fx-background-size: 50% auto;
 }
 
 #archiveProjectButton{
 	-fx-background-image: url('../archive.png');
   	-fx-background-repeat: no-repeat;
   	-fx-background-position: center;
-  	-fx-background-size: 35px 20px;
+  	-fx-background-size: 90% auto;
+}
+
+#importPhotoButton{
+	-fx-background-image: url('../addPhoto.png');
+  	-fx-background-repeat: no-repeat;
+  	-fx-background-position: center;
+  	-fx-background-size: 90% auto;
 }
