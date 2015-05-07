@@ -8,9 +8,9 @@
 <?import javafx.geometry.Insets?>
 
 
-<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml">
+<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml" stylesheets="@photo-flow.css">
 	<top>
-		<Pane fx:id="projectPane" style="-fx-border-style: solid;" prefHeight="75">
+		<Pane fx:id="projectPane" prefHeight="75" styleClass="light-background">
 			<children>
 				<TextField fx:id="projectNameField" layoutX="20.0" layoutY="27.0" text="Project Name" />
 				<Label fx:id="newLabel" layoutX="200.0" layoutY="31.0" prefWidth="45" text="New" />
@@ -43,6 +43,6 @@
 		</ScrollPane>
 	</center>
 	<right>
-		<PhotoController fx:id="photoController" maxWidth="250"/>
+		<PhotoController fx:id="photoController" maxWidth="250" styleClass="light-background"/>
 	</right>
 </fx:root>

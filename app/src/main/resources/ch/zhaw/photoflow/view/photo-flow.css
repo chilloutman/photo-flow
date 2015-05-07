@@ -1,0 +1,9 @@
+
+.light-background {
+	-fx-background-color: #444;
+	-fx-background: #444;
+}
+
+.dark-background {
+	-fx-background: #222;
+}
