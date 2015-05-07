@@ -61,7 +61,7 @@ public class ProjectController extends BorderPane implements Initializable {
 	@FXML
 	TextField projectNameField;
 	@FXML
-	Button workflowNextButton, workflowPauseButton, workflowBackButton, importPhotoButton, archiveProjectButton, exportProjectButton;
+	Button newButton, importButton, editButton, archiveButton, importPhotoButton, archiveProjectButton, exportProjectButton;
 	@FXML
 	MenuButton todoButton;
 	@FXML
@@ -298,14 +298,6 @@ public class ProjectController extends BorderPane implements Initializable {
 		
 		//Disable first
 		this.setDisable(true);
-
-		// inline
-		workflowNextButton.setOnAction(event -> {
-			System.out.println("clicked Next");
-		});
-
-		// external method
-		workflowNextButton.setOnAction(this::test);
 
 		importPhotoButton.setOnAction(this::importPhotos);
 		archiveProjectButton.setOnAction(this::archiveProject);

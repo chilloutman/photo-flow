@@ -13,20 +13,21 @@
 		<Pane fx:id="projectPane" prefHeight="75" styleClass="light-background">
 			<children>
 				<TextField fx:id="projectNameField" layoutX="20.0" layoutY="27.0" text="Project Name" />
-				<Label fx:id="newLabel" layoutX="200.0" layoutY="31.0" prefWidth="45" text="New" />
-				<Label fx:id="importLabel" layoutX="240.0" layoutY="31.0" prefWidth="45" text="Import" />
-				<Label fx:id="editLabel" layoutX="295.0" layoutY="31.0" prefWidth="45" text="Edit" />
-				<Label fx:id="exportLabel" layoutX="330.0" layoutY="31.0" prefWidth="45" text="Export" />
-				<Button fx:id="importPhotoButton" layoutX="400.0" layoutY="27.0" prefWidth="110" mnemonicParsing="false"  text="Import Photo"/>
-				<MenuButton fx:id="todoButton" layoutX="580.0" layoutY="27.0" mnemonicParsing="false" prefHeight="13.0" prefWidth="112.0" text="TODO's">
+				<Button fx:id="newButton" styleClass="workflowButton" layoutX="250.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text=""/>
+				<Label text="New" layoutX="257.0" layoutY="55.0" />
+				<Button fx:id="importButton" styleClass="workflowButton" layoutX="370.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text=""/>
+				<Label text="Import" layoutX="372.0" layoutY="55.0" />
+				<Button fx:id="editButton" styleClass="workflowButton" layoutX="490.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text=""/>
+				<Label text="Edit" layoutX="499.0" layoutY="55.0" />
+				<Button fx:id="archiveButton" styleClass="workflowButton" layoutX="610.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text=""/>
+				<Label text="Archive" layoutX="612.0" layoutY="55.0" />
+				<Button fx:id="importPhotoButton" layoutX="750.0" layoutY="27.0" prefWidth="90" mnemonicParsing="false"  text="Import Photo"/>
+				<MenuButton fx:id="todoButton" layoutX="850.0" layoutY="27.0" mnemonicParsing="false" prefHeight="13.0" prefWidth="80.0" text="TODO's">
 					<items>
 						<MenuItem mnemonicParsing="false" text="Action 1" />
 						<MenuItem mnemonicParsing="false" text="Action 2" />
 					</items>
 				</MenuButton>
-				<Button fx:id="workflowBackButton" layoutX="730.0" layoutY="27.0" prefWidth="70" mnemonicParsing="false" text="Back" />
-				<Button fx:id="workflowPauseButton" layoutX="800" layoutY="27.0" prefWidth="70" mnemonicParsing="false"  text="Pause"/>
-				<Button fx:id="workflowNextButton" layoutX="870.0" layoutY="27.0" prefWidth="70" mnemonicParsing="false" text="Next" />
 				<Button fx:id="archiveProjectButton" layoutX="970.0" layoutY="27.0" prefWidth="70" mnemonicParsing="false" text="Archive" />
 				<Button fx:id="exportProjectButton" layoutX="1040.0" layoutY="27.0" prefWidth="70" mnemonicParsing="false" text="Export" />
 			</children>
