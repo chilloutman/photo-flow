@@ -8,6 +8,7 @@
 	-fx-background: #222;
 }
 
+
 .workflowButton {
     -fx-background-radius: 7em;
 }
@@ -25,4 +26,18 @@
 .list-cell:filled:selected {
 	-fx-background-color: #888;
 	-fx-background: #888;
+	
+	}
+#exportProjectButton{
+	-fx-background-image: url('../export.png');
+  	-fx-background-repeat: no-repeat;
+  	-fx-background-position: center;
+  	-fx-background-size: 35px 20px;
+}
+
+#archiveProjectButton{
+	-fx-background-image: url('../archive.png');
+  	-fx-background-repeat: no-repeat;
+  	-fx-background-position: center;
+  	-fx-background-size: 35px 20px;
 }

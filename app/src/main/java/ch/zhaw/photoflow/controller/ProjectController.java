@@ -20,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -187,6 +188,7 @@ public class ProjectController extends BorderPane implements Initializable {
 			try {
 				fileHandler.importPhoto(photo, file);
 				photoDao.save(photo);
+				photos.add(photo);
 			} catch (FileHandlerException e) {
 				System.out.println("FILEHANDLEREXCEPTION");
 				e.printStackTrace();
@@ -198,7 +200,7 @@ public class ProjectController extends BorderPane implements Initializable {
 			}
 			
 		}
-		
+		displayPhotos();	
 	}
 
 	public void deletePhoto(Photo photo) {
@@ -295,6 +297,10 @@ public class ProjectController extends BorderPane implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		// direct connection to TextField in FXML GUI
 		projectNameField.setText("new Project");
+		
+		 exportProjectButton.setTooltip(new Tooltip("Export Project"));
+		 archiveProjectButton.setTooltip(new Tooltip("Archive Project"));
+		 importPhotoButton.setTooltip(new Tooltip("Import a new Photo"));
 		
 		//Disable first
 		this.setDisable(true);
