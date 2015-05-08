@@ -183,7 +183,7 @@ public class MainController extends PhotoFlowController implements Initializable
 		alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
 		Optional<ButtonType> result = alert.showAndWait();
 
-		if (result.get() != ButtonType.OK){
+		if (result.get() != ButtonType.YES){
 			return;
 		}
 		
