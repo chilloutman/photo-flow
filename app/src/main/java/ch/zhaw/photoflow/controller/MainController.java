@@ -184,7 +184,7 @@ public class MainController extends AbstractController implements Initializable 
 
 		if (result.get() != ButtonType.OK){
 			return;
-		}		
+		}
 		
 		try {
 			FileHandler fileHandler = Main.PHOTO_FLOW.getFileHandler(project);

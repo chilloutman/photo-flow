@@ -1,8 +1,7 @@
 package ch.zhaw.photoflow.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -326,11 +325,11 @@ public class ProjectController extends BorderPane implements Initializable {
 		}
 
 		@Override
-		protected Image call() throws FileNotFoundException {
+		protected Image call() throws FileHandlerException {
 			//System.out.println("Loading photo: " + photo);
-			File file = fileHandler.loadPhoto(photo);
-			Image image = new Image(new FileInputStream(file), 200, 200, true, true);
-			return image;
+			InputStream file = fileHandler.loadPhoto(photo);
+			System.out.println(file);
+			return new Image(file, 200, 200, true, true);
 		}
 	}
 	

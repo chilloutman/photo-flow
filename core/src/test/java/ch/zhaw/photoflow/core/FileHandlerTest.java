@@ -1,19 +1,19 @@
 package ch.zhaw.photoflow.core;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
 
@@ -87,12 +87,8 @@ public class FileHandlerTest {
 	 */
 	@Test
 	public void checkDirectoriesCreated() {
-		assertTrue(fileHandler.getUserHomePath() != null);
-		assertTrue(fileHandler.getWorkingPath() != null);
-		assertTrue(fileHandler.getProjectPath() != null);
-		assertFalse(fileHandler.getUserHomePath().isEmpty());
-		assertFalse(fileHandler.getWorkingPath().isEmpty());
-		assertFalse(fileHandler.getProjectPath().isEmpty());
+		assertTrue(FileHandler.WORKING_DIR.isDirectory());
+		assertTrue(fileHandler.getProjectDir().isDirectory());
 	}
 	
 	/**
@@ -109,9 +105,9 @@ public class FileHandlerTest {
 	 * Loads a Photo-File according the Photo-Object. Checks that exception is thrown if File cannot be found.
 	 * @throws FileNotFoundException
 	 */
-	@Test(expected=FileNotFoundException.class)
-	public void checkLoadPhoto() throws FileNotFoundException {
-		assertTrue(fileHandler.loadPhoto(photo3).isFile());
+	@Test(expected=FileHandlerException.class)
+	public void checkLoadPhoto() throws FileHandlerException {
+		assertTrue(fileHandler.getPhotoFile(photo3).isFile());
 		fileHandler.loadPhoto(photo4);
 	}
 	
@@ -138,9 +134,9 @@ public class FileHandlerTest {
 		fileHandler.importPhoto(photo1, file);
 		fileHandler.importPhoto(photo2, file2);
 		fileHandler.archiveProject();
-		assertFalse(new File(fileHandler.getProjectPath()).isDirectory());
-		assertFalse(new File(fileHandler.getProjectPath()).exists());
-		if(file.exists()&&file2.exists()){
+		assertFalse(fileHandler.getProjectDir().isDirectory());
+		assertFalse(fileHandler.getProjectDir().exists());
+		if (file.exists()&&file2.exists()) {
 			file.delete();
 			file2.delete();
 		}
@@ -152,16 +148,16 @@ public class FileHandlerTest {
 	 * @return
 	 */
 	private boolean deleteDirectory(File path) {
-	    if (path.exists()) {
-	        File[] files = path.listFiles();
-	        for (int i = 0; i < files.length; i++) {
-	            if (files[i].isDirectory()) {
-	                deleteDirectory(files[i]);
-	            } else {
-	                files[i].delete();
-	            }
-	        }
-	    }
-	    return (path.delete());
+		if (path.exists()) {
+			File[] files = path.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					deleteDirectory(files[i]);
+				} else {
+					files[i].delete();
+				}
+			}
+		}
+		return (path.delete());
 	}
 }

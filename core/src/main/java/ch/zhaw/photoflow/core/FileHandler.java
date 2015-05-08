@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -20,68 +22,40 @@ import com.google.common.io.Files;
 public class FileHandler {
 	
 	private static final String PHOTO_FLOW = "PhotoFlow";
-	private static String userHomePath = System.getProperty("user.home")+"/";
-	private static String workingPath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/";
-	private static String archivePath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/Archive/";
-	private static String sqlitePath = System.getProperty("user.home")+"/"+PHOTO_FLOW+"/DB/photoFlow.db";
-	private static File sqliteFile = new File(sqlitePath);
-	private String projectPath;
-	private Project project;
+	private static final File USER_HOME_DIR = new File(System.getProperty("user.home"));
+	static final File WORKING_DIR = new File(USER_HOME_DIR, PHOTO_FLOW);
+	private static final File ARCHIVE_DIR = new File(WORKING_DIR, "Aarchive");
+	private static final File SQLITE_DIR = new File(WORKING_DIR, "DB");
+	private static final File SQLITE_FILE = new File(SQLITE_DIR, "/photoFlow.db");
 	
-	public FileHandler() {
-		
+	private final File projectDir;
+	private final Project project;
+	
+	public static File getSqliteFile() throws FileHandlerException {
+		checkDirectory(SQLITE_FILE.getParentFile());
+		return SQLITE_FILE;
+	}
+	
+	/**
+	 * Check if directory exists and try to create it if it doesn't.
+	 * @param directory The directory to check.
+	 * @throws FileHandlerException If something went wrong.
+	 */
+	private static void checkDirectory (File directory) throws FileHandlerException {
+		if (!directory.isDirectory() && !directory.mkdirs()) {
+			throw new FileHandlerException("Could not create directory: " + directory);
+		}
 	}
 	
 	/**
 	 * Constructor initializes userhome and workingPath
 	 * @throws FotoHandlerException 
 	 */
-	public FileHandler(Project project) throws FileHandlerException{
+	public FileHandler(Project project) throws FileHandlerException {
 		this.project = project;
-		if(!createWorkingPath()){
-			throw new FileHandlerException("Error in creating Working Directory!");
-		}
-		if(!createProjectPath(project)){
-			throw new FileHandlerException("Error in creating Project Directory!");
-		}
-		setProjectPath(getWorkingPath()+project.getId().get().toString()+"/");
-	}
-	
-	/**
-	 * Creates working path, where actual Project-Files are stored.
-	 * @return true, if directory can be created, false, if it already exists
-	 */
-	private boolean createWorkingPath(){
-		File f = new File(getWorkingPath());
-		if(f.exists() && f.isDirectory()){
-			return true;
-		}
-		return f.mkdir();
-	}
-	
-	/**
-	 * Creates sqlite db path, where the actual sqlite db is stored.
-	 * @return true, if directory can be created, false, if it already exists
-	 */
-	public boolean createSQLitePath(){
-		File f = new File(getSQLitePath());
-		if(f.exists() && f.isDirectory()){
-			return true;
-		}
-		return f.getParentFile().mkdirs();
-	}
-
-	/**
-	 * This method is used to create a new Project (File-Folder on Explorer).
-	 * @param project
-	 * @return True if directory already exists or could be created successfully.
-	 */
-	private boolean createProjectPath(Project project) {
-		File f = new File(getWorkingPath()+project.getId().get().toString());
-		if(f.exists() && f.isDirectory()){
-			return true;
-		}
-		return f.mkdir();
+		projectDir = new File(WORKING_DIR, project.getId().get().toString());
+		checkDirectory(WORKING_DIR);
+		checkDirectory(projectDir);
 	}
 	
 	/**
@@ -94,36 +68,38 @@ public class FileHandler {
 	 */
 	public Photo importPhoto(Photo photo, File file) throws FileHandlerException {
 		if(FileFormat.get(file.getName()) != null){
-			if(new File(getProjectPath()+file.getName()).exists()){
+			if (new File(projectDir, file.getName()).exists()) {
+				// TODO change name and import anyway.
 				throw new FileHandlerException("File already exists!");
 			}
-			File newFile = new File(getProjectPath()+file.getName());
+			File newFile = new File(projectDir, file.getName());
 			try {
 				Files.copy(file, newFile);
 			} catch (IOException e) {
 				throw new FileHandlerException("Could not import File (Copy Fail)!",e);
 			}
-			photo.setFilePath(newFile.getAbsolutePath());
-			photo.setFileFormat(FileFormat.JPEG);	//static at the moment
+			photo.setFilePath(newFile.getName());
+			Optional<FileFormat> fileFormat = FileFormat.get(file.getName());
+			if (!fileFormat.isPresent()) {
+				throw new FileHandlerException("File format of photo is not supported: " + file);
+			}
+			photo.setFileFormat(fileFormat.get());
 			photo.setFileSize((int) file.length());
-			photo.setCreationDate(LocalDateTime.now());
+			photo.setCreationDate(LocalDateTime.now()); // TODO: Get file timestamp
 			return photo;
-		}else{
+		} else {
 			throw new FileHandlerException("File Extension is invalid!");
 		}
 	}
-	
-	/**
-	 * Method to get FileExtension to check for valid FileExtension jpg.
-	 * @param file
-	 * @return Returns the Extension of the File.
-	 */
-    private static String getFileExtension(File file) {
-        String fileName = file.getName();
-        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-        return fileName.substring(fileName.lastIndexOf(".")+1);
-        else return "";
-    }
+
+	public InputStream loadPhoto(Photo photo) throws FileHandlerException {
+		try {
+			File file = getPhotoFile(photo);
+			return new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			throw new FileHandlerException("Could not find file for photo: " + photo, e);
+		}
+	}
 	
 	/**
 	 * Method to get the physical Photo-File according to the logical Photo.
@@ -131,12 +107,8 @@ public class FileHandler {
 	 * @return File physical Photo File.
 	 * @throws FileNotFoundException Error is thrown if physical File cannot be found or is invalid.
 	 */
-	public File loadPhoto(Photo photo) throws FileNotFoundException {
-		File file = new File(photo.getFilePath());
-		if(!file.isFile()){
-			throw new FileNotFoundException("File not found or invalid!");
-		}
-		return file;
+	File getPhotoFile(Photo photo) throws FileHandlerException {
+		return new File(projectDir, photo.getFilePath());
 	}
 	
 	/**
@@ -147,9 +119,10 @@ public class FileHandler {
 	 * @throws FileNotFoundException If a File in the List cannot be found, this Exception is thrown.
 	 */
 	public File exportZip(String zipName, List<Photo> list) throws FileHandlerException {
-		try(FileOutputStream fos = new FileOutputStream(zipName);
-			ZipOutputStream zos = new ZipOutputStream(fos);){
-		
+		try (
+			FileOutputStream fos = new FileOutputStream(zipName);
+			ZipOutputStream zos = new ZipOutputStream(fos);
+		) {
 			for(Photo photo : list){
 				 try {
 					addToZip(photo.getFilePath(), zos);
@@ -192,14 +165,10 @@ public class FileHandler {
 	 * @throws FileHandlerException
 	 */
 	public void archiveProject() throws FileHandlerException {
-		File archiveDir = new File(archivePath);
-		File projectDir = new File(projectPath);
-		File targetDir = new File(archivePath+project.getId().get().toString()+"/");
-		if(!archiveDir.exists()){
-			archiveDir.mkdir();
-		}
-		if(!targetDir.exists()){
+		File targetDir = new File(ARCHIVE_DIR, project.getId().get().toString()+"/");
+		if (!targetDir.exists()) {
 			try {
+				targetDir.mkdirs();
 				Files.move(projectDir, targetDir);
 			} catch (IOException e) {
 				throw new FileHandlerException("Projectfiles could not be moved to archive!",e);
@@ -209,9 +178,7 @@ public class FileHandler {
 	}
 	
 	public void deleteProject() throws FileHandlerException {
-		File file = new File(getProjectPath());
-		
-		deleteDirectory(file);
+		deleteDirectory(projectDir);
 	}
 	
 	/**
@@ -220,42 +187,21 @@ public class FileHandler {
 	 * @return
 	 */
 	private boolean deleteDirectory(File path) {
-	    if (path.exists()) {
-	        File[] files = path.listFiles();
-	        for (int i = 0; i < files.length; i++) {
-	            if (files[i].isDirectory()) {
-	                deleteDirectory(files[i]);
-	            } else {
-	                files[i].delete();
-	            }
-	        }
-	    }
-	    return (path.delete());
+		if (path.exists()) {
+			File[] files = path.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					deleteDirectory(files[i]);
+				} else {
+					files[i].delete();
+				}
+			}
+		}
+		return (path.delete());
 	}
 	
-
-	public String getProjectPath() {
-		return projectPath;
-	}
-
-	public void setProjectPath(String projectPath) {
-		this.projectPath = projectPath;
-	}
-
-	public String getSQLitePath() {
-		return sqlitePath;
+	File getProjectDir () {
+		return projectDir;
 	}
 	
-	public File getSQLiteFile() {
-		return sqliteFile;
-	}
-
-	public String getUserHomePath() {
-		return userHomePath;
-	}
-
-	public String getWorkingPath() {
-		return workingPath;
-	}
-
 }
