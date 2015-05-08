@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -34,6 +35,7 @@ import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
 import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.ProjectDao;
+import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.PhotoWorkflow;
@@ -170,7 +172,8 @@ public class ProjectController extends BorderPane implements Initializable {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Import Photos");
 		
-		ExtensionFilter imageFilter = new ExtensionFilter("Image Files", "*.png", "*.jpg");
+		List<String> extensions = FileFormat.getAllFileExtensions().stream().map(e -> "*." + e).collect(Collectors.toList());
+		ExtensionFilter imageFilter = new ExtensionFilter("Image Files", extensions);
 		fileChooser.getExtensionFilters().add(imageFilter);
 
 		List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());

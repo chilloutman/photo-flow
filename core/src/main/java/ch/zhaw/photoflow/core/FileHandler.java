@@ -31,7 +31,7 @@ public class FileHandler {
 	private final File projectDir;
 	
 	public static File sqliteFile() throws FileHandlerException {
-		return checkDirectory(new File(workingDir(), "PhotoFlow.db"));
+		return new File(workingDir(), "PhotoFlow.db");
 	}
 	
 	static File workingDir() throws FileHandlerException {
