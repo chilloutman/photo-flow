@@ -2,6 +2,7 @@
 dependencies {
 	compile(
 		'org.xerial:sqlite-jdbc:3.8.7',
-		'org.jooq:jooq:3.6.1'
+		'org.jooq:jooq:3.6.1',
+		'com.drewnoakes:metadata-extractor:2.8.1'
 	)
 }

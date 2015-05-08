@@ -5,7 +5,6 @@ import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
 import ch.zhaw.photoflow.core.dao.SqlitePhotoDao;
 import ch.zhaw.photoflow.core.dao.SqliteProjectDao;
 import ch.zhaw.photoflow.core.domain.PhotoWorkflow;
-import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 
 /**
@@ -41,8 +40,8 @@ public class PhotoFlow {
 		}
 	}
 
-	public FileHandler getFileHandler(Project project) throws FileHandlerException {
-		return new FileHandler(project);
+	public FileHandler getFileHandler(int projectId) throws FileHandlerException {
+		return new FileHandler(projectId);
 	}
 
 	public PhotoDao getPhotoDao() {

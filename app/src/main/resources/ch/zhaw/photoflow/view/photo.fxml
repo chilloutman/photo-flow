@@ -12,8 +12,9 @@
 	<VBox spacing="50" fillWidth="true" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 		<padding><Insets top="10" left="10" bottom="10" right="10"/></padding>
 		<children>
-			<Label fx:id="filePathLabel" text="Photo Detail" wrapText="true"/>
-			<Label fx:id="fileSizeLabel" text="Photo Detail" wrapText="true"/>
+			<Label fx:id="filePathLabel" text="" wrapText="true"/>
+			<Label fx:id="fileSizeLabel" text="" wrapText="true"/>
+			<Label fx:id="metadataLabel" text="" wrapText="true"/>
 
 			<HBox spacing="25" alignment="CENTER">
 				<children>

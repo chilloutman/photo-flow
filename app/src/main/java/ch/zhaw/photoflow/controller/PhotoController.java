@@ -14,6 +14,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
+import ch.zhaw.photoflow.core.FileHandler;
+import ch.zhaw.photoflow.core.FileHandlerException;
 import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
@@ -28,7 +30,7 @@ public class PhotoController extends AnchorPane {
 	private Photo photo;
 	
 	@FXML
-	private Label filePathLabel, fileSizeLabel;
+	private Label filePathLabel, fileSizeLabel, metadataLabel;
 
 	public PhotoController() {
 		this(Main.PHOTO_FLOW.getPhotoDao(), Main.PHOTO_FLOW.getPhotoWorkflow());
@@ -55,6 +57,13 @@ public class PhotoController extends AnchorPane {
 		filePathLabel.textProperty().bind(stringProperty(photo, "filePath"));
 		StringExpression fileSize =  Bindings.format("%.2f MB", numberProperty(photo, "fileSize").divide(1024*1014));
 		fileSizeLabel.textProperty().bind(fileSize);
+		
+		try {
+			FileHandler fileHandler = Main.PHOTO_FLOW.getFileHandler(photo.getProjectId().get());
+			metadataLabel.setText(fileHandler.loadPhotoMetadata(photo));
+		} catch (FileHandlerException e) {
+			metadataLabel.setText("Could not load photo metadata. :-(");
+		}
 	}
 
 	private StringProperty stringProperty(Object bean, String property) {
@@ -85,7 +94,6 @@ public class PhotoController extends AnchorPane {
 	 * @param photoState
 	 */
 	public void transitionState(Project project, PhotoState photoState) {
-
 		workflow.transition(project, photo, photoState);
 		try {
 			photoDao.save(photo);

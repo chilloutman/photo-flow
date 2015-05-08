@@ -9,13 +9,16 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
-import ch.zhaw.photoflow.core.domain.Project;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Metadata;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Files;
 
@@ -27,7 +30,7 @@ public class FileHandler {
 	@VisibleForTesting
 	static File USER_HOME_DIR = new File(System.getProperty("user.home"));
 
-	private final Project project;
+	private final Integer projectId;
 	private final File projectDir;
 	
 	public static File sqliteFile() throws FileHandlerException {
@@ -59,9 +62,9 @@ public class FileHandler {
 	 * Constructor initializes userhome and workingPath
 	 * @throws FotoHandlerException 
 	 */
-	public FileHandler(Project project) throws FileHandlerException {
-		this.project = project;
-		projectDir = new File(workingDir(), project.getId().get().toString());
+	public FileHandler(Integer projectId) throws FileHandlerException {
+		this.projectId = projectId;
+		projectDir = new File(workingDir(), projectId.toString());
 		checkDirectory(projectDir);
 	}
 	
@@ -102,9 +105,26 @@ public class FileHandler {
 	public InputStream loadPhoto(Photo photo) throws FileHandlerException {
 		try {
 			File file = getPhotoFile(photo);
+			
 			return new FileInputStream(file);
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			throw new FileHandlerException("Could not find file for photo: " + photo, e);
+		}
+	}
+	
+	public String loadPhotoMetadata(Photo photo) throws FileHandlerException {
+		try (InputStream photoInputStream = loadPhoto(photo)) {
+			Metadata metadata = ImageMetadataReader.readMetadata(photoInputStream);
+			
+			String s = StreamSupport.stream(metadata.getDirectories().spliterator(), false)
+				.map(directory -> directory.getTags())
+				.map(tags -> tags.toString())
+				.reduce("", (result, d) -> result + "\n" + d);
+			
+			System.out.println(s);
+			return s;
+		} catch (ImageProcessingException | IOException e) {
+			throw new FileHandlerException("Could load photo metadata: " + photo, e);
 		}
 	}
 	
@@ -172,7 +192,7 @@ public class FileHandler {
 	 * @throws FileHandlerException
 	 */
 	public void archiveProject() throws FileHandlerException {
-		File targetDir = new File(archiveDir(), project.getId().get().toString());
+		File targetDir = new File(archiveDir(), projectId.toString());
 		if (!targetDir.isDirectory()) {
 			try {
 				targetDir.mkdirs();

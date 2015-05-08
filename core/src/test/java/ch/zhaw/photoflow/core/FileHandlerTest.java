@@ -40,7 +40,7 @@ public class FileHandlerTest {
 		// Prepare Test with dummy Testdata
 		project = Project.newProject();
 		project.setId(1234);
-		fileHandler = new FileHandler(project);
+		fileHandler = new FileHandler(project.getId().get());
 		
 		file1 = new File(TEST_DIR, "test1.jpg");
 		file2 = new File(TEST_DIR, "test2.jpg");

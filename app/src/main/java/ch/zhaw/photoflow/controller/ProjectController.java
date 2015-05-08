@@ -98,7 +98,7 @@ public class ProjectController extends BorderPane implements Initializable {
 		System.out.println("Project \"" + project.getName() + "\" has been selected.");
 		this.project = project;
 		try {
-			fileHandler = new FileHandler(project);
+			fileHandler = new FileHandler(project.getId().get());
 		} catch (FileHandlerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
