@@ -48,3 +48,9 @@
   	-fx-background-position: center;
   	-fx-background-size: 90% auto;
 }
+
+.separator {
+	-fx-border-color: #fff;
+	-fx-border-style: solid;
+	-fx-border-width: 2px;
+}
