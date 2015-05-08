@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyFloatProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
@@ -12,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.StringConverter;
 import ch.zhaw.photoflow.Main;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.PhotoDao;
@@ -53,13 +52,8 @@ public class PhotoController extends AnchorPane {
 		System.out.println("Photo has been selected: " + photo);
 		this.photo = photo;
 		
-		Bindings.convert(integerProperty(photo, "fileSize"));
-		
 		filePathLabel.textProperty().bind(stringProperty(photo, "filePath"));
-		StringExpression fileSize = Bindings.format(
-			"%.2f MB",
-			Bindings.createFloatBinding(() -> (float)photo.getFileSize() / (1024 * 1024))
-		);
+		StringExpression fileSize =  Bindings.format("%.2f MB", numberProperty(photo, "fileSize").divide(1024*1014));
 		fileSizeLabel.textProperty().bind(fileSize);
 	}
 
@@ -71,9 +65,12 @@ public class PhotoController extends AnchorPane {
 		}
 	}
 	
-	private IntegerProperty integerProperty(Object bean, String property) {
+	private ReadOnlyFloatProperty numberProperty(Object bean, String property) {
 		try {
-			return JavaBeanIntegerPropertyBuilder.create().bean(bean).name(property).build();
+			// Convert to float property so we can divide and get decimals if required.
+			return ReadOnlyFloatProperty.readOnlyFloatProperty(
+				JavaBeanIntegerPropertyBuilder.create().bean(bean).name(property).build()
+			);
 		} catch (NoSuchMethodException e) {
 			throw new IllegalStateException(e);
 		}
