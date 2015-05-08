@@ -67,9 +67,23 @@ public class MainController extends AbstractController implements Initializable 
 		
 		//Deletelistener
 		projectList.setOnKeyPressed((keyevent) -> {
+			Project project = projectList.getSelectionModel().getSelectedItem();
+
 			if(KeyCode.DELETE.equals(keyevent.getCode())) {
-				Project project = projectList.getSelectionModel().getSelectedItem();
 				deleteProject(project);
+			}
+			else if(ADD_NEW_PROJECT.equals(project) && KeyCode.ENTER.equals(keyevent.getCode()))
+			{
+				createProjectFromEvents();
+			}
+		});
+		
+		projectList.setOnMouseClicked((mouseEvent) ->{
+			Project project = projectList.getSelectionModel().getSelectedItem();
+			
+			if(ADD_NEW_PROJECT.equals(project))
+			{
+				createProjectFromEvents();
 			}
 		});
 	}
@@ -86,17 +100,29 @@ public class MainController extends AbstractController implements Initializable 
 		}
 	}
 	
+	private void createProjectFromEvents()
+	{
+		projectController.setDisable(true);
+		popup = new PopUpHandler();
+		Optional<Project> newProject = createProject();
+
+		// Update selection
+		Platform.runLater(() -> {
+			projectList.getSelectionModel().select(newProject.orElse(null));
+		});
+	}
+	
 	public void projectSelected(Project selectedProject) {
 		if (selectedProject == ADD_NEW_PROJECT) {
-			// TODO: Could we not block the UI here and use a listener instead?
-			projectController.setDisable(true);
-			popup = new PopUpHandler();
-			Optional<Project> newProject = createProject();
-
-			// Update selection
-			Platform.runLater(() -> {
-				projectList.getSelectionModel().select(newProject.orElse(null));
-			});
+//			// TODO: Could we not block the UI here and use a listener instead?
+//			projectController.setDisable(true);
+//			popup = new PopUpHandler();
+//			Optional<Project> newProject = createProject();
+//
+//			// Update selection
+//			Platform.runLater(() -> {
+//				projectList.getSelectionModel().select(newProject.orElse(null));
+//			});
 		} else {
 			projectController.setDisable(false);
 			projectController.setProject(selectedProject);
