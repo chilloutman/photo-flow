@@ -28,17 +28,13 @@ import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Tag;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
 
-public class MainController extends AbstractController implements Initializable {
+public class MainController extends PhotoFlowController implements Initializable {
 
 	/**
 	 * Special project that acts as the "add new project" button.
 	 */
 	private final Project ADD_NEW_PROJECT = Project.newProject(p -> p.setName("+ New Project"));
-	
-	@Inject
-	private PhotoFlow photoFlow;
 	
 	private final ObservableList<Project> projects = FXCollections.observableArrayList();
 	private PopUpHandler popup;

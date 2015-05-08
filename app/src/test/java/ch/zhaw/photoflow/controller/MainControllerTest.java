@@ -9,16 +9,12 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.zhaw.photoflow.core.DaoException;
-import ch.zhaw.photoflow.core.PhotoFlow;
-import ch.zhaw.photoflow.core.ProjectDao;
-import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
 
-@Ignore
+
 public class MainControllerTest extends ControllerTest<MainController> {
 
 	private MainController main;
@@ -30,14 +26,7 @@ public class MainControllerTest extends ControllerTest<MainController> {
 
 	@Before
 	public void before() throws DaoException, IOException {
-		ProjectDao dao = new InMemoryProjectDao();
-		main = initController(MainController.class.getResource("../view/main_gui.fxml"));
-		main.setPhotoFlow(new PhotoFlow() {
-			@Override
-			public ProjectDao projectDao() {
-				return dao;
-			}
-		});
+		main = loadController(MainController.class.getResource("../view/main_gui.fxml"));
 
 		dummyProject = Project.newProject(p -> {
 			p.setId(1);
@@ -46,7 +35,6 @@ public class MainControllerTest extends ControllerTest<MainController> {
 		});
 	}
 
-	// Test 1
 	@Test(expected = NullPointerException.class)
 	public void addProjectandFails() {
 		emptyProject = Project.newProject(p -> {
@@ -56,26 +44,23 @@ public class MainControllerTest extends ControllerTest<MainController> {
 		});
 
 		main.addProject(emptyProject);
-		assertEquals("to be equal", emptyProject, main.getProjects().get(0));
+		assertEquals("to be equal", emptyProject, main.getProjects().get(1));
 	}
 
-	// Test 2
 	@Test
 	public void addProject() {
 		main.addProject(dummyProject);
-		assertEquals("to be equal", dummyProject, main.getProjects().get(0));
+		assertEquals("to be equal", dummyProject, main.getProjects().get(1));
 	}
 
-	// Test 3
 	@Test
 	public void toGetProjects() {
 		main.addProject(dummyProject);
 		assertThat(main.getProjects(), is(not(empty())));
 	}
 
-	// Test 4
 	// @Test
-	// TODO: This test is broken because of the java fx binding...
+	// TODO: This test is broken because of the JavaFX binding...
 	public void toDeleteProject() {
 		main.addProject(dummyProject);
 
@@ -85,7 +70,6 @@ public class MainControllerTest extends ControllerTest<MainController> {
 		assertThat(main.getProjects(), is(empty()));
 	}
 
-	// Test 5
 	@Test(expected = IndexOutOfBoundsException.class)
 	public void toDeleteProjectandFail() {
 		main.addProject(dummyProject);

@@ -2,28 +2,18 @@ package ch.zhaw.photoflow.controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.ReadOnlyFloatProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
-import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
-import ch.zhaw.photoflow.core.PhotoFlow;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Tag;
 
-import com.google.inject.Inject;
+public class PhotoController extends PhotoFlowController {
 
-public class PhotoController {
-
-	@Inject
-	private PhotoFlow photoFlow;
-	
 	/** Currently selected photo. */
 	private Photo photo;
 	
@@ -46,26 +36,6 @@ public class PhotoController {
 		}
 	}
 
-	private StringProperty stringProperty(Object bean, String property) {
-		try {
-			return JavaBeanStringPropertyBuilder.create().bean(bean).name(property).build();
-		} catch (NoSuchMethodException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-	
-	private ReadOnlyFloatProperty numberProperty(Object bean, String property) {
-		try {
-			// Convert to float property so we can divide and get decimals if required.
-			return ReadOnlyFloatProperty.readOnlyFloatProperty(
-				JavaBeanIntegerPropertyBuilder.create().bean(bean).name(property).build()
-			);
-		} catch (NoSuchMethodException e) {
-			throw new IllegalStateException(e);
-		}
-			
-	}
-	
 	/**
 	 * Sets the state of the specified @{link Photo} object to the given
 	 * photoState.

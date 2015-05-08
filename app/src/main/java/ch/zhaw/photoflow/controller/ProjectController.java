@@ -30,7 +30,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
-import ch.zhaw.photoflow.core.PhotoFlow;
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
@@ -38,12 +37,8 @@ import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
 
-public class ProjectController implements Initializable {
-	
-	@Inject
-	private PhotoFlow photoFlow;
+public class ProjectController extends PhotoFlowController implements Initializable {
 	
 	private Project project;
 	private FileHandler fileHandler;
@@ -199,7 +194,6 @@ public class ProjectController implements Initializable {
 			photoFlow.projectWorkflow().transition(project, this.photos, projectState);
 
 			try {
-				this.project = photoFlow.projectDao().load(project.getId().get()).get();
 				photoFlow.projectDao().save(project);
 			} catch (DaoException e) {
 				// TODO: Inform user that saving failed

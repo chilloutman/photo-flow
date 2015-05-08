@@ -8,29 +8,22 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.ProjectDao;
-import ch.zhaw.photoflow.core.dao.InMemoryPhotoDao;
-import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
 
-@Ignore
 public class ProjectControllerTest extends ControllerTest<ProjectController> {
 
 	private ProjectController projectController;
 	
 	private static final Integer PROJECT_1 = 1;
 	private static final Integer PROJECT_2 = 2;
-	
-	private ProjectDao projectDao;
-	private PhotoDao photoDao;
 	
 	private Project project1;
 	private Project project2;
@@ -41,10 +34,9 @@ public class ProjectControllerTest extends ControllerTest<ProjectController> {
 	
 	@Before
 	public void before() throws DaoException, SQLException, IOException {
-		projectDao = new InMemoryProjectDao();
-		photoDao = new InMemoryPhotoDao();
-		
-		projectController = initController(ProjectController.class.getResource("../view/project.fxml"));
+		projectController = loadController(ProjectController.class.getResource("../view/project.fxml"));
+		ProjectDao projectDao = projectController.getPhotoFlow().projectDao();
+		PhotoDao photoDao = projectController.getPhotoFlow().photoDao();
 		
 		//Initialize ProjectDao Testdata
 		project1 = Project.newProject(p -> {
@@ -142,11 +134,10 @@ public class ProjectControllerTest extends ControllerTest<ProjectController> {
 		projectController.setProject(project1);
 		
 		projectController.transitionState(project1,  ProjectState.DONE);
-		
-		assertEquals("Transist to DONE should fail(Not Legal)", projectController.getProject().getState(), ProjectState.NEW);
+		assertEquals("Transist to DONE should fail(Not Legal)", ProjectState.NEW, projectController.getProject().getState());
 
 		projectController.transitionState(project1,  ProjectState.IN_WORK);
-		assertEquals("Transist to IN_WORK(Legal)", projectController.getProject().getState(), ProjectState.IN_WORK);
+		assertEquals("Transist to IN_WORK(Legal)", ProjectState.IN_WORK, projectController.getProject().getState());
 		
 	}
 	

@@ -20,7 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import ch.zhaw.photoflow.core.domain.Tag;
 
-public class PopUpHandler extends AbstractController {
+public class PopUpHandler extends PhotoFlowController {
 
 	private String name;
 	private String desc;
