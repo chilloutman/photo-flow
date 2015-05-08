@@ -16,35 +16,43 @@ import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Files;
 
 
 public class FileHandler {
 	
 	private static final String PHOTO_FLOW = "PhotoFlow";
-	private static final File USER_HOME_DIR = new File(System.getProperty("user.home"));
-	static final File WORKING_DIR = new File(USER_HOME_DIR, PHOTO_FLOW);
-	private static final File ARCHIVE_DIR = new File(WORKING_DIR, "Aarchive");
-	private static final File SQLITE_DIR = new File(WORKING_DIR, "DB");
-	private static final File SQLITE_FILE = new File(SQLITE_DIR, "/photoFlow.db");
 	
-	private final File projectDir;
+	@VisibleForTesting
+	static File USER_HOME_DIR = new File(System.getProperty("user.home"));
+
 	private final Project project;
+	private final File projectDir;
 	
-	public static File getSqliteFile() throws FileHandlerException {
-		checkDirectory(SQLITE_FILE.getParentFile());
-		return SQLITE_FILE;
+	public static File sqliteFile() throws FileHandlerException {
+		return checkDirectory(new File(workingDir(), "PhotoFlow.db"));
+	}
+	
+	static File workingDir() throws FileHandlerException {
+		return checkDirectory(new File(USER_HOME_DIR, PHOTO_FLOW));
+	}
+	
+	static File archiveDir() throws FileHandlerException {
+		return checkDirectory(new File(workingDir(), "Archive"));
 	}
 	
 	/**
 	 * Check if directory exists and try to create it if it doesn't.
 	 * @param directory The directory to check.
+	 * @return directory
 	 * @throws FileHandlerException If something went wrong.
 	 */
-	private static void checkDirectory (File directory) throws FileHandlerException {
+	private static File checkDirectory (File directory) throws FileHandlerException {
 		if (!directory.isDirectory() && !directory.mkdirs()) {
 			throw new FileHandlerException("Could not create directory: " + directory);
 		}
+		return directory;
 	}
 	
 	/**
@@ -53,8 +61,7 @@ public class FileHandler {
 	 */
 	public FileHandler(Project project) throws FileHandlerException {
 		this.project = project;
-		projectDir = new File(WORKING_DIR, project.getId().get().toString());
-		checkDirectory(WORKING_DIR);
+		projectDir = new File(workingDir(), project.getId().get().toString());
 		checkDirectory(projectDir);
 	}
 	
@@ -70,7 +77,7 @@ public class FileHandler {
 		if(FileFormat.get(file.getName()) != null){
 			if (new File(projectDir, file.getName()).exists()) {
 				// TODO change name and import anyway.
-				throw new FileHandlerException("File already exists!");
+				throw new FileHandlerException("File already exists: " + file);
 			}
 			File newFile = new File(projectDir, file.getName());
 			try {
@@ -123,11 +130,11 @@ public class FileHandler {
 			FileOutputStream fos = new FileOutputStream(zipName);
 			ZipOutputStream zos = new ZipOutputStream(fos);
 		) {
-			for(Photo photo : list){
+			for (Photo photo : list) {
 				 try {
-					addToZip(photo.getFilePath(), zos);
+					addToZip(photo, zos);
 				} catch (IOException e) {
-					throw new FileHandlerException("Could not load Photo to Zip!", e);
+					throw new FileHandlerException("Could not load Photo to Zip: " + photo, e);
 				}
 			}
 		} catch (IOException e1) {
@@ -143,11 +150,11 @@ public class FileHandler {
 	 * @param zos ZipOutputStream
 	 * @throws FileNotFoundException If the physical File cannot be found, this Exception is thrown.
 	 * @throws IOException
+	 * @throws FileHandlerException 
 	 */
-	private void addToZip(String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
-		File file = new File(fileName);
-		try(FileInputStream fis = new FileInputStream(file);){
-			ZipEntry zipEntry = new ZipEntry(file.getName());
+	private void addToZip(Photo photo, ZipOutputStream zos) throws FileNotFoundException, IOException, FileHandlerException {
+		try (InputStream fis = loadPhoto(photo)){
+			ZipEntry zipEntry = new ZipEntry(photo.getFilePath());
 			zos.putNextEntry(zipEntry);
 	
 			byte[] bytes = new byte[1024];
@@ -165,8 +172,8 @@ public class FileHandler {
 	 * @throws FileHandlerException
 	 */
 	public void archiveProject() throws FileHandlerException {
-		File targetDir = new File(ARCHIVE_DIR, project.getId().get().toString()+"/");
-		if (!targetDir.exists()) {
+		File targetDir = new File(archiveDir(), project.getId().get().toString());
+		if (!targetDir.isDirectory()) {
 			try {
 				targetDir.mkdirs();
 				Files.move(projectDir, targetDir);

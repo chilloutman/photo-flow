@@ -1,85 +1,69 @@
 package ch.zhaw.photoflow.core;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
 
 public class FileHandlerTest {
-
+	
+	private static File TEST_DIR;
+	
 	private FileHandler fileHandler;
 	private Project project;
 	private Photo photo1, photo2, photo3, photo4;
-	private List<Photo> pList;
-	private static String userHome = System.getProperty("user.home");
-	private File file, file2, file3, file4;
-	private static boolean cleanUpDone = false;
+	private List<Photo> photos;
+	private File file1, file2, file3, file4;
+	
+	@BeforeClass
+	public static void beforeClass() throws IOException {
+		TEST_DIR = Files.createTempDirectory("FileHandlerTest").toFile();
+		TEST_DIR.deleteOnExit();
+		FileHandler.USER_HOME_DIR = TEST_DIR;
+	}
 	
 	@Before
-	public void before() throws IOException {
-		
-		// Working directories
-		File f = new File(userHome+"/Test/");
-		File f2 = new File(userHome+"/PhotoFlow/");
-		
-		// Execute CleanUp only once to check Files at the End in Explorer
-		if(!cleanUpDone){
-			// Clean first, that after Test can be manually checked if Files get created
-			if(f.exists()){
-				deleteDirectory(f);
-			}
-			if(f2.exists()){
-				deleteDirectory(f2);
-			}
-			// SetUp only Once
-			cleanUpDone = true;
-		}
-		
+	public void before() throws IOException, FileHandlerException {
 		// Prepare Test with dummy Testdata
 		project = Project.newProject();
 		project.setId(1234);
-		try {
-			fileHandler = new FileHandler(project);
-		} catch (FileHandlerException e) {
-			e.printStackTrace();
-		}
+		fileHandler = new FileHandler(project);
 		
-		// Test directory(For Zip and Import) and PhotoFlow directory
-		f.mkdir();
-		f2.mkdir();
+		file1 = new File(TEST_DIR, "test1.jpg");
+		file2 = new File(TEST_DIR, "test2.jpg");
+		file3 = new File(TEST_DIR, "test3.jpg");
+		file4 = new File(TEST_DIR, "test4.jpg");
 		
-		file = new File(userHome+"/Test/test.jpg");
-		file2 = new File(userHome+"/Test/test2.jpg");
-		file3 = new File(userHome+"/Test/test.jpg");
-		file4 = new File(userHome+"/Test/test3.jpg");
-		file.createNewFile();
+		file1.createNewFile();
 		file2.createNewFile();
 		file3.createNewFile();
 		file4.createNewFile();
-		photo1 = Photo.newPhoto();
-		photo2 = Photo.newPhoto();
-		photo3 = Photo.newPhoto();
-		photo4 = Photo.newPhoto();
-		photo1.setFilePath(userHome+"/Test/test.jpg");
-		photo2.setFilePath(userHome+"/Test/test2.jpg");
-		photo3.setFilePath(userHome+"/Test/test3.jpg");
-		photo4.setFilePath(userHome+"/Test/testNotExist.jpg");
-		pList = new ArrayList<Photo>();
-		pList.add(photo1);
-		pList.add(photo2);
-		pList.add(photo3);
+		
+		photo1 = Photo.newPhoto(p -> p.setFilePath(file1.getName()));
+		photo2 = Photo.newPhoto(p -> p.setFilePath(file2.getName()));
+		photo3 = Photo.newPhoto(p -> p.setFilePath(file3.getName()));
+		photo4 = Photo.newPhoto(p -> p.setFilePath("testNotExist.jpg"));
+		
+		photos = Arrays.asList(photo1, photo2, photo3);
+	}
+	
+	@After
+	public void after () throws FileHandlerException {
+		fileHandler.deleteProject();
 	}
 	
 	/**
@@ -87,7 +71,6 @@ public class FileHandlerTest {
 	 */
 	@Test
 	public void checkDirectoriesCreated() {
-		assertTrue(FileHandler.WORKING_DIR.isDirectory());
 		assertTrue(fileHandler.getProjectDir().isDirectory());
 	}
 	
@@ -97,8 +80,11 @@ public class FileHandlerTest {
 	 * @throws IOException
 	 */
 	@Test
-	public void checkExportZip() throws FileNotFoundException, FileHandlerException{
-		assertTrue(fileHandler.exportZip(userHome+"/Test/test.zip", pList).isFile());
+	public void checkExportZip() throws FileHandlerException {
+		fileHandler.importPhoto(photo1, file1);
+		fileHandler.importPhoto(photo2, file2);
+		fileHandler.importPhoto(photo3, file3);
+		assertTrue(fileHandler.exportZip(TEST_DIR + "test.zip", photos).isFile());
 	}
 	
 	/**
@@ -107,20 +93,9 @@ public class FileHandlerTest {
 	 */
 	@Test(expected=FileHandlerException.class)
 	public void checkLoadPhoto() throws FileHandlerException {
+		fileHandler.importPhoto(photo3, file3);
 		assertTrue(fileHandler.getPhotoFile(photo3).isFile());
 		fileHandler.loadPhoto(photo4);
-	}
-	
-	/**
-	 * Checks import of new photos. Throws an exception if the file already exists.
-	 * @throws FileHandlerException 
-	 */
-	@Test(expected=FileHandlerException.class)
-	public void checkImportPhoto() throws FileHandlerException {
-		assertThat(fileHandler.importPhoto(photo1, file).getCreationDate(), notNullValue());
-		assertThat(fileHandler.importPhoto(photo2, file2).getFilePath(), notNullValue());
-		Photo returnPhoto = fileHandler.importPhoto(photo1, file3);
-		assertTrue(returnPhoto == null);
 	}
 	
 	/**
@@ -131,33 +106,15 @@ public class FileHandlerTest {
 	 */
 	@Test
 	public void checkArchiveProject() throws IOException, FileHandlerException {
-		fileHandler.importPhoto(photo1, file);
+		fileHandler.importPhoto(photo1, file1);
 		fileHandler.importPhoto(photo2, file2);
 		fileHandler.archiveProject();
 		assertFalse(fileHandler.getProjectDir().isDirectory());
 		assertFalse(fileHandler.getProjectDir().exists());
-		if (file.exists()&&file2.exists()) {
-			file.delete();
+		if (file1.exists()&&file2.exists()) {
+			file1.delete();
 			file2.delete();
 		}
 	}
-	
-	/**
-	 * Private method used to cleanup Testdata Directories and Files
-	 * @param path
-	 * @return
-	 */
-	private boolean deleteDirectory(File path) {
-		if (path.exists()) {
-			File[] files = path.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory()) {
-					deleteDirectory(files[i]);
-				} else {
-					files[i].delete();
-				}
-			}
-		}
-		return (path.delete());
-	}
+
 }

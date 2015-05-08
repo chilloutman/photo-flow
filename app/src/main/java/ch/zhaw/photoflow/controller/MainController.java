@@ -227,7 +227,7 @@ public class MainController extends AbstractController implements Initializable 
 				setText("");
 				return;
 			}
-			
+
 			try {
 				StringProperty nameProperty = JavaBeanStringPropertyBuilder.create().bean(project).name("name").build();
 				textProperty().bind(nameProperty);

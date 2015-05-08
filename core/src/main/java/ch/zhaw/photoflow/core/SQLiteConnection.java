@@ -29,7 +29,7 @@ public class SQLiteConnection {
 			config.enforceForeignKeys(true);
 			
 			try {
-				this.connection = DriverManager.getConnection(DB_BASE_URL + FileHandler.getSqliteFile(), config.toProperties());
+				this.connection = DriverManager.getConnection(DB_BASE_URL + FileHandler.sqliteFile(), config.toProperties());
 			} catch (FileHandlerException e) {
 				throw new RuntimeException(e);
 			}
