@@ -5,6 +5,7 @@ import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
 import ch.zhaw.photoflow.core.dao.SqlitePhotoDao;
 import ch.zhaw.photoflow.core.dao.SqliteProjectDao;
 import ch.zhaw.photoflow.core.domain.PhotoWorkflow;
+import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 
 /**
@@ -22,41 +23,47 @@ public class PhotoFlow {
 	private final PhotoWorkflow photoWorkflow = new PhotoWorkflow();
 
 	public PhotoFlow() {
+		this(false);
 		if (DEBUG) {
-			photoDao = new InMemoryPhotoDao();
-			projectDao = new InMemoryProjectDao();
-
 			DummyData.addProjects(projectDao);
 			try {
 				DummyData.addPhotos(photoDao, projectDao.loadAll().stream().findAny().get());
 			} catch (DaoException e) { throw new RuntimeException(e); }
+		}
+	}
+	
+	public PhotoFlow(boolean test) {
+		if (test) {
+			photoDao = new InMemoryPhotoDao();
+			projectDao = new InMemoryProjectDao();
 		} else {
-			
-			//SQLite Initializer
 			SQLiteInitialize.initialize();
-			
 			photoDao = new SqlitePhotoDao();
 			projectDao = new SqliteProjectDao();
 		}
 	}
 
-	public FileHandler getFileHandler(int projectId) throws FileHandlerException {
+	public FileHandler fileHandler(Project project) throws FileHandlerException {
+		return new FileHandler(project.getId().get());
+	}
+	
+	public FileHandler fileHandler(int projectId) throws FileHandlerException {
 		return new FileHandler(projectId);
 	}
 
-	public PhotoDao getPhotoDao() {
+	public PhotoDao photoDao() {
 		return photoDao;
 	}
 
-	public ProjectDao getProjectDao() {
+	public ProjectDao projectDao() {
 		return projectDao;
 	}
 	
-	public ProjectWorkflow getProjectWorkflow () {
+	public ProjectWorkflow projectWorkflow () {
 		return projectWorkflow;
 	}
 	
-	public PhotoWorkflow getPhotoWorkflow () {
+	public PhotoWorkflow photoWorkflow () {
 		return photoWorkflow;
 	}
 	

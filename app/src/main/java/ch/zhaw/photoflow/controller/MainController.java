@@ -20,15 +20,15 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.KeyCode;
-import ch.zhaw.photoflow.Main;
+import javafx.scene.layout.Pane;
 import ch.zhaw.photoflow.core.DaoException;
-import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
-import ch.zhaw.photoflow.core.ProjectDao;
+import ch.zhaw.photoflow.core.PhotoFlow;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Tag;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
 
 public class MainController extends AbstractController implements Initializable {
 
@@ -37,12 +37,17 @@ public class MainController extends AbstractController implements Initializable 
 	 */
 	private final Project ADD_NEW_PROJECT = Project.newProject(p -> p.setName("+ New Project"));
 	
-	private final ProjectDao projectDao;
+	@Inject
+	private PhotoFlow photoFlow;
+	
 	private final ObservableList<Project> projects = FXCollections.observableArrayList();
 	private PopUpHandler popup;
 
 	@FXML
 	private ProjectController projectController;
+	
+	@FXML
+	private Pane project;
 
 	@FXML
 	private ListView<Project> projectList;
@@ -50,11 +55,12 @@ public class MainController extends AbstractController implements Initializable 
 	private String projectName;
 	private String projectDescription;
 	private List<Tag> tags = new ArrayList<>();
-
-	public MainController(ProjectDao projectDao) {
-		this.projectDao = projectDao;
+	
+	@VisibleForTesting
+	protected void setPhotoFlow(PhotoFlow photoFlow) {
+		this.photoFlow = photoFlow;
 	}
-
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		loadProjects();
@@ -69,11 +75,9 @@ public class MainController extends AbstractController implements Initializable 
 		projectList.setOnKeyPressed((keyevent) -> {
 			Project project = projectList.getSelectionModel().getSelectedItem();
 
-			if(KeyCode.DELETE.equals(keyevent.getCode())) {
+			if (KeyCode.DELETE.equals(keyevent.getCode())) {
 				deleteProject(project);
-			}
-			else if(ADD_NEW_PROJECT.equals(project) && KeyCode.ENTER.equals(keyevent.getCode()))
-			{
+			} else if (ADD_NEW_PROJECT.equals(project) && KeyCode.ENTER.equals(keyevent.getCode())) {
 				createProjectFromEvents();
 			}
 		});
@@ -81,8 +85,7 @@ public class MainController extends AbstractController implements Initializable 
 		projectList.setOnMouseClicked((mouseEvent) ->{
 			Project project = projectList.getSelectionModel().getSelectedItem();
 			
-			if(ADD_NEW_PROJECT.equals(project))
-			{
+			if (ADD_NEW_PROJECT.equals(project)) {
 				createProjectFromEvents();
 			}
 		});
@@ -95,14 +98,16 @@ public class MainController extends AbstractController implements Initializable 
 		try {
 			this.projects.clear();
 			this.projects.add(ADD_NEW_PROJECT);
-			this.projects.addAll(projectDao.loadAll());
+			this.projects.addAll(photoFlow.projectDao().loadAll());
 		} catch (DaoException e) {
+			e.printStackTrace();
+			// TODO error handling
 		}
 	}
 	
 	private void createProjectFromEvents()
 	{
-		projectController.setDisable(true);
+		project.setDisable(true);
 		popup = new PopUpHandler();
 		Optional<Project> newProject = createProject();
 
@@ -124,7 +129,7 @@ public class MainController extends AbstractController implements Initializable 
 //				projectList.getSelectionModel().select(newProject.orElse(null));
 //			});
 		} else {
-			projectController.setDisable(false);
+			project.setDisable(false);
 			projectController.setProject(selectedProject);
 		}
 	}
@@ -162,7 +167,7 @@ public class MainController extends AbstractController implements Initializable 
 	 */
 	public void addProject(Project project) {
 		try {
-			projectDao.save(project);
+			photoFlow.projectDao().save(project);
 			this.projects.add(project);
 			System.out.println(this.projects);
 		} catch (DaoException e) {
@@ -187,12 +192,12 @@ public class MainController extends AbstractController implements Initializable 
 		}
 		
 		try {
-			FileHandler fileHandler = Main.PHOTO_FLOW.getFileHandler(project.getId().get());
-			fileHandler.deleteProject();
-			projectDao.delete(project);
-			this.projects.remove(project);
+			photoFlow.fileHandler(project).deleteProject();
+			photoFlow.projectDao().delete(project);
+			projects.remove(project);
 		} catch (DaoException e) {
 			// TODO: Warn user
+			e.printStackTrace();
 		} catch (FileHandlerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

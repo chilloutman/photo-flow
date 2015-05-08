@@ -3,14 +3,12 @@
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-
-<?import ch.zhaw.photoflow.controller.PhotoController ?>
 <?import javafx.geometry.Insets?>
 
 
-<fx:root type="javafx.scene.layout.BorderPane" xmlns:fx="http://javafx.com/fxml" stylesheets="@photo-flow.css">
+<BorderPane fx:controller="ch.zhaw.photoflow.controller.ProjectController" stylesheets="@photo-flow.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
 	<top>
-		<Pane fx:id="projectPane" prefHeight="75" styleClass="light-background">
+		<Pane prefHeight="75" styleClass="light-background">
 			<children>
 				<TextField fx:id="projectNameField" layoutX="20.0" layoutY="27.0" text="Project Name" />
 				<Button fx:id="newButton" styleClass="workflowButton" layoutX="250.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text=""/>
@@ -46,6 +44,6 @@
 		</ScrollPane>
 	</center>
 	<right>
-		<PhotoController fx:id="photoController" prefWidth="250" styleClass="light-background"/>
+		<fx:include fx:id="photo" source="photo.fxml"/>
 	</right>
-</fx:root>
+</BorderPane>

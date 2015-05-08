@@ -1,9 +1,10 @@
 apply plugin:'application'
 
-mainClassName = 'ch.zhaw.photoflow.Main'
+mainClassName = 'ch.zhaw.photoflow.PhotoFlowApplication'
 
 dependencies {
   compile(
-    project(':core')
+    project(':core'),
+    'com.cathive.fx:fx-guice:8.0.0'
   )
 }

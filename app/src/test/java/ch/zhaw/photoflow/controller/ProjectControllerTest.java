@@ -1,16 +1,18 @@
 package ch.zhaw.photoflow.controller;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.PhotoDao;
-import ch.zhaw.photoflow.core.PhotoFlow;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.dao.InMemoryPhotoDao;
 import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
@@ -19,9 +21,9 @@ import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
 
-public class ProjectControllerTest {
+@Ignore
+public class ProjectControllerTest extends ControllerTest<ProjectController> {
 
-	private final PhotoFlow photoFlow = new PhotoFlow();
 	private ProjectController projectController;
 	
 	private static final Integer PROJECT_1 = 1;
@@ -38,10 +40,11 @@ public class ProjectControllerTest {
 	private Photo photo3;
 	
 	@Before
-	public void before() throws DaoException, SQLException {
+	public void before() throws DaoException, SQLException, IOException {
 		projectDao = new InMemoryProjectDao();
 		photoDao = new InMemoryPhotoDao();
-		projectController = new ProjectController(projectDao, photoDao, photoFlow.getProjectWorkflow(), photoFlow.getPhotoWorkflow());
+		
+		projectController = initController(ProjectController.class.getResource("../view/project.fxml"));
 		
 		//Initialize ProjectDao Testdata
 		project1 = Project.newProject(p -> {
@@ -123,13 +126,13 @@ public class ProjectControllerTest {
 		Photo photo = Photo.newPhoto(p -> {
 			p.setProjectId(PROJECT_1);
 			p.setFilePath("yolo.jpg");
-		});		
+		});
 		
 		projectController.setProject(project1);
 		
 		projectController.flagPhoto(photo);
 		assertEquals("Photo has not been flagged(Illegal Project State)", PhotoState.NEW, photo.getState());
-		photoFlow.getProjectWorkflow().transition(project1, projectController.getPhotos(), ProjectState.IN_WORK);
+		project1.setState(ProjectState.IN_WORK);
 		projectController.flagPhoto(photo);
 		assertEquals("Photo has been flagged(Legal Project State)", PhotoState.FLAGGED, photo.getState());
 	}

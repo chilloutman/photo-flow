@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
 
-<fx:root type="javafx.scene.layout.AnchorPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40">
+<AnchorPane prefWidth="250" styleClass="light-background" fx:controller="ch.zhaw.photoflow.controller.PhotoController" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
 	<VBox spacing="50" fillWidth="true" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 		<padding><Insets top="10" left="10" bottom="10" right="10"/></padding>
 		<children>
@@ -24,4 +24,4 @@
 			</HBox>
 		</children>
 	</VBox>
-</fx:root>
+</AnchorPane>

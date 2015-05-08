@@ -12,14 +12,14 @@
 
 <?import ch.zhaw.photoflow.controller.ProjectController ?>
 
-<AnchorPane prefHeight="800" prefWidth="1400" stylesheets="@photo-flow.css" styleClass="dark-background" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:controller="ch.zhaw.photoflow.controller.MainController" prefHeight="800" prefWidth="1400" stylesheets="@photo-flow.css" styleClass="dark-background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<BorderPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" style="-fx-box-border: transparent; -fx-focus-color: transparent;-fx-border-width: 0px;">
 			<left>
 				<ListView fx:id="projectList"/>
 			</left>
 			<center>
-				<ProjectController fx:id="projectController"/>
+				<fx:include fx:id="project" source="project.fxml"/>
 			</center>
 		</BorderPane>
 	</children>
