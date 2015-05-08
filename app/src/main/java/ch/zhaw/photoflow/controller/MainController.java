@@ -13,6 +13,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -146,6 +149,17 @@ public class MainController extends AbstractController implements Initializable 
 	 * @param project the project to be deleted
 	 */
 	public void deleteProject(Project project) {
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Löschbestätigung");
+		alert.setHeaderText("Projekt und beinhaltende Bilder unwiderruflich löschen?");
+
+		alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+		Optional<ButtonType> result = alert.showAndWait();
+
+		if (result.get() != ButtonType.OK){
+			return;
+		}		
+		
 		try {
 			FileHandler fileHandler = Main.PHOTO_FLOW.getFileHandler(project);
 			fileHandler.deleteProject();
