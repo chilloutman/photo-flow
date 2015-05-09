@@ -15,8 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import org.controlsfx.control.CheckComboBox;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -35,6 +33,9 @@ import javafx.scene.layout.TilePane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.StringConverter;
+
+import org.controlsfx.control.CheckComboBox;
+
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
@@ -53,6 +54,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	private FileHandler fileHandler;
 	private List<Photo> photos = new ArrayList<Photo>();
 	final ObservableList<Todo> todos = FXCollections.observableArrayList();
+	private PopUpHandler popup;
+	private ImageViewer imageViewer;
+
 
 	/** Daemon threads for background task execution */
 	private final ExecutorService imageLoaderService = newImageLoaderService();
@@ -111,6 +115,15 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				view.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 					photoController.setPhoto(photo);
 				});
+				
+				view.setOnMouseClicked((event) -> {
+					if(event.getClickCount() == 2)
+					{
+						System.out.println("Döbel klicked");
+						imageViewer = new ImageViewer(photo, fileHandler);
+					}
+				});
+
 				photosPane.getChildren().add(view);
 				imageLoadingTasks.remove(task);
 			});

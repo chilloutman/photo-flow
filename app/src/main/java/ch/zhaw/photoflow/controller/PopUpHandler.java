@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 import ch.zhaw.photoflow.core.domain.Tag;
 
 public class PopUpHandler extends PhotoFlowController {
@@ -25,6 +26,8 @@ public class PopUpHandler extends PhotoFlowController {
 	private String name;
 	private String desc;
 	private List<Tag> tags;
+	//private FileHandler fileHandler;
+
 	
 	@FXML
 	private TextField textfieldProjectName;
@@ -48,6 +51,7 @@ public class PopUpHandler extends PhotoFlowController {
 	{		
 		Dialog<List<String>> dialog = new Dialog<>();
 		dialog.setTitle("Create Project");
+		dialog.initModality(Modality.NONE);
 
 		// Set the button types.
 		ButtonType createButtonType = new ButtonType("create", ButtonData.OK_DONE);
@@ -109,6 +113,8 @@ public class PopUpHandler extends PhotoFlowController {
 		});
 	
 	}
+	
+	
 	
 	/**
 	 * Cuts the received String in to single Tags and collects them in a List
