@@ -4,18 +4,12 @@
 	-fx-background: #444;
 }
 
-.combo-box-base .list-cell{
-	-fx-background-color: white;
-	-fx-border-color: #222;
+#todoCheckComboBoxPane .list-cell{
+	-fx-border-color: #fff;
 }
 
 .dark-background {
 	-fx-background: #222;
-}
-
-
-.workflowButton {
-    -fx-background-radius: 7em;
 }
 
 .list-cell {
@@ -31,8 +25,8 @@
 .list-cell:filled:selected {
 	-fx-background-color: #888;
 	-fx-background: #888;
-	
-	}
+}
+
 #exportProjectButton{
 	-fx-background-image: url('../export.png');
   	-fx-background-repeat: no-repeat;
@@ -52,6 +46,27 @@
   	-fx-background-repeat: no-repeat;
   	-fx-background-position: center;
   	-fx-background-size: 90% auto;
+}
+
+.workflowButtonRed {
+	-fx-background-image: url('../red_NA.png');
+  	-fx-background-repeat: no-repeat;
+  	-fx-background-position: center;
+  	-fx-background-size: 70% auto;
+  	-fx-background-radius: 7em;
+}
+
+.workflowButtonGreen {
+	-fx-background-image: url('../check_green.png');
+  	-fx-background-repeat: no-repeat;
+  	-fx-background-position: center;
+  	-fx-background-size: 80% auto;
+  	-fx-background-radius: 7em;
+}
+
+.workflowButton {
+	-fx-background-image: none;
+	-fx-background-radius: 7em;
 }
 
 .separator {
