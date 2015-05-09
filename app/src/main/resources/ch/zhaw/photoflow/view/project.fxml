@@ -4,6 +4,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import org.controlsfx.control.CheckComboBox?>
 
 
 <BorderPane fx:controller="ch.zhaw.photoflow.controller.ProjectController" stylesheets="@photo-flow.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
@@ -22,15 +23,11 @@
 				<Pane styleClass="separator" layoutX="535.0" layoutY="29.0" prefWidth="70" prefHeight="4" ></Pane>
 				<Button fx:id="archiveButton" styleClass="workflowButton" layoutX="610.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text=""/>
 				<Label text="Archive" layoutX="612.0" layoutY="55.0" />
-				<Button fx:id="importPhotoButton" layoutX="750.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
-				<MenuButton fx:id="todoButton" layoutX="850.0" layoutY="27.0" mnemonicParsing="false" prefHeight="13.0" prefWidth="80.0" text="TODO's">
-					<items>
-						<MenuItem mnemonicParsing="false" text="Action 1" />
-						<MenuItem mnemonicParsing="false" text="Action 2" />
-					</items>
-				</MenuButton>
-				<Button fx:id="archiveProjectButton" layoutX="970.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
-				<Button fx:id="exportProjectButton" layoutX="1040.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
+				
+				<Button fx:id="importPhotoButton" layoutX="700.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
+				<Pane fx:id="todoCheckComboBoxPane" layoutX="760.0" layoutY="27.0" prefHeight="13.0" prefWidth="120.0" />
+				<Button fx:id="archiveProjectButton" layoutX="960.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
+				<Button fx:id="exportProjectButton" layoutX="1030.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
 			</children>
 		</Pane>
 	</top>

@@ -1,5 +1,7 @@
 package ch.zhaw.photoflow.controller;
 
+import impl.org.controlsfx.skin.CheckComboBoxSkin;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,20 +15,26 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import org.controlsfx.control.CheckComboBox;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuButton;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.util.StringConverter;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
@@ -35,6 +43,7 @@ import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
+import ch.zhaw.photoflow.core.domain.Todo;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -43,10 +52,13 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	private Project project;
 	private FileHandler fileHandler;
 	private List<Photo> photos = new ArrayList<Photo>();
+	final ObservableList<Todo> todos = FXCollections.observableArrayList();
 
 	/** Daemon threads for background task execution */
 	private final ExecutorService imageLoaderService = newImageLoaderService();
 	private final Collection<ImageLoadingTask> imageLoadingTasks = new HashSet<>();
+
+	CheckComboBox<Todo> todoCheckComboBox;
 
 	@FXML
 	private PhotoController photoController;
@@ -56,7 +68,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	@FXML
 	Button newButton, importButton, editButton, archiveButton, importPhotoButton, archiveProjectButton, exportProjectButton;
 	@FXML
-	MenuButton todoButton;
+	Pane todoCheckComboBoxPane;
 	@FXML
 	TilePane photosPane;
 
@@ -269,6 +281,54 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		importPhotoButton.setOnAction(this::importPhotos);
 		archiveProjectButton.setOnAction(this::archiveProject);
 		exportProjectButton.setOnAction(this::exportProject);
+		
+		initializeTodoCheckComboBox();
+	}
+	
+	/**
+	 * Initializes the CheckComboBox for Todo tasks.
+	 */
+	private void initializeTodoCheckComboBox() {
+		
+		//TestData
+		Todo todo1 = new Todo("Test1");
+		Todo todo2 = new Todo("Test2");
+		Todo todo3 = new Todo("Test3");
+		
+		todos.add(todo1);
+		todos.add(todo2);
+		todos.add(todo3);
+		
+		todoCheckComboBox = new CheckComboBox<Todo>(todos);
+		todoCheckComboBoxPane.getChildren().add(todoCheckComboBox);
+
+		//Converter
+		todoCheckComboBox.converterProperty().set(
+				new StringConverter<Todo>() {
+
+					@Override
+					public Todo fromString(String string) {
+						
+						return null;
+					}
+
+					@Override
+					public String toString(Todo object) {
+						return object.getDescription();
+					}
+				}
+		);
+		
+		//Listener Required for resizing until Issue is resolved:
+		//https://bitbucket.org/controlsfx/controlsfx/issue/462/checkcombobox-ignores-prefwidth-maybe-any
+		todoCheckComboBox.skinProperty().addListener((observable, oldValue, newValue) -> {
+			if(oldValue==null && newValue!=null){
+                CheckComboBoxSkin<Todo> skin = (CheckComboBoxSkin<Todo>)newValue;
+                ComboBox<Todo> combo = (ComboBox<Todo>)skin.getChildren().get(0);
+                combo.setPrefWidth(180.0);
+                combo.setMaxWidth(Double.MAX_VALUE);
+            }
+		});
 		
 	}
 

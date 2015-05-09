@@ -5,6 +5,7 @@ mainClassName = 'ch.zhaw.photoflow.PhotoFlowApplication'
 dependencies {
   compile(
     project(':core'),
-    'com.cathive.fx:fx-guice:8.0.0'
+    'com.cathive.fx:fx-guice:8.0.0',
+    'org.controlsfx:controlsfx:8.20.8'
   )
 }

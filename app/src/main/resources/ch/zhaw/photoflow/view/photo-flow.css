@@ -4,6 +4,11 @@
 	-fx-background: #444;
 }
 
+.combo-box-base .list-cell{
+	-fx-background-color: white;
+	-fx-border-color: #222;
+}
+
 .dark-background {
 	-fx-background: #222;
 }
