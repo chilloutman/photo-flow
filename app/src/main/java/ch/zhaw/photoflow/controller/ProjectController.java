@@ -1,6 +1,5 @@
 package ch.zhaw.photoflow.controller;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +52,7 @@ import ch.zhaw.photoflow.controller.PhotoController.PhotoListener;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
+
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
@@ -280,6 +280,11 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	public void transitionState(Project project, ProjectState projectState) {
 		if (photoFlow.projectWorkflow().canTransition(project, this.photos, projectState)) {
 			photoFlow.projectWorkflow().transition(project, this.photos, projectState);
+			try {
+				photoFlow.projectDao().save(project);
+			} catch (DaoException e) {
+				// TODO: Inform user that saving failed
+			}
 			updateWorkflowButtons();
 			saveProject();
 		} else {
@@ -295,6 +300,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			// TODO display erroe message.
 			throw new RuntimeException(e);
 		}
+		updateWorkflowButtons();
 	}
 
 	public void archiveProject(ActionEvent event) {
@@ -329,74 +335,59 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	}
 	
 	public void updateWorkflowButtons() {
-		// TODO: Use Project Workflow for this!
-		// canTransition() can be used to determine which button should be neabled.
-		switch(project.getState()){
-		case NEW:
-			newButton.setDisable(false);
-			newButton.getStyleClass().removeAll();
-			newButton.getStyleClass().add("workflowButton");
-			importButton.setDisable(true);
-			importButton.getStyleClass().removeAll();
-			importButton.getStyleClass().add("workflowButtonRed");
-			editButton.setDisable(true);
-			editButton.getStyleClass().removeAll();
-			editButton.getStyleClass().add("workflowButtonRed");
-			finishButton.setDisable(true);
-			finishButton.getStyleClass().removeAll();
-			finishButton.getStyleClass().add("workflowButtonRed");
-			break;
-		case IN_WORK:
-			newButton.setDisable(true);
-			newButton.getStyleClass().removeAll();
-			newButton.getStyleClass().add("workflowButtonGreen");
-			importButton.setDisable(false);
-			importButton.getStyleClass().removeAll();
-			importButton.getStyleClass().add("workflowButton");
-			editButton.setDisable(false);
-			editButton.getStyleClass().removeAll();
-			editButton.getStyleClass().add("workflowButton");
-			finishButton.setDisable(true);
-			finishButton.getStyleClass().removeAll();
-			finishButton.getStyleClass().add("workflowButtonRed");
-			break;
-		case ARCHIVED:
-			newButton.setDisable(true);
-			newButton.getStyleClass().removeAll();
-			newButton.getStyleClass().add("workflowButtonGreen");
-			importButton.setDisable(true);
-			importButton.getStyleClass().removeAll();
-			importButton.getStyleClass().add("workflowButtonGreen");
-			editButton.setDisable(true);
-			editButton.getStyleClass().removeAll();
-			editButton.getStyleClass().add("workflowButtonGreen");
-			finishButton.setDisable(true);
-			finishButton.getStyleClass().removeAll();
-			finishButton.getStyleClass().add("workflowButtonGreen");
-			break;
-		case DONE:
-			newButton.setDisable(true);
-			newButton.getStyleClass().removeAll();
-			newButton.getStyleClass().add("workflowButtonGreen");
-			importButton.setDisable(true);
-			importButton.getStyleClass().removeAll();
-			importButton.getStyleClass().add("workflowButtonGreen");
-			editButton.setDisable(true);
-			editButton.getStyleClass().removeAll();
-			editButton.getStyleClass().add("workflowButtonGreen");
-			finishButton.setDisable(false);
-			finishButton.getStyleClass().removeAll();
-			finishButton.getStyleClass().add("workflowButton");
-			break;
-		case PAUSED:
+//		newButton.getStyleClass().removeAll();
+//		importButton.getStyleClass().removeAll();
+//		editButton.getStyleClass().removeAll();
+//		finishButton.getStyleClass().removeAll();
+//		
+//		newButton.getStyleClass().add("workflowButtonRed");
+//		importButton.getStyleClass().add("workflowButtonRed");
+//		editButton.getStyleClass().add("workflowButtonRed");
+//		finishButton.getStyleClass().add("workflowButtonRed");
+		
+		if(project.getState() == ProjectState.PAUSED){
 			newButton.setDisable(true);
 			importButton.setDisable(true);
 			editButton.setDisable(true);
 			finishButton.setDisable(true);
-			break;
-		default:
-			break;
+			archiveProjectButton.setDisable(true);
+			exportProjectButton.setDisable(true);
+		}else {
+			newButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.NEW));
+			importButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
+			editButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
+			finishButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.DONE));
+			importPhotoButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
+			exportProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
+			archiveProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 		}
+		
+//		switch(project.getState()){
+//		case NEW:
+//			newButton.getStyleClass().add("workflowButton");
+//			break;
+//		case IN_WORK:
+//			newButton.getStyleClass().add("workflowButtonGreen");
+//			importButton.getStyleClass().add("workflowButton");
+//			editButton.getStyleClass().add("workflowButton");
+//			break;
+//		case ARCHIVED:
+//			newButton.getStyleClass().add("workflowButtonGreen");
+//			importButton.getStyleClass().add("workflowButtonGreen");
+//			editButton.getStyleClass().add("workflowButtonGreen");
+//			finishButton.getStyleClass().add("workflowButtonGreen");
+//			break;
+//		case DONE:
+//			newButton.getStyleClass().add("workflowButtonGreen");
+//			importButton.getStyleClass().add("workflowButtonGreen");
+//			editButton.getStyleClass().add("workflowButtonGreen");
+//			finishButton.getStyleClass().add("workflowButton");
+//			break;
+//		case PAUSED:
+//			break;
+//		default:
+//			break;
+//		}
 	}
 
 	@Override

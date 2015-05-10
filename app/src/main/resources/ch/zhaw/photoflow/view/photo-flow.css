@@ -93,5 +93,6 @@
 .selected-photo {
 	-fx-border-color: #fff;
 	-fx-border-style: solid;
+	-fx-background-insets: 0 0 -1 0, 0, 1, 2;
 	-fx-border-width: 2px;
 }
