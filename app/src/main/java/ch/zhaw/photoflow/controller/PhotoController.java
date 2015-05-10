@@ -2,6 +2,8 @@ package ch.zhaw.photoflow.controller;
 
 import java.util.Optional;
 
+import org.controlsfx.control.Notifications;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
 import javafx.fxml.FXML;
@@ -43,6 +45,11 @@ public class PhotoController extends PhotoFlowController {
 			FileHandler fileHandler = photoFlow.fileHandler(photo.getProjectId().get());
 			metadataLabel.setText(fileHandler.loadPhotoMetadata(photo));
 		} catch (FileHandlerException e) {
+			Notifications.create()
+			.darkStyle()
+            .title("Error")
+            .text("Could not load any metadata from your photo :-(")
+            .showError();
 			metadataLabel.setText("Could not load photo metadata. :-(");
 		}
 		
@@ -65,6 +72,11 @@ public class PhotoController extends PhotoFlowController {
 			photoFlow.photoDao().save(photo);
 		} catch (DaoException e) {
 			// TODO: Warn user that photo couldn't be saved.
+			Notifications.create()
+			.darkStyle()
+            .title("Error")
+            .text("Your photo could not be safed somehow. Plese try again! Everybody needs a second chance :-)")
+            .showError();
 			throw new RuntimeException(e);
 		}
 	}
@@ -78,6 +90,11 @@ public class PhotoController extends PhotoFlowController {
 		} catch (DaoException e) {
 			this.photo.removeTag(tag);
 			// TODO: Inform user, that persistence failed
+			Notifications.create()
+			.darkStyle()
+            .title("Error")
+            .text("Your Tags could not be safed. You would not have used the anyway, right?")
+            .showError();
 			throw new RuntimeException(e);
 		}
 
@@ -92,6 +109,11 @@ public class PhotoController extends PhotoFlowController {
 		} catch (DaoException e) {
 			this.photo.addTag(tag);
 			// TODO: Inform user, that persistence failed
+			Notifications.create()
+			.darkStyle()
+            .title("Error")
+            .text("The photo tags could no be safed. Please try again.")
+            .showError();
 			throw new RuntimeException(e);
 		}
 	}

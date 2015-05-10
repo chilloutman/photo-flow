@@ -3,6 +3,8 @@ package ch.zhaw.photoflow.controller;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.controlsfx.control.Notifications;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -52,10 +54,13 @@ public class ImageViewer{
 			e.printStackTrace();
 		} catch (FileHandlerException e) {
 			// TODO Auto-generated catch block
+			Notifications.create()
+			.darkStyle()
+            .title("Error")
+            .text("Hmm, we could not load your photo. Just try again. It will work this time. We hope...")
+            .showError();
 			e.printStackTrace();
 		}
-		
-		
 		
 		Dialog<ButtonType> dialog = new Dialog<>();
 		ScrollPane scroll = new ScrollPane();

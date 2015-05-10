@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.controlsfx.control.Notifications;
+
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
@@ -51,6 +53,8 @@ public class MainController extends PhotoFlowController implements Initializable
 	private String projectName;
 	private String projectDescription;
 	private List<Tag> tags = new ArrayList<>();
+	
+	private Notifications notifications;
 	
 	@VisibleForTesting
 	protected void setPhotoFlow(PhotoFlow photoFlow) {
@@ -100,6 +104,11 @@ public class MainController extends PhotoFlowController implements Initializable
 		} catch (DaoException e) {
 			e.printStackTrace();
 			// TODO error handling
+			Notifications.create()
+			.darkStyle()
+            .title("Error")
+            .text("Could not load project! Please try restart PhotoFlow!")
+            .showError();
 		}
 	}
 	
@@ -126,7 +135,6 @@ public class MainController extends PhotoFlowController implements Initializable
 	 * Processes stuff for object {@link Project} and adds to list.
 	 */
 	public Optional<Project> createProject() {
-		// todo tag handling
 		if (popup.getName() != null) {
 			setProjectName(popup.getName());
 			setProjectDescription(popup.getDesc());
@@ -140,9 +148,19 @@ public class MainController extends PhotoFlowController implements Initializable
 				p.setTags(tags);
 			});
 			addProject(project);
+			Notifications.create()
+			.darkStyle()
+            .title("Success")
+            .text("Your new Project was successfully created!")
+            .showInformation();
 			System.out.println("project created");
 			return Optional.of(project);
 		} else {
+			Notifications.create()
+			.darkStyle()
+            .title("Cancel")
+            .text("You canceled the project creation!")
+            .showWarning();
 			System.out.println("canceled project creation");
 			return Optional.empty();
 		}

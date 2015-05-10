@@ -1,14 +1,13 @@
 package ch.zhaw.photoflow.controller;
 
-import ch.zhaw.photoflow.core.PhotoFlow;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-
 import javafx.beans.property.ReadOnlyFloatProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
 import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
+import ch.zhaw.photoflow.core.PhotoFlow;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
 
 
 public abstract class PhotoFlowController {
