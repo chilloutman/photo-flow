@@ -66,8 +66,10 @@ public class PopUpHandler extends PhotoFlowController {
 		TextField projectName = new TextField();
 		projectName.setPromptText("Project Name");
 		TextArea projectDescription = new TextArea();
+		projectDescription.setMaxHeight(400);
 		projectDescription.setPromptText("Project Description");
 		TextArea projectTags = new TextArea();
+		projectTags.setMaxHeight(50);
 		projectTags.setPromptText("Project Tags");
 
 		grid.add(new Label("Project Name:"), 0, 0);
