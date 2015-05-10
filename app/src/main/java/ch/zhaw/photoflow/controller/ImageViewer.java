@@ -3,8 +3,6 @@ package ch.zhaw.photoflow.controller;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.controlsfx.control.Notifications;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -28,18 +26,12 @@ public class ImageViewer{
 
 	private Image img;
 	private double scaleFactor = 0.3;
+	private ErrorHandler errorHandler = new ErrorHandler();
 	
 	@FXML
 	private ImageView popupImage;
 	
-	
-	@Inject
-	private GuiceFXMLLoader fxmlLoader;
-	
 	public ImageViewer(Photo photo, FileHandler fileHandler) {
-		// TODO Auto-generated constructor stub
-		System.out.println("über direkt");
-//		createImagePopup(photo, fileHandler);
 		createCanvas(photo, fileHandler);
 	}
 
@@ -50,16 +42,9 @@ public class ImageViewer{
 		try (InputStream file = fileHandler.loadPhoto(photo)) {
 			img = new Image(file);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FileHandlerException e) {
-			// TODO Auto-generated catch block
-			Notifications.create()
-			.darkStyle()
-            .title("Error")
-            .text("Hmm, we could not load your photo. Just try again. It will work this time. We hope...")
-            .showError();
-			e.printStackTrace();
+			errorHandler.spawnError("Hmm, we could not load your photo. Just try again. It will work this time. We hope...");
 		}
 		
 		Dialog<ButtonType> dialog = new Dialog<>();

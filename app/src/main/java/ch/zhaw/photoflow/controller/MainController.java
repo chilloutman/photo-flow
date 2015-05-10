@@ -39,6 +39,7 @@ public class MainController extends PhotoFlowController implements Initializable
 	
 	private final ObservableList<Project> projects = FXCollections.observableArrayList();
 	private PopUpHandler popup;
+	private ErrorHandler errorHandler = new ErrorHandler();
 
 	@FXML
 	private ProjectController projectController;
@@ -76,7 +77,7 @@ public class MainController extends PhotoFlowController implements Initializable
 		projectList.setOnKeyPressed((keyevent) -> {
 			Project project = projectList.getSelectionModel().getSelectedItem();
 
-			if (KeyCode.DELETE.equals(keyevent.getCode())) {
+			if (KeyCode.DELETE.equals(keyevent.getCode()) || KeyCode.BACK_SPACE.equals(keyevent.getCode())) {
 				deleteProject(project);
 			} else if (ADD_NEW_PROJECT.equals(project) && KeyCode.ENTER.equals(keyevent.getCode())) {
 				createProjectFromEvents();
@@ -102,12 +103,7 @@ public class MainController extends PhotoFlowController implements Initializable
 			this.projects.addAll(photoFlow.projectDao().loadAll());
 		} catch (DaoException e) {
 			e.printStackTrace();
-			// TODO error handling
-			Notifications.create()
-			.darkStyle()
-            .title("Error")
-            .text("Could not load project! Please try restart PhotoFlow!")
-            .showError();
+			errorHandler.spawnError("Could not load project! Please try restart PhotoFlow!");
 		}
 	}
 	
@@ -146,19 +142,11 @@ public class MainController extends PhotoFlowController implements Initializable
 				p.setTags(tags);
 			});
 			addProject(project);
-			Notifications.create()
-			.darkStyle()
-            .title("Success")
-            .text("Your new Project was successfully created!")
-            .showInformation();
+			errorHandler.spawnInformation("Your new Project was successfully created!");
 			System.out.println("project created");
 			return Optional.of(project);
 		} else {
-			Notifications.create()
-			.darkStyle()
-            .title("Cancel")
-            .text("You canceled the project creation!")
-            .showWarning();
+			errorHandler.spawnWarining("You canceled the project creation!");
 			System.out.println("canceled project creation");
 			return Optional.empty();
 		}

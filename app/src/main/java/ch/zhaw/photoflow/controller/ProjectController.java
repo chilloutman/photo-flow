@@ -32,6 +32,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
@@ -63,6 +64,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	final ObservableList<Todo> todos = FXCollections.observableArrayList();
 	private PopUpHandler popup;
 	private ImageViewer imageViewer;
+	private ErrorHandler errorHandler = new ErrorHandler();
 	
 	/** Daemon threads for background task execution */
 	private final ExecutorService imageLoaderService = newImageLoaderService();
@@ -123,11 +125,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			this.photos.clear();
 			this.photos.addAll(loadedPhotos);
 		} catch (DaoException e) {
-			Notifications.create()
-			.darkStyle()
-            .title("Oops")
-            .text("Something went wrong :-( Please try again!")
-            .showError();
+			errorHandler.spawnError("Something went wrong :-( Please try again!");
 			throw new RuntimeException(e);
 		}
 	}
@@ -147,18 +145,14 @@ public class ProjectController extends PhotoFlowController implements Initializa
 						imageViewer = new ImageViewer(photo, fileHandler);
 					}
 				});
-
+				
 				photosPane.getChildren().add(imageNode);
 				imageLoadingTasks.remove(task);
 			});
 			
 			task.onFailedProperty().addListener((observale, a, b) -> {
 				System.out.println("Loading photo failed: " + photo);
-				Notifications.create()
-				.darkStyle()
-	            .title("Cancel")
-	            .text("Darn! We could not load your Image "+photo.getFilePath())
-	            .showError();
+				errorHandler.spawnError("Darn! We could not load your Image "+photo.getFilePath());
 				imageLoadingTasks.remove(task);
 			});
 			
@@ -188,6 +182,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		
 		// Store this so that we can remove the styling next time.
 		selectedImageNode = Optional.of(imageNode);
+
 	}
 	
 	private ExecutorService newImageLoaderService () {
@@ -206,11 +201,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			photoFlow.photoDao().save(photo);
 			photos.add(photo);
 		} catch (DaoException e) {
-			Notifications.create()
-			.darkStyle()
-            .title("Error")
-            .text("We are so sorry. We tried really hard to add your photo to the project, but we failed...miserably!")
-            .showError();
+			errorHandler.spawnError("We are so sorry. We tried really hard to add your photo to the project, but we failed...miserably!");
 			throw new RuntimeException(e);
 		}
 	}
@@ -226,11 +217,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		List<File> selectedFiles = fileChooser.showOpenMultipleDialog(importButton.getScene().getWindow());
 		
 		if (selectedFiles == null) {
-			Notifications.create()
-			.darkStyle()
-            .title("Warning")
-            .text("You have not selected any photos, have you?")
-            .showWarning();
+			errorHandler.spawnWarining("You have not selected any photos, have you?");
 			return;
 		}
 		
@@ -243,18 +230,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				fileHandler.importPhoto(photo, file);
 				photoFlow.photoDao().save(photo);
 				photos.add(photo);
-				Notifications.create()
-				.darkStyle()
-	            .title("Success")
-	            .text("All your photos are belong to us!")
-	            .showInformation();
 			} catch (FileHandlerException e) {
 				System.out.println("FILEHANDLEREXCEPTION");
-				Notifications.create()
-				.darkStyle()
-	            .title("Error")
-	            .text("Could not load your Photo. Maybe it was deleted from your filesystem...")
-	            .showError();
+				errorHandler.spawnError("Could not load your Photo. Maybe it was deleted from your filesystem...");
 				e.printStackTrace();
 			} catch (DaoException e) {
 				System.out.println("DAOEXCEPTION");
@@ -263,6 +241,11 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			}
 			
 		}
+		Notifications.create()
+		.darkStyle()
+        .title("Success")
+        .text("All your photos are belong to us!")
+        .showInformation();
 		displayPhotos();
 		transitionState(this.project, ProjectState.IN_WORK);
 	}
@@ -272,11 +255,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			photoFlow.photoDao().delete(photo);
 			photos.remove(photo);
 		} catch (DaoException e) {
-			Notifications.create()
-			.darkStyle()
-            .title("Error")
-            .text("Your photo could not be deleted. Guess a 'sorry' would be appropriate...")
-            .showError();
+			errorHandler.spawnError("Your photo could not be deleted. Guess a 'sorry' would be appropriate...");
 			throw new RuntimeException(e);
 		}
 	}
@@ -312,6 +291,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		try {
 			fileHandler.archiveProject();
 			transitionState(this.project, ProjectState.ARCHIVED);
+			errorHandler.spawnInformation("Project was archived using cryo tech!");
 		} catch (FileHandlerException e) {
 			// TODO Auto-generated catch block.
 			throw new RuntimeException(e);
@@ -335,7 +315,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				throw new RuntimeException(e);
 			}
 		}
-		
+		errorHandler.spawnInformation("Your files were beeing transfered to new location: "+selectedFile.getAbsolutePath());
 	}
 	
 	public void updateWorkflowButtons() {

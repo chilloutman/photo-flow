@@ -20,6 +20,7 @@ public class PhotoController extends PhotoFlowController {
 
 	/** Currently selected photo. */
 	private Photo photo;
+	private ErrorHandler errorHandler = new ErrorHandler();
 	
 	private Optional<PhotoListener> listener;
 	
@@ -45,11 +46,7 @@ public class PhotoController extends PhotoFlowController {
 			FileHandler fileHandler = photoFlow.fileHandler(photo.getProjectId().get());
 			metadataLabel.setText(fileHandler.loadPhotoMetadata(photo));
 		} catch (FileHandlerException e) {
-			Notifications.create()
-			.darkStyle()
-            .title("Error")
-            .text("Could not load any metadata from your photo :-(")
-            .showError();
+			errorHandler.spawnError("Could not load any metadata from your photo :-(");
 			metadataLabel.setText("Could not load photo metadata. :-(");
 		}
 		
@@ -71,12 +68,7 @@ public class PhotoController extends PhotoFlowController {
 		try {
 			photoFlow.photoDao().save(photo);
 		} catch (DaoException e) {
-			// TODO: Warn user that photo couldn't be saved.
-			Notifications.create()
-			.darkStyle()
-            .title("Error")
-            .text("Your photo could not be safed somehow. Plese try again! Everybody needs a second chance :-)")
-            .showError();
+			errorHandler.spawnError("Your photo could not be safed somehow. Plese try again! Everybody needs a second chance :-)");
 			throw new RuntimeException(e);
 		}
 	}
@@ -89,12 +81,7 @@ public class PhotoController extends PhotoFlowController {
 			photoFlow.photoDao().save(this.photo);
 		} catch (DaoException e) {
 			this.photo.removeTag(tag);
-			// TODO: Inform user, that persistence failed
-			Notifications.create()
-			.darkStyle()
-            .title("Error")
-            .text("Your Tags could not be safed. You would not have used the anyway, right?")
-            .showError();
+			errorHandler.spawnError("Your Tags could not be safed. You would not have used the anyway, right?");
 			throw new RuntimeException(e);
 		}
 
@@ -109,11 +96,7 @@ public class PhotoController extends PhotoFlowController {
 		} catch (DaoException e) {
 			this.photo.addTag(tag);
 			// TODO: Inform user, that persistence failed
-			Notifications.create()
-			.darkStyle()
-            .title("Error")
-            .text("The photo tags could no be safed. Please try again.")
-            .showError();
+			errorHandler.spawnError("The photo tags could no be safed. Please try again.");
 			throw new RuntimeException(e);
 		}
 	}
