@@ -294,6 +294,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	}
 	
 	public void updateWorkflowButtons() {
+		// TODO: Use Project Workflow for this!
+		// canTransition() can be used to determine which button should be neabled.
 		switch(project.getState()){
 		case NEW:
 			newButton.setDisable(false);
