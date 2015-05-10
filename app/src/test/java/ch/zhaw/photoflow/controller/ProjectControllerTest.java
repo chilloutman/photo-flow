@@ -14,7 +14,6 @@ import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Photo;
-import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
 
@@ -111,22 +110,6 @@ public class ProjectControllerTest extends ControllerTest<ProjectController> {
 		
 		projectController.deletePhoto(photo);
 		assertFalse(projectController.getPhotos().contains(photo));
-	}
-	
-	@Test
-	public void flagPhotos() {
-		Photo photo = Photo.newPhoto(p -> {
-			p.setProjectId(PROJECT_1);
-			p.setFilePath("yolo.jpg");
-		});
-		
-		projectController.setProject(project1);
-		
-		projectController.flagPhoto(photo);
-		assertEquals("Photo has not been flagged(Illegal Project State)", PhotoState.NEW, photo.getState());
-		project1.setState(ProjectState.IN_WORK);
-		projectController.flagPhoto(photo);
-		assertEquals("Photo has been flagged(Legal Project State)", PhotoState.FLAGGED, photo.getState());
 	}
 
 	@Test

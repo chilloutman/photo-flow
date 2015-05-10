@@ -1,15 +1,17 @@
 package ch.zhaw.photoflow.controller;
 
+import java.util.Optional;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
-import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Tag;
 
 public class PhotoController extends PhotoFlowController {
@@ -17,9 +19,18 @@ public class PhotoController extends PhotoFlowController {
 	/** Currently selected photo. */
 	private Photo photo;
 	
+	private Optional<PhotoListener> listener;
+	
+	@FXML
+	private Button flagButton, discardButton;
+	
 	@FXML
 	private Label filePathLabel, fileSizeLabel, metadataLabel;
-
+	
+	public void setListener(PhotoListener listener) {
+		this.listener = Optional.of(listener);
+	}
+	
 	public void setPhoto(Photo photo) {
 		System.out.println("Photo has been selected: " + photo);
 		this.photo = photo;
@@ -34,29 +45,30 @@ public class PhotoController extends PhotoFlowController {
 		} catch (FileHandlerException e) {
 			metadataLabel.setText("Could not load photo metadata. :-(");
 		}
+		
+		flagButton.setOnAction(event -> {
+			listener.ifPresent(listener -> {
+				listener.flagPhoto(photo);
+				savePhoto();
+			});
+		});
+		discardButton.setOnAction(event -> {
+			listener.ifPresent(listener -> {
+				listener.discardPhoto(photo);
+				savePhoto();
+			});
+		});
 	}
-
-	/**
-	 * Sets the state of the specified @{link Photo} object to the given
-	 * photoState.
-	 * 
-	 * @param project
-	 * @param photoState
-	 */
-	public void transitionState(Project project, PhotoState photoState) {
-		photoFlow.photoWorkflow().transition(project, photo, photoState);
+	
+	private void savePhoto() {
 		try {
 			photoFlow.photoDao().save(photo);
 		} catch (DaoException e) {
-			try {
-				this.photo = photoFlow.photoDao().load(photo.getId().get()).get();
-				// TODO: Warn user that photo couldn't get saved.
-			} catch (DaoException e1) {
-				// TODO: Warn user that photo couldn't get rolled back.
-			}
+			// TODO: Warn user that photo couldn't be saved.
+			throw new RuntimeException(e);
 		}
 	}
-
+	
 	public void addTag(String tagName) {
 		Tag tag = new Tag(tagName);
 		this.photo.addTag(tag);
@@ -66,6 +78,7 @@ public class PhotoController extends PhotoFlowController {
 		} catch (DaoException e) {
 			this.photo.removeTag(tag);
 			// TODO: Inform user, that persistence failed
+			throw new RuntimeException(e);
 		}
 
 	}
@@ -79,7 +92,24 @@ public class PhotoController extends PhotoFlowController {
 		} catch (DaoException e) {
 			this.photo.addTag(tag);
 			// TODO: Inform user, that persistence failed
+			throw new RuntimeException(e);
 		}
 	}
-
+	
+	public static interface PhotoListener {
+	
+		/**
+		 * Sets the status of the specified {@link Photo} object to {@link PhotoState#FLAGGED}.
+		 * @param photo
+		 */
+		public void flagPhoto(Photo photo);
+		
+		/**
+		 * Sets the status of the specified {@link Photo} object to {@link PhotoState#DISCARDED}.
+		 * @param photo
+		 */
+		public void discardPhoto(Photo photo);
+		
+	}
+	
 }

@@ -34,4 +34,20 @@ public class PhotoWorkflow extends AbstractWorkflow<PhotoState> {
 		});
 	}
 	
+	public boolean canFlag(Project project, Photo photo) {
+		return canTransition(project, photo, PhotoState.FLAGGED);
+	}
+	
+	public boolean canDiscard(Project project, Photo photo) {
+		return canTransition(project, photo, PhotoState.DISCARDED);
+	}
+	
+	public void flag(Project project, Photo photo) {
+		transition(project, photo, PhotoState.FLAGGED);
+	}
+	
+	public void discard(Project project, Photo photo) {
+		transition(project, photo, PhotoState.DISCARDED);
+	}
+	
 }

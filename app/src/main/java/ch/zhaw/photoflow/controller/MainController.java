@@ -64,7 +64,9 @@ public class MainController extends PhotoFlowController implements Initializable
 		projectList.setCellFactory(listView -> new ProjectCell());
 		projectList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		projectList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-			projectSelected(newValue);
+			if (newValue != null) {
+				projectSelected(newValue);
+			}
 		});
 		
 		//Deletelistener
@@ -114,17 +116,7 @@ public class MainController extends PhotoFlowController implements Initializable
 	}
 	
 	public void projectSelected(Project selectedProject) {
-		if (selectedProject == ADD_NEW_PROJECT) {
-//			// TODO: Could we not block the UI here and use a listener instead?
-//			projectController.setDisable(true);
-//			popup = new PopUpHandler();
-//			Optional<Project> newProject = createProject();
-//
-//			// Update selection
-//			Platform.runLater(() -> {
-//				projectList.getSelectionModel().select(newProject.orElse(null));
-//			});
-		} else {
+		if (selectedProject != ADD_NEW_PROJECT) {
 			project.setDisable(false);
 			projectController.setProject(selectedProject);
 		}
@@ -224,7 +216,7 @@ public class MainController extends PhotoFlowController implements Initializable
 			super.updateItem(project, empty);
 
 			textProperty().unbind();
-			if (empty){
+			if (empty) {
 				setText("");
 				return;
 			}

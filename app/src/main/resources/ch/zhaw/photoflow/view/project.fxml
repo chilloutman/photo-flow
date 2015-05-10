@@ -34,7 +34,7 @@
 	<center>
 		<ScrollPane hbarPolicy="NEVER" fitToWidth="true" style="-fx-box-border: transparent; -fx-focus-color: transparent;">
 			<content>
-				<TilePane fx:id="photosPane" alignment="TOP_LEFT" tileAlignment="CENTER" hgap="25" vgap="25">
+				<TilePane fx:id="photosPane" alignment="CENTER" tileAlignment="CENTER" hgap="10" vgap="10">
 					<padding><Insets top="25" left="25" bottom="25" right="25"/></padding>
 				</TilePane>
 			</content>

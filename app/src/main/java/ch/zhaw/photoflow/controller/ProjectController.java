@@ -8,8 +8,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,14 +24,16 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -36,6 +41,7 @@ import javafx.util.StringConverter;
 
 import org.controlsfx.control.CheckComboBox;
 
+import ch.zhaw.photoflow.controller.PhotoController.PhotoListener;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
@@ -56,13 +62,12 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	final ObservableList<Todo> todos = FXCollections.observableArrayList();
 	private PopUpHandler popup;
 	private ImageViewer imageViewer;
-
-
+	
 	/** Daemon threads for background task execution */
 	private final ExecutorService imageLoaderService = newImageLoaderService();
 	private final Collection<ImageLoadingTask> imageLoadingTasks = new HashSet<>();
 
-	CheckComboBox<Todo> todoCheckComboBox;
+	private CheckComboBox<Todo> todoCheckComboBox;
 
 	@FXML
 	private PhotoController photoController;
@@ -75,8 +80,17 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	Pane todoCheckComboBoxPane, separatorOne, separatorTwo, separatorThree;
 	@FXML
 	TilePane photosPane;
+	
+	private final Map<Photo, Node> photoNodes = new HashMap<>();
+	private Optional<Node> selectedImageNode = Optional.empty();
+	private static final String SELECTED_STYLE = "selected-photo";
+	private static final String DISCARDED_STYLE = "discarded-photo";
+	private static final String FLAGGED_STYLE = "flagged-photo";
 
 	public void setProject(Project project) {
+		if (this.project == project ) {
+			return;
+		}
 		projectNameField.setText(project.getName());
 		System.out.println("Project \"" + project.getName() + "\" has been selected.");
 		this.project = project;
@@ -87,7 +101,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		}
 		loadPhotos();
 		displayPhotos();
-		setWorkflowButtons();
+		updateWorkflowButtons();
 	}
 	
 	private void loadPhotos() {
@@ -97,34 +111,28 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			this.photos.addAll(loadedPhotos);
 		} catch (DaoException e) {
 			// TODO: Inform user that loading failed
+			throw new RuntimeException(e);
 		}
 	}
 	
 	private void displayPhotos() {
-		// Cancel all previous tasks
-		imageLoadingTasks.forEach(task -> task.cancel(true));
-		imageLoadingTasks.clear();
-		photosPane.getChildren().clear();
+		resetPhotosPane();
 		
 		for (Photo photo : photos) {
 			ImageLoadingTask task = new ImageLoadingTask(photo, fileHandler);
 			
-			task.valueProperty().addListener((observable, oldImage, image) -> {
-				//System.out.println("Creating ImageView for image");
-				ImageView view = new ImageView(image);
-				view.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-					photoController.setPhoto(photo);
-				});
+			task.valueProperty().addListener((observable, old, imageNode) -> {
+				photoNodes.put(photo, imageNode);
 				
-				view.setOnMouseClicked((event) -> {
-					if(event.getClickCount() == 2)
-					{
+				imageNode.setOnMouseClicked((event) -> {
+					selectPhoto(photo);
+					if (event.getClickCount() == 2) {
 						System.out.println("Döbel klicked");
 						imageViewer = new ImageViewer(photo, fileHandler);
 					}
 				});
 
-				photosPane.getChildren().add(view);
+				photosPane.getChildren().add(imageNode);
 				imageLoadingTasks.remove(task);
 			});
 			
@@ -137,6 +145,29 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			imageLoadingTasks.add(task);
 			imageLoaderService.execute(task);
 		}
+	}
+	
+	private void resetPhotosPane() {
+		// Cancel all previous tasks
+		imageLoadingTasks.forEach(task -> task.cancel(true));
+		imageLoadingTasks.clear();
+		
+		photosPane.getChildren().clear();
+		photoNodes.clear();
+	}
+	
+	private void selectPhoto(Photo photo) {
+		Node imageNode = photoNodes.get(photo);
+		
+		// Apply selected style
+		selectedImageNode.ifPresent(v -> v.getStyleClass().remove(SELECTED_STYLE));
+		imageNode.getStyleClass().add(SELECTED_STYLE);
+		
+		// Update photo detail view
+		photoController.setPhoto(photo);
+		
+		// Store this so that we can remove the styling next time.
+		selectedImageNode = Optional.of(imageNode);
 	}
 	
 	private ExecutorService newImageLoaderService () {
@@ -157,6 +188,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		} catch (DaoException e) {
 			// TODO: Inform user that photo could not be added to the actual
 			// project
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -204,8 +236,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			photoFlow.photoDao().delete(photo);
 			photos.remove(photo);
 		} catch (DaoException e) {
-			
 			// TODO: Inform user that deletion failed
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -219,7 +251,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	public void transitionState(Project project, ProjectState projectState) {
 		if (photoFlow.projectWorkflow().canTransition(project, this.photos, projectState)) {
 			photoFlow.projectWorkflow().transition(project, this.photos, projectState);
-			setWorkflowButtons();
+			updateWorkflowButtons();
 
 			try {
 				photoFlow.projectDao().save(project);
@@ -228,23 +260,6 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			}
 		} else {
 			// Inform User
-		}
-	}
-
-	/**
-	 * Sets the status of the specified {@link Photo} object to
-	 * {@link PhotoState.Flagged}.
-	 * 
-	 * @param photo
-	 */
-	public void flagPhoto(Photo photo) {
-		if (photoFlow.photoWorkflow().canTransition(this.project, photo, PhotoState.FLAGGED)) {
-			this.photos.remove(photo);
-			photoFlow.photoWorkflow().transition(this.project, photo, PhotoState.FLAGGED);
-			this.photos.add(photo);
-		}
-		else {
-			// TODO Inform user
 		}
 	}
 
@@ -278,7 +293,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		
 	}
 	
-	public void setWorkflowButtons() {
+	public void updateWorkflowButtons() {
 		switch(project.getState()){
 		case NEW:
 			newButton.setDisable(false);
@@ -349,12 +364,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// direct connection to TextField in FXML GUI
 		projectNameField.setText("new Project");
 		
-		exportProjectButton.setTooltip(new Tooltip("Export Project"));
-		archiveProjectButton.setTooltip(new Tooltip("Archive Project"));
-		importPhotoButton.setTooltip(new Tooltip("Import a new Photo"));
+		initializeTooltips();
+		initializePhotoListener();
 		
 		//Disable first TODO
 		//this.setDisable(true);
@@ -368,6 +381,45 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		exportProjectButton.setOnAction(this::exportProject);
 		
 		initializeTodoCheckComboBox();
+	}
+	
+	private void initializeTooltips() {
+		exportProjectButton.setTooltip(new Tooltip("Export Project"));
+		archiveProjectButton.setTooltip(new Tooltip("Archive Project"));
+		importPhotoButton.setTooltip(new Tooltip("Import a new Photo"));
+	}
+	
+	private void initializePhotoListener() {
+		photoController.setListener(new PhotoListener() {
+			
+			@Override
+			public void flagPhoto(Photo photo) {
+				if (photoFlow.photoWorkflow().canFlag(project, photo)) {
+					photoFlow.photoWorkflow().flag(project, photo);
+					
+					photoNodes.get(photo).getStyleClass().remove(DISCARDED_STYLE);
+					photoNodes.get(photo).getStyleClass().add(FLAGGED_STYLE);
+					
+					System.out.println("Photo flagged: " + photo);
+				} else {
+					// TODO Button should have been disabled.
+				}
+			}
+			
+			@Override
+			public void discardPhoto(Photo photo) {
+				if (photoFlow.photoWorkflow().canDiscard(project, photo)) {
+					photoFlow.photoWorkflow().discard(project, photo);
+					
+					photoNodes.get(photo).getStyleClass().remove(FLAGGED_STYLE);
+					photoNodes.get(photo).getStyleClass().add(DISCARDED_STYLE);
+					
+					System.out.println("Photo discarded: " + photo);
+				} else {
+					// TODO Button should have been disabled.
+				}
+			}
+		});
 	}
 	
 	/**
@@ -406,18 +458,21 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		
 		//Listener Required for resizing until Issue is resolved:
 		//https://bitbucket.org/controlsfx/controlsfx/issue/462/checkcombobox-ignores-prefwidth-maybe-any
+		
 		todoCheckComboBox.skinProperty().addListener((observable, oldValue, newValue) -> {
 			if(oldValue==null && newValue!=null){
-                CheckComboBoxSkin<Todo> skin = (CheckComboBoxSkin<Todo>)newValue;
-                ComboBox<Todo> combo = (ComboBox<Todo>)skin.getChildren().get(0);
-                combo.setPrefWidth(180.0);
-                combo.setMaxWidth(Double.MAX_VALUE);
-            }
+				@SuppressWarnings("unchecked")
+				CheckComboBoxSkin<Todo> skin = (CheckComboBoxSkin<Todo>) newValue;
+				@SuppressWarnings("unchecked")
+				ComboBox<Todo> combo = (ComboBox<Todo>) skin.getChildren().get(0);
+				combo.setPrefWidth(180.0);
+				combo.setMaxWidth(Double.MAX_VALUE);
+			}
 		});
 		
 	}
 
-	private static class ImageLoadingTask extends Task<Image> {
+	private static class ImageLoadingTask extends Task<Pane> {
 		
 		private final Photo photo;
 		private final FileHandler fileHandler;
@@ -428,10 +483,24 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		}
 
 		@Override
-		protected Image call() throws FileHandlerException, IOException {
+		protected Pane call() throws FileHandlerException, IOException {
 			//System.out.println("Loading photo: " + photo);
 			try (InputStream file = fileHandler.loadPhoto(photo)) {
-				return new Image(file, 200, 200, true, true);
+				Image image = new Image(file, 200, 200, true, true);
+				
+				// Wrap in pane so that we can apply styles.
+				ImageView imageView = new ImageView(image);
+				StackPane pane = new StackPane(imageView);
+				StackPane.setAlignment(imageView, Pos.CENTER);
+				
+				// Set styles
+				if (PhotoState.DISCARDED.equals(photo.getState())) {
+					pane.getStyleClass().add(DISCARDED_STYLE);
+				} else if (PhotoState.FLAGGED.equals(photo.getState())) {
+					pane.getStyleClass().add(FLAGGED_STYLE);
+				}
+				
+				return pane;
 			}
 		}
 	}

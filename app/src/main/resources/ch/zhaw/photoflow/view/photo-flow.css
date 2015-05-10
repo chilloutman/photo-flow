@@ -4,12 +4,12 @@
 	-fx-background: #444;
 }
 
-#todoCheckComboBoxPane .list-cell{
-	-fx-border-color: #fff;
-}
-
 .dark-background {
 	-fx-background: #222;
+}
+
+#todoCheckComboBoxPane .list-cell{
+	-fx-border-color: #fff;
 }
 
 .list-cell {
@@ -29,39 +29,39 @@
 
 #exportProjectButton{
 	-fx-background-image: url('../export.png');
-  	-fx-background-repeat: no-repeat;
-  	-fx-background-position: center;
-  	-fx-background-size: 50% auto;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 50% auto;
 }
 
 #archiveProjectButton{
 	-fx-background-image: url('../archive.png');
-  	-fx-background-repeat: no-repeat;
-  	-fx-background-position: center;
-  	-fx-background-size: 90% auto;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 90% auto;
 }
 
 #importPhotoButton{
 	-fx-background-image: url('../addPhoto.png');
-  	-fx-background-repeat: no-repeat;
-  	-fx-background-position: center;
-  	-fx-background-size: 90% auto;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 90% auto;
 }
 
 .workflowButtonRed {
 	-fx-background-image: url('../red_NA.png');
-  	-fx-background-repeat: no-repeat;
-  	-fx-background-position: center;
-  	-fx-background-size: 70% auto;
-  	-fx-background-radius: 7em;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 70% auto;
+	-fx-background-radius: 7em;
 }
 
 .workflowButtonGreen {
 	-fx-background-image: url('../check_green.png');
-  	-fx-background-repeat: no-repeat;
-  	-fx-background-position: center;
-  	-fx-background-size: 80% auto;
-  	-fx-background-radius: 7em;
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 80% auto;
+	-fx-background-radius: 7em;
 }
 
 .workflowButton {
@@ -70,6 +70,27 @@
 }
 
 .separator {
+	-fx-border-color: #fff;
+	-fx-border-style: solid;
+	-fx-border-width: 2px;
+}
+
+/* Photo Controller */
+
+.discarded-photo {
+	-fx-border-color: red;
+	-fx-border-style: solid;
+	-fx-border-width: 2px;
+	-fx-opacity: .2;
+}
+
+.flagged-photo {
+	-fx-border-color: green;
+	-fx-border-style: solid;
+	-fx-border-width: 2px;
+}
+
+.selected-photo {
 	-fx-border-color: #fff;
 	-fx-border-style: solid;
 	-fx-border-width: 2px;
