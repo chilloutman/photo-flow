@@ -10,6 +10,7 @@ import com.google.common.base.MoreObjects;
 public class Todo {
 	
 	private final String description;
+	private boolean checked = false;
 	
 	public Todo(String description) {
 		this.description = description;
@@ -19,6 +20,14 @@ public class Todo {
 		return description;
 	}
 	
+	public boolean isChecked() {
+		return checked;
+	}
+
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
+
 	@Override
 	public int hashCode() {
 		return description.hashCode();

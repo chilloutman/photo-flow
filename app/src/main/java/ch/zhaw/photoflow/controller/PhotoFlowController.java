@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyFloatProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.adapter.JavaBeanIntegerPropertyBuilder;
@@ -12,7 +13,7 @@ import ch.zhaw.photoflow.core.PhotoFlow;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-
+import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
 
 public abstract class PhotoFlowController {
 	
@@ -39,6 +40,15 @@ public abstract class PhotoFlowController {
 			STRING_PROPERTIES.put(key, stringProperty);
 			return stringProperty;
 		} catch (NoSuchMethodException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+	
+	protected BooleanProperty booleanProperty(Object bean, String property) {
+		try {
+			return JavaBeanBooleanPropertyBuilder.create().bean(bean).name(property).build();
+		}
+		catch (NoSuchMethodException e) {
 			throw new IllegalStateException(e);
 		}
 	}

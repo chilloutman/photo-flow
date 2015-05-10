@@ -25,9 +25,9 @@
 				<Label text="Finish" layoutX="612.0" layoutY="55.0" />
 				
 				<Button fx:id="importPhotoButton" layoutX="700.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
-				<Pane fx:id="todoCheckComboBoxPane" layoutX="760.0" layoutY="27.0" prefHeight="13.0" prefWidth="120.0" />
-				<Button fx:id="archiveProjectButton" layoutX="960.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
-				<Button fx:id="exportProjectButton" layoutX="1030.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
+				<Button fx:id="todoButton" text="Todo" layoutX="770.0" layoutY="27.0" prefWidth="60" />
+				<Button fx:id="archiveProjectButton" layoutX="855" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
+				<Button fx:id="exportProjectButton" layoutX="925" layoutY="27.0" prefWidth="45" mnemonicParsing="false"/>
 			</children>
 		</Pane>
 	</top>

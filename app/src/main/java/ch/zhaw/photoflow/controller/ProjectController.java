@@ -18,6 +18,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -27,21 +29,31 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.StringConverter;
 
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
+import org.controlsfx.control.PopOver;
 
 import ch.zhaw.photoflow.controller.PhotoController.PhotoListener;
 import ch.zhaw.photoflow.core.DaoException;
@@ -78,11 +90,13 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	@FXML
 	TextField projectNameField;
 	@FXML
-	Button newButton, importButton, editButton,finishButton, importPhotoButton, archiveProjectButton, exportProjectButton;
+	Button newButton, importButton, editButton,finishButton, importPhotoButton, archiveProjectButton, exportProjectButton, todoButton;
 	@FXML
 	Pane todoCheckComboBoxPane, separatorOne, separatorTwo, separatorThree;
 	@FXML
 	TilePane photosPane;
+	
+	PopOver popOver;
 	
 	private final Map<Photo, Node> photoNodes = new HashMap<>();
 	private Optional<Node> selectedImageNode = Optional.empty();
@@ -407,7 +421,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		archiveProjectButton.setOnAction(this::archiveProject);
 		exportProjectButton.setOnAction(this::exportProject);
 		
-		initializeTodoCheckComboBox();
+		initializeTodoButton();
+		initializeTodoPopOver();
 	}
 	
 	private void initializeTooltips() {
@@ -416,6 +431,11 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		importPhotoButton.setTooltip(new Tooltip("Import a new Photo"));
 	}
 	
+	private void initializeTodoButton() {
+		todoButton.setOnAction(event -> {
+			popOver.show(todoButton);
+		});
+	}
 	private void initializePhotoListener() {
 		photoController.setListener(new PhotoListener() {
 			
@@ -448,55 +468,82 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			}
 		});
 	}
+	private void initializeTodoPopOver() {
+	popOver = new PopOver();
+	popOver.autoHideProperty().set(true);
+	popOver.detachedTitleProperty().set("Todos");
 	
-	/**
-	 * Initializes the CheckComboBox for Todo tasks.
-	 */
-	private void initializeTodoCheckComboBox() {
+	popOver.setContentNode(createPopOverContent());
+}
+	
+	private VBox createPopOverContent() {
+		VBox rootBox = new VBox();
 		
-		//TestData
-		Todo todo1 = new Todo("Test1");
-		Todo todo2 = new Todo("Test2");
-		Todo todo3 = new Todo("Test3");
+		Label todosLabel = new Label("Todos");
+		todosLabel.setTextFill(Color.BLACK);
+		todosLabel.setContentDisplay(ContentDisplay.CENTER);
+		rootBox.getChildren().add(todosLabel);
 		
-		todos.add(todo1);
-		todos.add(todo2);
-		todos.add(todo3);
+		HBox content = new HBox();
 		
-		todoCheckComboBox = new CheckComboBox<Todo>(todos);
-		todoCheckComboBoxPane.getChildren().add(todoCheckComboBox);
+		//List
+		ListView<Todo> listViewTodo = new ListView<Todo>(todos);
+		
+		listViewTodo.setCellFactory(column -> {
+			return new ListCell<Todo>() {
+				
+				@Override
+				public void updateItem(Todo todo, boolean empty) {
+					super.updateItem(todo, empty);
 
-		//Converter
-		todoCheckComboBox.converterProperty().set(
-				new StringConverter<Todo>() {
-
-					@Override
-					public Todo fromString(String string) {
-						
-						return null;
+					if (todo == null || empty) {
+						setGraphic(null);
 					}
+					else {
+						CheckBox checkBox = new CheckBox(todo.getDescription());
+						BooleanProperty checkedProperty = booleanProperty(todo, "checked");
+						checkBox.selectedProperty().bindBidirectional(checkedProperty);
 
-					@Override
-					public String toString(Todo object) {
-						return object.getDescription();
+						setGraphic(checkBox);
 					}
 				}
-		);
-		
-		//Listener Required for resizing until Issue is resolved:
-		//https://bitbucket.org/controlsfx/controlsfx/issue/462/checkcombobox-ignores-prefwidth-maybe-any
-		
-		todoCheckComboBox.skinProperty().addListener((observable, oldValue, newValue) -> {
-			if(oldValue==null && newValue!=null){
-				@SuppressWarnings("unchecked")
-				CheckComboBoxSkin<Todo> skin = (CheckComboBoxSkin<Todo>) newValue;
-				@SuppressWarnings("unchecked")
-				ComboBox<Todo> combo = (ComboBox<Todo>) skin.getChildren().get(0);
-				combo.setPrefWidth(180.0);
-				combo.setMaxWidth(Double.MAX_VALUE);
+				
+			};
+		});
+
+		listViewTodo.setOnKeyPressed(keyevent -> {
+			if (KeyCode.DELETE.equals(keyevent.getCode())) {
+				Todo selectedTodo = listViewTodo.getSelectionModel().getSelectedItem();
+				//Remove from database
+				todos.remove(selectedTodo);
 			}
 		});
 		
+		content.getChildren().add(listViewTodo);
+		
+		//Detail
+		VBox editBox = new VBox();
+		Label descriptionLabel = new Label("Description");
+		descriptionLabel.setTextFill(Color.BLACK);
+		
+		TextField descriptionTextField = new TextField();
+		
+		descriptionTextField.setOnKeyPressed(keyevent -> {
+			if (KeyCode.ENTER.equals(keyevent.getCode())) {
+				Todo todo = new Todo(descriptionTextField.getText());
+				//DB Save
+				todos.add(todo);
+				descriptionTextField.setText("");
+			}
+		});
+		
+		editBox.getChildren().add(descriptionLabel);
+		editBox.getChildren().add(descriptionTextField);
+		
+		content.getChildren().add(editBox);
+		rootBox.getChildren().add(content);
+		
+		return rootBox;
 	}
 
 	private static class ImageLoadingTask extends Task<Pane> {
