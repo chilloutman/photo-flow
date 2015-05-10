@@ -10,7 +10,6 @@ import org.controlsfx.control.Notifications;
 
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
-import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -112,8 +111,7 @@ public class MainController extends PhotoFlowController implements Initializable
 		}
 	}
 	
-	private void createProjectFromEvents()
-	{
+	private void createProjectFromEvents() {
 		project.setDisable(true);
 		popup = new PopUpHandler();
 		Optional<Project> newProject = createProject();
@@ -239,12 +237,8 @@ public class MainController extends PhotoFlowController implements Initializable
 				return;
 			}
 
-			try {
-				StringProperty nameProperty = JavaBeanStringPropertyBuilder.create().bean(project).name("name").build();
-				textProperty().bind(nameProperty);
-			} catch (NoSuchMethodException e) {
-				throw new IllegalArgumentException(e);
-			}
+			StringProperty nameProperty = stringProperty(project, "name");
+			textProperty().bind(nameProperty);
 		}
 	}
 

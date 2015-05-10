@@ -92,9 +92,14 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		if (this.project == project ) {
 			return;
 		}
-		projectNameField.setText(project.getName());
+		
 		System.out.println("Project \"" + project.getName() + "\" has been selected.");
+		if (this.project != null) {
+			projectNameField.textProperty().unbindBidirectional(stringProperty(this.project, "name"));
+		}
 		this.project = project;
+		initializeProjectNameField();
+		
 		try {
 			fileHandler = photoFlow.fileHandler(project);
 		} catch (FileHandlerException e) {
@@ -103,6 +108,13 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		loadPhotos();
 		displayPhotos();
 		updateWorkflowButtons();
+	}
+	
+	private void initializeProjectNameField() {
+		projectNameField.textProperty().bindBidirectional(stringProperty(this.project, "name"));
+		projectNameField.textProperty().addListener((observable, oldValue, newValue) -> {
+			saveProject();
+		});
 	}
 	
 	private void loadPhotos() {
@@ -222,9 +234,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			return;
 		}
 		
-		Photo photo;
 		for (File file : selectedFiles) {
-			photo = Photo.newPhoto( p -> {
+			Photo photo = Photo.newPhoto( p -> {
 				p.setProjectId(project.getId().get());
 			});
 			
@@ -281,14 +292,19 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		if (photoFlow.projectWorkflow().canTransition(project, this.photos, projectState)) {
 			photoFlow.projectWorkflow().transition(project, this.photos, projectState);
 			updateWorkflowButtons();
-
-			try {
-				photoFlow.projectDao().save(project);
-			} catch (DaoException e) {
-				// TODO: Inform user that saving failed
-			}
+			saveProject();
 		} else {
 			// Inform User
+		}
+	}
+	
+	private void saveProject() {
+		System.out.println("Saving project: " + project);
+		try {
+			photoFlow.projectDao().save(project);
+		} catch (DaoException e) {
+			// TODO display erroe message.
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -297,8 +313,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			fileHandler.archiveProject();
 			transitionState(this.project, ProjectState.ARCHIVED);
 		} catch (FileHandlerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO Auto-generated catch block.
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -316,7 +332,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			fileHandler.exportZip(selectedFile.getAbsolutePath(), photos);
 			} catch (FileHandlerException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 		}
 		
