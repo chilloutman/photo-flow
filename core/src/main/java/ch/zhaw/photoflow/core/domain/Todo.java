@@ -1,6 +1,7 @@
 package ch.zhaw.photoflow.core.domain;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
 
@@ -9,11 +10,20 @@ import com.google.common.base.MoreObjects;
  */
 public class Todo {
 	
+	private Optional<Integer> id = Optional.empty();
 	private final String description;
 	private boolean checked = false;
 	
 	public Todo(String description) {
 		this.description = description;
+	}
+	
+	public Optional<Integer> getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = Optional.of(id);
 	}
 	
 	public String getDescription() {

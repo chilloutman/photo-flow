@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS todo (
 	ID INTEGER PRIMARY KEY,
 	project_fk INT NOT NULL,
 	description TEXT NOT NULL,
+	checked INT NOT NULL,
 	FOREIGN KEY(project_fk) REFERENCES project(ID) ON DELETE CASCADE
 );
 

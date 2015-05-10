@@ -89,8 +89,12 @@ public class Project implements PersistentDomainObject {
 		this.state = state;
 	}
 
-	public ImmutableList<Todo> getTodos() {
-		return ImmutableList.copyOf(todos);
+	public List<Todo> getTodos() {
+		return todos;
+	}
+	
+	public void addTodos(List<Todo> todos) {
+		this.todos.addAll(todos);
 	}
 	
 	public void addTodo(Todo todo) {

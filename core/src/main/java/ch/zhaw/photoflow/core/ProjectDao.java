@@ -1,6 +1,10 @@
 package ch.zhaw.photoflow.core;
 
+import java.util.List;
+import java.util.Optional;
+
 import ch.zhaw.photoflow.core.domain.Project;
+import ch.zhaw.photoflow.core.domain.Todo;
 
 import com.google.common.collect.ImmutableList;
 
@@ -17,4 +21,8 @@ public interface ProjectDao extends Dao<Project> {
 	 */
 	public ImmutableList<Project> loadAll() throws DaoException;
 	
+	public List<Todo> loadAllTodosByProject(Project project) throws DaoException;
+	public Optional<Todo> loadTodo(int id) throws DaoException;
+	public Todo saveTodo(Project project, Todo todo) throws DaoException;
+	public void deleteTodo(Todo todo) throws DaoException;
 }

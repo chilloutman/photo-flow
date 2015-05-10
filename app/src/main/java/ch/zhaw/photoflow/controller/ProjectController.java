@@ -1,6 +1,5 @@
 package ch.zhaw.photoflow.controller;
 
-import impl.org.controlsfx.skin.CheckComboBoxSkin;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +18,6 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -30,7 +28,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -40,7 +37,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -49,9 +45,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.util.StringConverter;
 
-import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 import org.controlsfx.control.PopOver;
 
@@ -81,8 +75,6 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	/** Daemon threads for background task execution */
 	private final ExecutorService imageLoaderService = newImageLoaderService();
 	private final Collection<ImageLoadingTask> imageLoadingTasks = new HashSet<>();
-
-	private CheckComboBox<Todo> todoCheckComboBox;
 
 	@FXML
 	private PhotoController photoController;
@@ -121,6 +113,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		} catch (FileHandlerException e) {
 			throw new RuntimeException(e);
 		}
+		
+		this.todos.clear();
+		this.todos.addAll(project.getTodos());
+		
 		loadPhotos();
 		displayPhotos();
 		updateWorkflowButtons();
@@ -431,11 +427,6 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		importPhotoButton.setTooltip(new Tooltip("Import a new Photo"));
 	}
 	
-	private void initializeTodoButton() {
-		todoButton.setOnAction(event -> {
-			popOver.show(todoButton);
-		});
-	}
 	private void initializePhotoListener() {
 		photoController.setListener(new PhotoListener() {
 			
@@ -468,6 +459,13 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			}
 		});
 	}
+	
+	private void initializeTodoButton() {
+		todoButton.setOnAction(event -> {
+			popOver.show(todoButton);
+		});
+	}
+	
 	private void initializeTodoPopOver() {
 	popOver = new PopOver();
 	popOver.autoHideProperty().set(true);
@@ -489,6 +487,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		//List
 		ListView<Todo> listViewTodo = new ListView<Todo>(todos);
 		
+		//Custom Cellfactory
 		listViewTodo.setCellFactory(column -> {
 			return new ListCell<Todo>() {
 				
@@ -502,6 +501,14 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					else {
 						CheckBox checkBox = new CheckBox(todo.getDescription());
 						BooleanProperty checkedProperty = booleanProperty(todo, "checked");
+						checkedProperty.addListener((observable, oldvalue, newvalue) -> {
+							try {
+								photoFlow.projectDao().saveTodo(project, todo);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						});
 						checkBox.selectedProperty().bindBidirectional(checkedProperty);
 
 						setGraphic(checkBox);
@@ -510,12 +517,17 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				
 			};
 		});
-
+		
+		//Delete
 		listViewTodo.setOnKeyPressed(keyevent -> {
 			if (KeyCode.DELETE.equals(keyevent.getCode())) {
 				Todo selectedTodo = listViewTodo.getSelectionModel().getSelectedItem();
-				//Remove from database
-				todos.remove(selectedTodo);
+				try {
+					photoFlow.projectDao().deleteTodo(selectedTodo);
+					todos.remove(selectedTodo);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -531,12 +543,18 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		descriptionTextField.setOnKeyPressed(keyevent -> {
 			if (KeyCode.ENTER.equals(keyevent.getCode())) {
 				Todo todo = new Todo(descriptionTextField.getText());
-				//DB Save
-				todos.add(todo);
-				descriptionTextField.setText("");
+				try {
+					photoFlow.projectDao().saveTodo(project, todo);
+					todos.add(todo);
+					descriptionTextField.setText("");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		
+		//GUI Creation
 		editBox.getChildren().add(descriptionLabel);
 		editBox.getChildren().add(descriptionTextField);
 		

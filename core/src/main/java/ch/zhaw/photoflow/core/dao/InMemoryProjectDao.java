@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
+import ch.zhaw.photoflow.core.domain.Todo;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -65,6 +66,31 @@ public class InMemoryProjectDao implements ProjectDao {
 		Preconditions.checkNotNull(project);
 		Preconditions.checkArgument(project.getId().isPresent());
 		projects.remove(project);
+	}
+
+	@Override
+	public List<Todo> loadAllTodosByProject(Project project)
+			throws DaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Optional<Todo> loadTodo(int id) throws DaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Todo saveTodo(Project project, Todo todo) throws DaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteTodo(Todo todo) throws DaoException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

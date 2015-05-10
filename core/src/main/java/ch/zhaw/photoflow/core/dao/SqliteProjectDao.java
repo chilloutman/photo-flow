@@ -7,7 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -18,6 +20,7 @@ import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.SQLiteConnection;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
+import ch.zhaw.photoflow.core.domain.Todo;
 
 import com.google.common.collect.ImmutableList;
 
@@ -45,8 +48,13 @@ public class SqliteProjectDao implements ProjectDao {
 				});
 			}).collect(toImmutableList());
 			
+
+			for (Project project : projectList) {
+				project.addTodos(loadAllTodosByProject(project));
+			}
+			
 		} catch (SQLException e) {
-			throw new DaoException("Error in loading all elements", e);
+			throw new DaoException("Error in loading all project elements", e);
 		}
 		
 		return projectList;
@@ -75,7 +83,7 @@ public class SqliteProjectDao implements ProjectDao {
 			return project;
 			
 		} catch (SQLException e) {
-			throw new DaoException("Error in loading", e);
+			throw new DaoException("Error in loading project", e);
 		}
 		
 	}
@@ -86,6 +94,8 @@ public class SqliteProjectDao implements ProjectDao {
 			try {
 				Connection sqliteConnection = SQLiteConnection.getConnection();
 				sqliteConnection.setAutoCommit(false);
+				
+				//Store Project
 				if (project.getId().isPresent()) {
 					//Update
 					
@@ -120,32 +130,157 @@ public class SqliteProjectDao implements ProjectDao {
 				
 				return project;
 			} catch (SQLException e) {
-				throw new DaoException("Error in Saving", e);
+				throw new DaoException("Error in Saving project", e);
 			}
 			
 
 	}
-
+	
 	@Override
 	public void delete(Project project) throws DaoException {
 		
-			if (project.getId().isPresent()) {
-				Connection sqliteConnection;
-				try {
-					sqliteConnection = SQLiteConnection.getConnection();
-					sqliteConnection.setAutoCommit(false);
-					Statement stmt = sqliteConnection.createStatement();
-					
-					String deleteSQL = "DELETE FROM project " +
-							" WHERE ID = " + project.getId().get();
-					
-					stmt.executeUpdate(deleteSQL);
-					sqliteConnection.commit();
-				} catch (SQLException e) {
-					throw new DaoException("Error in deleting", e);
-				}
+		if (project.getId().isPresent()) {
+			Connection sqliteConnection;
+			try {
+				sqliteConnection = SQLiteConnection.getConnection();
+				sqliteConnection.setAutoCommit(false);
+				Statement stmt = sqliteConnection.createStatement();
+				
+				String deleteSQL = "DELETE FROM project " +
+						" WHERE ID = " + project.getId().get();
+				
+				stmt.executeUpdate(deleteSQL);
+				sqliteConnection.commit();
+			} catch (SQLException e) {
+				throw new DaoException("Error in deleting project", e);
+			}
+		}
+		
+	}
+	
+	@Override
+	public List<Todo> loadAllTodosByProject(Project project) throws DaoException {
+		List<Todo> todoList;
+
+		try {
+			Connection sqliteConnection = SQLiteConnection.getConnection();
+			sqliteConnection.setAutoCommit(false);
+			
+			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
+			
+			//Load Data and create ImmutableList<Project>
+			todoList = create.select().from("todo").fetch().stream().<Todo>map(record -> {
+				Todo todo = new Todo((String)record.getValue("description"));
+				todo.setId((int)record.getValue("project_fk"));
+				todo.setId((int)record.getValue("ID"));
+				todo.setChecked(((int)record.getValue("checked")) == 1 ? true : false);
+				
+				return todo;
+				
+			}).collect(Collectors.toList());
+			
+		} catch (SQLException e) {
+			throw new DaoException("Error in loading all todo elements", e);
+		}
+		
+		return todoList;
+	}
+	
+	@Override
+	public Optional<Todo> loadTodo(int id) throws DaoException {
+
+		try {
+			Connection sqliteConnection;
+			sqliteConnection = SQLiteConnection.getConnection();
+			sqliteConnection.setAutoCommit(false);
+			
+			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
+
+			Optional<Todo> todo = create.select().from("todo").where("ID = " + id).fetch().stream().<Todo>map(
+					record -> {
+						Todo tempTodo = new Todo((String)record.getValue("description"));
+						tempTodo.setId((int)record.getValue("project_fk"));
+						tempTodo.setId((int)record.getValue("ID"));
+						tempTodo.setChecked(((int)record.getValue("checked")) == 1 ? true : false);
+						
+						return tempTodo;
+						
+					}).findFirst();
+			
+			return todo;
+			
+		} catch (SQLException e) {
+			throw new DaoException("Error in loading todo", e);
+		}
+		
+	}
+	
+	@Override
+	public Todo saveTodo(Project project, Todo todo) throws DaoException {
+		
+		Connection sqliteConnection;
+		
+		try {
+			sqliteConnection = SQLiteConnection.getConnection();
+			sqliteConnection.setAutoCommit(false);
+			
+			if (todo.getId().isPresent()) {
+				//Update
+				String updateSQL = "UPDATE todo SET project_fk = ?, description = ?, checked = ? WHERE ID = ?";
+				PreparedStatement prepstmt = sqliteConnection.prepareStatement(updateSQL);
+				prepstmt.setInt(1, project.getId().get());
+				prepstmt.setString(2, todo.getDescription());
+				prepstmt.setInt(3, (todo.isChecked()) ? 1 : 0);
+				prepstmt.setInt(4, todo.getId().get());
+				
+				prepstmt.executeUpdate();
+				sqliteConnection.commit();
+			}
+			else {
+				//Insert
+				String insertSQL = "INSERT INTO todo (project_fk, description, checked) VALUES(?,?,?)";
+				PreparedStatement prepstmt = sqliteConnection.prepareStatement(insertSQL);
+				
+				prepstmt.setInt(1, project.getId().get());
+				prepstmt.setString(2, todo.getDescription());
+				prepstmt.setInt(3, (todo.isChecked()) ? 1 : 0);
+				
+				prepstmt.executeUpdate();
+				sqliteConnection.commit();
+				
+				ResultSet rs = prepstmt.getGeneratedKeys();
+				rs.next();
+				todo.setId(rs.getInt(1));
 			}
 			
+			return todo;
+			
+		} catch (SQLException e) {
+			throw new DaoException("Error in Saving todo", e);
+		}
 	}
+	
+	@Override
+	public void deleteTodo(Todo todo) throws DaoException {
+		
+		if (todo.getId().isPresent()) {
+			Connection sqliteConnection;
+			try {
+				sqliteConnection = SQLiteConnection.getConnection();
+				sqliteConnection.setAutoCommit(false);
+				Statement stmt = sqliteConnection.createStatement();
+				
+				String deleteSQL = "DELETE FROM todo " +
+						" WHERE ID = " + todo.getId().get();
+				
+				stmt.executeUpdate(deleteSQL);
+				sqliteConnection.commit();
+			} catch (SQLException e) {
+				throw new DaoException("Error in deleting todo", e);
+			}
+		}
+		
+}
+
 
 }
