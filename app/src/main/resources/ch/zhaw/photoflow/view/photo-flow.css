@@ -48,6 +48,13 @@
 	-fx-background-size: 90% auto;
 }
 
+#pauseProjectButton{
+	-fx-background-image: url('../pause.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 50% auto;
+}
+
 .workflowButtonRed {
 	-fx-background-image: url('../red_NA.png');
 	-fx-background-repeat: no-repeat;

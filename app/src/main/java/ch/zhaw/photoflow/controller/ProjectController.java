@@ -82,7 +82,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	@FXML
 	TextField projectNameField;
 	@FXML
-	Button newButton, importButton, editButton,finishButton, importPhotoButton, archiveProjectButton, exportProjectButton, todoButton;
+	Button newButton, importButton, editButton,finishButton, importPhotoButton, archiveProjectButton, exportProjectButton, todoButton, pauseProjectButton;
 	@FXML
 	Pane todoCheckComboBoxPane, separatorOne, separatorTwo, separatorThree;
 	@FXML
@@ -331,19 +331,29 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				throw new RuntimeException(e);
 			}
 		}
-		errorHandler.spawnInformation("Your files were beeing transfered to new location: "+selectedFile.getAbsolutePath());
+		errorHandler.spawnInformation("Your files were being transfered to new location: "+selectedFile.getAbsolutePath());
+	}
+	
+	public void pauseProject(ActionEvent event) {
+		if(project.getState() != ProjectState.PAUSED){
+			transitionState(this.project, ProjectState.PAUSED);
+			errorHandler.spawnInformation("Project paused! To continue click Button again.");
+		}else{
+			transitionState(this.project, ProjectState.IN_WORK);
+			errorHandler.spawnInformation("Project continues...");
+		}
 	}
 	
 	public void updateWorkflowButtons() {
-//		newButton.getStyleClass().removeAll();
-//		importButton.getStyleClass().removeAll();
-//		editButton.getStyleClass().removeAll();
-//		finishButton.getStyleClass().removeAll();
-//		
-//		newButton.getStyleClass().add("workflowButtonRed");
-//		importButton.getStyleClass().add("workflowButtonRed");
-//		editButton.getStyleClass().add("workflowButtonRed");
-//		finishButton.getStyleClass().add("workflowButtonRed");
+		newButton.getStyleClass().removeAll();
+		importButton.getStyleClass().removeAll();
+		editButton.getStyleClass().removeAll();
+		finishButton.getStyleClass().removeAll();
+		
+		newButton.getStyleClass().add("workflowButtonRed");
+		importButton.getStyleClass().add("workflowButtonRed");
+		editButton.getStyleClass().add("workflowButtonRed");
+		finishButton.getStyleClass().add("workflowButtonRed");
 		
 		if(project.getState() == ProjectState.PAUSED){
 			newButton.setDisable(true);
@@ -352,6 +362,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			finishButton.setDisable(true);
 			archiveProjectButton.setDisable(true);
 			exportProjectButton.setDisable(true);
+			todoButton.setDisable(true);
 		}else {
 			newButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.NEW));
 			importButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
@@ -360,34 +371,36 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			importPhotoButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
 			exportProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			archiveProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
+			todoButton.setDisable(false);
+			pauseProjectButton.setDisable(false);
 		}
 		
-//		switch(project.getState()){
-//		case NEW:
-//			newButton.getStyleClass().add("workflowButton");
-//			break;
-//		case IN_WORK:
-//			newButton.getStyleClass().add("workflowButtonGreen");
-//			importButton.getStyleClass().add("workflowButton");
-//			editButton.getStyleClass().add("workflowButton");
-//			break;
-//		case ARCHIVED:
-//			newButton.getStyleClass().add("workflowButtonGreen");
-//			importButton.getStyleClass().add("workflowButtonGreen");
-//			editButton.getStyleClass().add("workflowButtonGreen");
-//			finishButton.getStyleClass().add("workflowButtonGreen");
-//			break;
-//		case DONE:
-//			newButton.getStyleClass().add("workflowButtonGreen");
-//			importButton.getStyleClass().add("workflowButtonGreen");
-//			editButton.getStyleClass().add("workflowButtonGreen");
-//			finishButton.getStyleClass().add("workflowButton");
-//			break;
-//		case PAUSED:
-//			break;
-//		default:
-//			break;
-//		}
+		switch(project.getState()){
+		case NEW:
+			newButton.getStyleClass().add("workflowButtonGreen");
+			break;
+		case IN_WORK:
+			newButton.getStyleClass().add("workflowButtonGreen");
+			importButton.getStyleClass().add("workflowButton");
+			editButton.getStyleClass().add("workflowButton");
+			break;
+		case ARCHIVED:
+			newButton.getStyleClass().add("workflowButtonGreen");
+			importButton.getStyleClass().add("workflowButtonGreen");
+			editButton.getStyleClass().add("workflowButtonGreen");
+			finishButton.getStyleClass().add("workflowButtonGreen");
+			break;
+		case DONE:
+			newButton.getStyleClass().add("workflowButtonGreen");
+			importButton.getStyleClass().add("workflowButtonGreen");
+			editButton.getStyleClass().add("workflowButtonGreen");
+			finishButton.getStyleClass().add("workflowButton");
+			break;
+		case PAUSED:
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
@@ -407,6 +420,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		importPhotoButton.setOnAction(this::importPhotos);
 		archiveProjectButton.setOnAction(this::archiveProject);
 		exportProjectButton.setOnAction(this::exportProject);
+		pauseProjectButton.setOnAction(this::pauseProject);
 		
 		initializeTodoButton();
 		initializeTodoPopOver();

@@ -108,9 +108,9 @@ public class SqlitePhotoDao implements PhotoDao {
 				
 				String updateSQL = "UPDATE photo SET project_fk = ?, "
 						+ "file_path_to_original = ?, "
-						+ "file_size = ? "
-						+ "file_format = ? "
-						+ "timestamp = ? "
+						+ "file_size = ?, "
+						+ "file_format = ?, "
+						+ "timestamp = ?, "
 						+ "status = ? "
 						+ "WHERE ID = ?";
 				
