@@ -375,7 +375,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			newButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.NEW));
 			importButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
 			editButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
-			finishButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.DONE));
+			finishButton.setDisable(!(project.getState() == ProjectState.IN_WORK));
 			importPhotoButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
 			exportProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			archiveProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
