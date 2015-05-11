@@ -285,11 +285,12 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			} catch (DaoException e) {
 				// TODO: Inform user that saving failed
 			}
-			updateWorkflowButtons();
 			saveProject();
 		} else {
-			// Inform User
+			errorHandler.spawnError("Your Project is not in a correct State!");
+			throw new RuntimeException();
 		}
+		updateWorkflowButtons();
 	}
 	
 	private void saveProject() {
@@ -335,15 +336,14 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	}
 	
 	public void pauseProject(ActionEvent event) {
+		pauseProjectButton.getStyleClass().removeAll();
 		if(project.getState() != ProjectState.PAUSED){
 			transitionState(this.project, ProjectState.PAUSED);
 			errorHandler.spawnInformation("Project paused! To continue click Button again.");
-			pauseProjectButton.getStyleClass().removeAll();
 			pauseProjectButton.getStyleClass().add("playProjectButton");
 		}else{
 			transitionState(this.project, ProjectState.IN_WORK);
 			errorHandler.spawnInformation("Project continues...");
-			pauseProjectButton.getStyleClass().removeAll();
 			pauseProjectButton.getStyleClass().add("pauseProjectButton");
 		}
 	}
@@ -353,11 +353,13 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		importButton.getStyleClass().removeAll();
 		editButton.getStyleClass().removeAll();
 		finishButton.getStyleClass().removeAll();
+		pauseProjectButton.getStyleClass().removeAll();
 		
 		newButton.getStyleClass().add("workflowButtonRed");
 		importButton.getStyleClass().add("workflowButtonRed");
 		editButton.getStyleClass().add("workflowButtonRed");
 		finishButton.getStyleClass().add("workflowButtonRed");
+		pauseProjectButton.getStyleClass().add("pauseProjectButton");
 		
 		if(project.getState() == ProjectState.PAUSED){
 			newButton.setDisable(true);
@@ -367,6 +369,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			archiveProjectButton.setDisable(true);
 			exportProjectButton.setDisable(true);
 			todoButton.setDisable(true);
+			pauseProjectButton.setDisable(false);
 		}else {
 			newButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.NEW));
 			importButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
@@ -376,7 +379,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			exportProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			archiveProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			todoButton.setDisable(false);
-			pauseProjectButton.setDisable(false);
+			pauseProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.PAUSED));
 		}
 		
 		switch(project.getState()){
@@ -387,6 +390,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			newButton.getStyleClass().add("workflowButtonGreen");
 			importButton.getStyleClass().add("workflowButton");
 			editButton.getStyleClass().add("workflowButton");
+			pauseProjectButton.getStyleClass().add("pauseProjectButton");
 			break;
 		case ARCHIVED:
 			newButton.getStyleClass().add("workflowButtonGreen");
@@ -401,6 +405,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			finishButton.getStyleClass().add("workflowButton");
 			break;
 		case PAUSED:
+			pauseProjectButton.getStyleClass().add("playProjectButton");
 			break;
 		default:
 			break;
