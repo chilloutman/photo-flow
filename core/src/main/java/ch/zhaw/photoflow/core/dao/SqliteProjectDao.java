@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -160,8 +161,16 @@ public class SqliteProjectDao implements ProjectDao {
 	
 	@Override
 	public List<Todo> loadAllTodosByProject(Project project) throws DaoException {
-		List<Todo> todoList;
+		List<Todo> todoList = new ArrayList<Todo>();
 
+		if (project == null) {
+			return todoList;
+		}
+		
+		if (! project.getId().isPresent()) {
+			return todoList;
+		}
+		
 		try {
 			Connection sqliteConnection = SQLiteConnection.getConnection();
 			sqliteConnection.setAutoCommit(false);
@@ -169,7 +178,7 @@ public class SqliteProjectDao implements ProjectDao {
 			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
 			
 			//Load Data and create ImmutableList<Project>
-			todoList = create.select().from("todo").fetch().stream().<Todo>map(record -> {
+			todoList = create.select().from("todo").where("project_fk = " + project.getId().get()).fetch().stream().<Todo>map(record -> {
 				Todo todo = new Todo((String)record.getValue("description"));
 				todo.setId((int)record.getValue("project_fk"));
 				todo.setId((int)record.getValue("ID"));

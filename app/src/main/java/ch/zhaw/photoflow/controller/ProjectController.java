@@ -559,6 +559,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				Todo todo = new Todo(descriptionTextField.getText());
 				try {
 					photoFlow.projectDao().saveTodo(project, todo);
+					project.addTodo(todo);
 					todos.add(todo);
 					descriptionTextField.setText("");
 				} catch (Exception e) {
