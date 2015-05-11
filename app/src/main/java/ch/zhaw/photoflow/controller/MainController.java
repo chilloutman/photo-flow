@@ -146,6 +146,7 @@ public class MainController extends PhotoFlowController implements Initializable
 			System.out.println("project created");
 			return Optional.of(project);
 		} else {
+			project.setDisable(false);
 			errorHandler.spawnWarining("You canceled the project creation!");
 			System.out.println("canceled project creation");
 			return Optional.empty();

@@ -26,7 +26,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 	private Optional<PhotoListener> listener;
 	
 	@FXML
-	private Button flagButton, discardButton, editButton;
+	private Button flagButton, discardButton, editorButton;
 	
 	@FXML
 	private Label filePathLabel, fileSizeLabel, metadataLabel;
@@ -41,7 +41,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		
 		flagButton.setDisable(false);
 		discardButton.setDisable(false);
-		editButton.setDisable(false);
+		editorButton.setDisable(false);
 		
 		filePathLabel.textProperty().bind(stringProperty(photo, "filePath"));
 		StringExpression fileSize =  Bindings.format("%.2f MB", numberProperty(photo, "fileSize").divide(1024*1014));
@@ -69,7 +69,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		});
 		
 		//TODO open FileHandler
-		editButton.setOnAction(event -> {
+		editorButton.setOnAction(event -> {
 //			listener.ifPresent(listener -> {
 //				listener.discardPhoto(photo);
 //				savePhoto();
@@ -137,7 +137,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		// TODO Auto-generated method stub
 		flagButton.setDisable(true);
 		discardButton.setDisable(true);
-		editButton.setDisable(true);
+		editorButton.setDisable(true);
 	}
 	
 }

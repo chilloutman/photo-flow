@@ -35,7 +35,12 @@ public class ImageViewer{
 		createCanvas(photo, fileHandler);
 	}
 
-	
+	/**
+	 * Creates a dialog box with the selected image in a large scale. The image is fitted in a scrollpane. So it supports multitouch
+	 * zooming (Mac onyl, sorry folks) and panning. Scaling / increasing size is also supported via resizing the dialog.
+	 * @param photo the selected photo
+	 * @param fileHandler the filehandler used by the projectcontroller
+	 */
 	public void createCanvas(Photo photo, FileHandler fileHandler)
 	{
 		//load image
