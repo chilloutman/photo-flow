@@ -48,8 +48,15 @@
 	-fx-background-size: 90% auto;
 }
 
-#pauseProjectButton{
+.pauseProjectButton{
 	-fx-background-image: url('../pause.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 50% auto;
+}
+
+.playProjectButton{
+	-fx-background-image: url('../play.png');
 	-fx-background-repeat: no-repeat;
 	-fx-background-position: center;
 	-fx-background-size: 50% auto;

@@ -28,7 +28,7 @@
 				<Button fx:id="todoButton" text="Todo" layoutX="770.0" layoutY="27.0" prefWidth="60" disable="true" />
 				<Button fx:id="archiveProjectButton" layoutX="855" layoutY="27.0" prefWidth="45" mnemonicParsing="false" disable="true" />
 				<Button fx:id="exportProjectButton" layoutX="925" layoutY="27.0" prefWidth="45" mnemonicParsing="false" disable="true"/>
-				<Button fx:id="pauseProjectButton" layoutX="995" layoutY="27.0" prefWidth="45" mnemonicParsing="false" disable="true"/>
+				<Button fx:id="pauseProjectButton" styleClass="pauseProjectButton" layoutX="995" layoutY="27.0" prefWidth="45" mnemonicParsing="false" disable="true"/>
 			</children>
 		</Pane>
 	</top>

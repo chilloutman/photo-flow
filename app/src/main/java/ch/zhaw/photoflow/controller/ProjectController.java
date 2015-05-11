@@ -338,9 +338,13 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		if(project.getState() != ProjectState.PAUSED){
 			transitionState(this.project, ProjectState.PAUSED);
 			errorHandler.spawnInformation("Project paused! To continue click Button again.");
+			pauseProjectButton.getStyleClass().removeAll();
+			pauseProjectButton.getStyleClass().add("playProjectButton");
 		}else{
 			transitionState(this.project, ProjectState.IN_WORK);
 			errorHandler.spawnInformation("Project continues...");
+			pauseProjectButton.getStyleClass().removeAll();
+			pauseProjectButton.getStyleClass().add("pauseProjectButton");
 		}
 	}
 	
