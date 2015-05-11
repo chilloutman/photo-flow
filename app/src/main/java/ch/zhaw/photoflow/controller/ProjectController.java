@@ -33,6 +33,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -81,7 +82,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	@FXML
 	TextField projectNameField;
 	@FXML
-	Button newButton, importButton, editButton,finishButton, importPhotoButton, archiveProjectButton, exportProjectButton, todoButton, pauseProjectButton;
+	Button newButton, archiveButton, editButton, finishButton, importPhotoButton, archiveProjectButton, exportProjectButton, todoButton, pauseProjectButton;
 	@FXML
 	Pane todoCheckComboBoxPane, separatorOne, separatorTwo, separatorThree;
 	@FXML
@@ -223,10 +224,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		ExtensionFilter imageFilter = new ExtensionFilter("Image Files", extensions);
 		fileChooser.getExtensionFilters().add(imageFilter);
 
-		List<File> selectedFiles = fileChooser.showOpenMultipleDialog(importButton.getScene().getWindow());
+		List<File> selectedFiles = fileChooser.showOpenMultipleDialog(importPhotoButton.getScene().getWindow());
 		
 		if (selectedFiles == null) {
-			errorHandler.spawnWarining("You have not selected any photos, have you?");
+			errorHandler.spawnWarning("You have not selected any photos, have you?");
 			return;
 		}
 		
@@ -246,7 +247,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			} catch (DaoException e) {
 				System.out.println("DAOEXCEPTION");
 				e.printStackTrace();
-				// TODO Inform User (DAO)
+				errorHandler.spawnError("Sorry! Something went wrong in saving your Photo. Please try again!");
 			}
 			
 		}
@@ -257,6 +258,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
         .showInformation();
 		displayPhotos();
 		transitionState(this.project, ProjectState.IN_WORK);
+		updateWorkflowButtons();
 	}
 
 	public void deletePhoto(Photo photo) {
@@ -282,7 +284,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			try {
 				photoFlow.projectDao().save(project);
 			} catch (DaoException e) {
-				// TODO: Inform user that saving failed
+				errorHandler.spawnError("Something went wrong in saving Project!");
 			}
 			saveProject();
 		} else {
@@ -297,7 +299,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		try {
 			photoFlow.projectDao().save(project);
 		} catch (DaoException e) {
-			// TODO display erroe message.
+			errorHandler.spawnError("Something went wrong in saving Project!");
 			throw new RuntimeException(e);
 		}
 		updateWorkflowButtons();
@@ -309,9 +311,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			transitionState(this.project, ProjectState.ARCHIVED);
 			errorHandler.spawnInformation("Project was archived using cryo tech!");
 		} catch (FileHandlerException e) {
-			// TODO Auto-generated catch block.
+			errorHandler.spawnError("Project could not be archived!");
 			throw new RuntimeException(e);
 		}
+		updateWorkflowButtons();
 	}
 	
 	public void exportProject(ActionEvent event) {
@@ -327,7 +330,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			try {
 			fileHandler.exportZip(selectedFile.getAbsolutePath(), photos);
 			} catch (FileHandlerException e) {
-				// TODO Auto-generated catch block
+				errorHandler.spawnError("Project could not be exported!");
 				throw new RuntimeException(e);
 			}
 		}
@@ -347,23 +350,42 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		}
 	}
 	
+	public void editProject(ActionEvent event){
+		if(photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK) && !photos.isEmpty()){
+			transitionState(project, ProjectState.IN_WORK);
+		}else{
+			errorHandler.spawnWarning("State cannot be changed! Be sure you have imported any Photos");
+		}
+		updateWorkflowButtons();
+	}
+	
+	public void finishProject(ActionEvent event){
+		if(photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.DONE)){
+			transitionState(project, ProjectState.DONE);
+		}else{
+			errorHandler.spawnWarning("Finishing Project not possible! Every Photo must be flagged or discarded!");
+		}
+		updateWorkflowButtons();
+	}
+	
 	public void updateWorkflowButtons() {
-		newButton.getStyleClass().removeAll();
-		importButton.getStyleClass().removeAll();
-		editButton.getStyleClass().removeAll();
-		finishButton.getStyleClass().removeAll();
-		pauseProjectButton.getStyleClass().removeAll();
+		newButton.setEffect(null);
+		editButton.setEffect(null);
+		finishButton.setEffect(null);
+		archiveButton.setEffect(null);
+		pauseProjectButton.setEffect(null);
 		
 		newButton.getStyleClass().add("workflowButtonRed");
-		importButton.getStyleClass().add("workflowButtonRed");
 		editButton.getStyleClass().add("workflowButtonRed");
 		finishButton.getStyleClass().add("workflowButtonRed");
+		archiveButton.getStyleClass().add("workflowButtonRed");
 		pauseProjectButton.getStyleClass().add("pauseProjectButton");
+		
 		
 		if(project.getState() == ProjectState.PAUSED){
 			projectNameField.setDisable(true);
 			newButton.setDisable(true);
-			importButton.setDisable(true);
+			archiveButton.setDisable(true);
 			editButton.setDisable(true);
 			finishButton.setDisable(true);
 			archiveProjectButton.setDisable(true);
@@ -373,10 +395,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		}else {
 			projectNameField.setDisable(false);
 			newButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.NEW));
-			importButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
+			archiveButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			editButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
 			finishButton.setDisable(!(project.getState() == ProjectState.IN_WORK));
-			importPhotoButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
+			importPhotoButton.setDisable(!((photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK) && project.getState() != ProjectState.DONE) || project.getState() == ProjectState.IN_WORK));
 			exportProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			archiveProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			todoButton.setDisable(false);
@@ -385,25 +407,31 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		
 		switch(project.getState()){
 		case NEW:
-			newButton.getStyleClass().add("workflowButtonGreen");
+			newButton.getStyleClass().add("workflowButton");
+			editButton.getStyleClass().add("workflowButton");
+			newButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
 			break;
 		case IN_WORK:
+			newButton.getStyleClass().removeAll();
 			newButton.getStyleClass().add("workflowButtonGreen");
-			importButton.getStyleClass().add("workflowButton");
 			editButton.getStyleClass().add("workflowButton");
+			finishButton.getStyleClass().add("workflowButton");
 			pauseProjectButton.getStyleClass().add("pauseProjectButton");
-			break;
-		case ARCHIVED:
-			newButton.getStyleClass().add("workflowButtonGreen");
-			importButton.getStyleClass().add("workflowButtonGreen");
-			editButton.getStyleClass().add("workflowButtonGreen");
-			finishButton.getStyleClass().add("workflowButtonGreen");
+			editButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
 			break;
 		case DONE:
 			newButton.getStyleClass().add("workflowButtonGreen");
-			importButton.getStyleClass().add("workflowButtonGreen");
 			editButton.getStyleClass().add("workflowButtonGreen");
-			finishButton.getStyleClass().add("workflowButton");
+			finishButton.getStyleClass().add("workflowButtonGreen");
+			archiveButton.getStyleClass().add("workflowButton");
+			finishButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
+			break;
+		case ARCHIVED:
+			newButton.getStyleClass().add("workflowButtonGreen");
+			archiveButton.getStyleClass().add("workflowButtonGreen");
+			editButton.getStyleClass().add("workflowButtonGreen");
+			finishButton.getStyleClass().add("workflowButtonGreen");
+			archiveButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
 			break;
 		case PAUSED:
 			pauseProjectButton.getStyleClass().add("playProjectButton");
@@ -425,13 +453,17 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		projectNameField.setDisable(true);
 		newButton.setDisable(true);
 		editButton.setDisable(true);
-		importButton.setDisable(true);
 		finishButton.setDisable(true);
+		archiveButton.setDisable(true);
 
+		editButton.setOnAction(this::editProject);
+		finishButton.setOnAction(this::finishProject);
+		archiveButton.setOnAction(this::archiveProject);
 		importPhotoButton.setOnAction(this::importPhotos);
 		archiveProjectButton.setOnAction(this::archiveProject);
 		exportProjectButton.setOnAction(this::exportProject);
 		pauseProjectButton.setOnAction(this::pauseProject);
+		
 		
 		initializeTodoButton();
 		initializeTodoPopOver();

@@ -46,7 +46,7 @@ public enum ProjectState implements State<ProjectState> {
 	DONE("Done") {
 		@Override
 		Collection<ProjectState> nextStates() {
-			return ImmutableSet.of(IN_WORK);
+			return ImmutableSet.of(IN_WORK, ARCHIVED);
 		}
 		
 		@Override

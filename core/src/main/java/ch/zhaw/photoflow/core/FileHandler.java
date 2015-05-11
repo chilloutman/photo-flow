@@ -15,6 +15,7 @@ import java.util.zip.ZipOutputStream;
 
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
+import ch.zhaw.photoflow.core.domain.PhotoState;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -188,7 +189,9 @@ public class FileHandler {
 		) {
 			for (Photo photo : list) {
 				 try {
-					addToZip(photo, zos);
+					if(photo.getState() == PhotoState.FLAGGED){
+						addToZip(photo, zos);
+					}
 				} catch (IOException e) {
 					throw new FileHandlerException("Could not load Photo to Zip: " + photo, e);
 				}

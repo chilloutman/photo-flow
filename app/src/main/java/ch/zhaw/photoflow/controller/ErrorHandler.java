@@ -4,7 +4,7 @@ import org.controlsfx.control.Notifications;
 
 public class ErrorHandler {
 
-	public void spawnWarining(String text)
+	public void spawnWarning(String text)
 	{
 		Notifications.create()
 		.darkStyle()

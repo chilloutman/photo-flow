@@ -15,14 +15,14 @@
 				<Button fx:id="newButton" styleClass="workflowButtonRed" layoutX="250.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="false"/>
 				<Label text="New" layoutX="257.0" layoutY="55.0" />
 				<Pane fx:id="separatorOne" styleClass="separator" layoutX="295.0" layoutY="29.0" prefWidth="70" prefHeight="4" ></Pane>
-				<Button fx:id="importButton" styleClass="workflowButtonRed" layoutX="370.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true"/>
-				<Label text="Import" layoutX="372.0" layoutY="55.0" />
+				<Button fx:id="editButton" styleClass="workflowButtonRed" layoutX="370.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true"/>
+				<Label text="Edit" layoutX="380.0" layoutY="55.0" />
 				<Pane fx:id="separatorTwo" styleClass="separator" layoutX="415.0" layoutY="29.0" prefWidth="70" prefHeight="4" ></Pane>
-				<Button fx:id="editButton" styleClass="workflowButtonRed" layoutX="490.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true"/>
-				<Label text="Edit" layoutX="499.0" layoutY="55.0" />
+				<Button fx:id="finishButton" styleClass="workflowButtonRed" layoutX="490.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true"/>
+				<Label text="Finish" layoutX="494.0" layoutY="55.0" />
 				<Pane fx:id="separatorThree" styleClass="separator" layoutX="535.0" layoutY="29.0" prefWidth="70" prefHeight="4" ></Pane>
-				<Button fx:id="finishButton" styleClass="workflowButtonRed" layoutX="610.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true"/>
-				<Label text="Finish" layoutX="612.0" layoutY="55.0" />
+				<Button fx:id="archiveButton" styleClass="workflowButtonRed" layoutX="610.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true"/>
+				<Label text="Archive" layoutX="610.0" layoutY="55.0" />
 
 				<Button fx:id="importPhotoButton" layoutX="700.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false" disable="true" />
 				<Button fx:id="todoButton" text="Todo" layoutX="770.0" layoutY="27.0" prefWidth="60" disable="true" />

@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -147,7 +148,7 @@ public class MainController extends PhotoFlowController implements Initializable
 			return Optional.of(project);
 		} else {
 			project.setDisable(false);
-			errorHandler.spawnWarining("You canceled the project creation!");
+			errorHandler.spawnWarning("You canceled the project creation!");
 			System.out.println("canceled project creation");
 			return Optional.empty();
 		}
