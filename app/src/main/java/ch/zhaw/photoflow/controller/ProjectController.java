@@ -52,7 +52,6 @@ import ch.zhaw.photoflow.controller.PhotoController.PhotoListener;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
-
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
@@ -474,7 +473,42 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					// TODO Button should have been disabled.
 				}
 			}
+
+			@Override
+			public void editPhoto(Photo photo) {
+				try {
+					if(isWindows())
+					{
+						System.out.println("Windows");
+						Runtime.getRuntime().exec("explorer.exe /select, "+System.getProperty("user.home")+"/PhotoFlow/"+project.getId().toString()+"/");
+					}
+					else if(isMac())
+					{
+						System.out.println("Mac: open /System/Library/CoreServices/Finder.app  "+System.getProperty("user.home")+"/PhotoFlow/"+project.getId().toString()+"/");
+						Runtime.getRuntime().exec("open /System/Library/CoreServices/Finder.app "+System.getProperty("user.home")+"/PhotoFlow/"+project.getId().get()+"/");
+					}
+					else
+					{
+						errorHandler.spawnError("Editting is not yet supported on your OS. Please buy a Mac :-P");
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			System.out.println("edit picture");
+			errorHandler.spawnInformation("Opening File explorer to exit your photo");
+			}
 		});
+	}
+		
+	private boolean isWindows() {
+	    String os = System.getProperty("os.name").toLowerCase();
+	    return (os.indexOf("win") >= 0);
+	}
+	
+	private boolean isMac() {
+	    String os = System.getProperty("os.name").toLowerCase();
+	    return (os.indexOf("mac") >= 0);
 	}
 	
 	private void initializeTodoButton() {

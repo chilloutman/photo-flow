@@ -67,17 +67,14 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 				savePhoto();
 			});
 		});
-		
-		//TODO open FileHandler
 		editorButton.setOnAction(event -> {
-//			listener.ifPresent(listener -> {
-//				listener.discardPhoto(photo);
-//				savePhoto();
-//			});
-			System.out.println("edit picture");
-			errorHandler.spawnInformation("Opening File explorer to exit your photo");
+			listener.ifPresent(listener -> {
+				listener.editPhoto(photo);
+				//savePhoto();
+			});
 		});
 	}
+		
 	
 	private void savePhoto() {
 		try {
@@ -129,6 +126,12 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		 * @param photo
 		 */
 		public void discardPhoto(Photo photo);
+		
+		/**
+		 * Sets the status of the specified {@link Photo} object to {@link PhotoState#DISCARDED}.
+		 * @param photo
+		 */
+		public void editPhoto(Photo photo);
 		
 	}
 
