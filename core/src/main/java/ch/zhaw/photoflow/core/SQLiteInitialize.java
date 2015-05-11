@@ -7,8 +7,14 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.Statement;
 
+/**
+ * Initializes a SQLite database.
+ */
 public class SQLiteInitialize {
 
+	/**
+	 * Initializes a SQLite database with the database script provided in Resources folder.
+	 */
 	public static void initialize() {
 
 		Connection c = null;

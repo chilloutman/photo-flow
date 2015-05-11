@@ -10,6 +10,9 @@ import java.util.function.Consumer;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Implementation of a model for photos.
+ */
 public class Photo implements PersistentDomainObject {
 	
 	private Optional<Integer> id = Optional.empty();

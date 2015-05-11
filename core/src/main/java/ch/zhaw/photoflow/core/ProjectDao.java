@@ -21,8 +21,34 @@ public interface ProjectDao extends Dao<Project> {
 	 */
 	public ImmutableList<Project> loadAll() throws DaoException;
 	
+	/**
+	 * 
+	 * @param {@link Project}
+	 * @return all todos held by a specific {@link Project}
+	 * @throws DaoException
+	 */
 	public List<Todo> loadAllTodosByProject(Project project) throws DaoException;
+	
+	/**
+	 * @param id of a {@link Todo}.
+	 * @return a {@link Todo} identified by given parameter.
+	 * @throws DaoException
+	 */
 	public Optional<Todo> loadTodo(int id) throws DaoException;
+	
+	/**
+	 * Saves the {@link Todo} object relating to the provided {@link Project}.
+	 * @param {@link Project}
+	 * @param {@link Todo}
+	 * @return {@link Todo}
+	 * @throws DaoException
+	 */
 	public Todo saveTodo(Project project, Todo todo) throws DaoException;
+	
+	/**
+	 * Removes a Todo.
+	 * @param {@link todo}
+	 * @throws DaoException
+	 */
 	public void deleteTodo(Todo todo) throws DaoException;
 }

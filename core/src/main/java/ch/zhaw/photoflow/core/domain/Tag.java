@@ -4,6 +4,9 @@ import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
 
+/**
+ *	Implementation of a model for tags.
+ */
 public class Tag {
 
 	private final String name;

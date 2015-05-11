@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.google.common.base.MoreObjects;
 
 /**
- * This class is immutable. There should be no setters.
+ * Implementation of a model for todo tasks.
  */
 public class Todo {
 	

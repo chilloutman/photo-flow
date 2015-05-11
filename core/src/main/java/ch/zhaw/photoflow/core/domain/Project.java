@@ -9,8 +9,10 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
 
+/**
+ * * Implementation of a model for projects.
+ */
 public class Project implements PersistentDomainObject {
 
 	private Optional<Integer> id = Optional.empty();

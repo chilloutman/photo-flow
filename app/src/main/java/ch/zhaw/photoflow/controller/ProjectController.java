@@ -480,7 +480,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					if(isWindows())
 					{
 						System.out.println("Windows");
-						Runtime.getRuntime().exec("explorer.exe /select, "+System.getProperty("user.home")+"/PhotoFlow/"+project.getId().toString()+"/");
+						Runtime.getRuntime().exec("explorer "+ System.getProperty("user.home")+"\\PhotoFlow\\"+project.getId().get());
 					}
 					else if(isMac())
 					{

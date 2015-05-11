@@ -33,14 +33,26 @@ public class FileHandler {
 	private final Integer projectId;
 	private final File projectDir;
 	
+	/**
+	 * @return {@link File} SQLite database file.
+	 * @throws FileHandlerException
+	 */
 	public static File sqliteFile() throws FileHandlerException {
 		return new File(workingDir(), "PhotoFlow.db");
 	}
 	
+	/**
+	 * @return {@link File} working directory.
+	 * @throws FileHandlerException
+	 */
 	static File workingDir() throws FileHandlerException {
 		return checkDirectory(new File(USER_HOME_DIR, PHOTO_FLOW));
 	}
 	
+	/**
+	 * @return {@link File} archive directory
+	 * @throws FileHandlerException
+	 */
 	static File archiveDir() throws FileHandlerException {
 		return checkDirectory(new File(workingDir(), "Archive"));
 	}
@@ -102,6 +114,12 @@ public class FileHandler {
 		}
 	}
 
+	/**
+	 * Gets an {@link InputStream} from a photo-file corresponding to the given {@link Photo photo} object.
+	 * @param photo
+	 * @return {@link InputStream}
+	 * @throws FileHandlerException
+	 */
 	public InputStream loadPhoto(Photo photo) throws FileHandlerException {
 		try {
 			File file = getPhotoFile(photo);
@@ -112,6 +130,12 @@ public class FileHandler {
 		}
 	}
 	
+	/**
+	 * Loads the meta data of a photo-file.
+	 * @param photo
+	 * @return String dump of all photo-file meta datas.
+	 * @throws FileHandlerException
+	 */
 	public String loadPhotoMetadata(Photo photo) throws FileHandlerException {
 		try (InputStream photoInputStream = loadPhoto(photo)) {
 			Metadata metadata = ImageMetadataReader.readMetadata(photoInputStream);
@@ -204,6 +228,10 @@ public class FileHandler {
 		System.out.println("Project successfully archived!");
 	}
 	
+	/**
+	 * Deletes the project directory.
+	 * @throws FileHandlerException
+	 */
 	public void deleteProject() throws FileHandlerException {
 		deleteDirectory(projectDir);
 	}

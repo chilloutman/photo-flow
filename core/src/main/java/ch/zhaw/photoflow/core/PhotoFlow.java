@@ -32,6 +32,10 @@ public class PhotoFlow {
 		}
 	}
 	
+	/**
+	 * PhotoFlow constructor.
+	 * @param boolean test. If test is true, database dummies will be used in this project else sqlite DAOs.
+	 */
 	public PhotoFlow(boolean test) {
 		if (test) {
 			photoDao = new InMemoryPhotoDao();

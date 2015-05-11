@@ -1,5 +1,8 @@
 package ch.zhaw.photoflow.core.domain;
 
+/**
+ * Implementation of a model for locations.
+ */
 public class Location {
 	
 	private float lat;	//latitude

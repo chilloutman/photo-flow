@@ -6,6 +6,9 @@ import java.sql.SQLException;
 
 import org.sqlite.SQLiteConfig;
 
+/**
+ * Manages the connection pool.
+ */
 public class SQLiteConnection {
 
 	private static SQLiteConnection instance = new SQLiteConnection();
@@ -23,6 +26,11 @@ public class SQLiteConnection {
 		}
 	}
 
+	/**
+	 * Creates a {@link Connection} to the photoflow sqlite database if necessary. Else the existing {@link Connection} will be returned. 
+	 * @return {@link Connection}
+	 * @throws SQLException
+	 */
 	private Connection createConnection() throws SQLException {
 		if (this.connection == null || this.connection.isClosed()) {
 			SQLiteConfig config = new SQLiteConfig();
@@ -38,6 +46,11 @@ public class SQLiteConnection {
 		return connection;
 	}
 
+	/**
+	 * Gets a {@link Connection} of the connection pool.
+	 * @return
+	 * @throws SQLException
+	 */
 	public static Connection getConnection() throws SQLException {
 		return instance.createConnection();
 	}

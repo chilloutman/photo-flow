@@ -23,6 +23,9 @@ import ch.zhaw.photoflow.core.domain.PhotoState;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * SQLite implementation of the {@link PhotoDao}
+ */
 public class SqlitePhotoDao implements PhotoDao {
 
 	@Override

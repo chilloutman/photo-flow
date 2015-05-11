@@ -21,6 +21,11 @@ public enum FileFormat {
 		this.extensions = extensions;
 	}
 
+	/**
+	 * Gets a fileformat by the file name.
+	 * @param fileName
+	 * @return {@link Optional}<{@link FileFormat}>
+	 */
 	public static Optional<FileFormat> get(String fileName) {
 		Stream<FileFormat> s = Arrays.stream(values()).filter(fileFormat -> {
 			return Arrays.stream(fileFormat.extensions)
@@ -31,6 +36,10 @@ public enum FileFormat {
 		return s.findFirst();
 	}
 	
+	/**
+	 * Gets all declared file formats
+	 * @return {@link ImmutableList<String>} containing all declared file formats.
+	 */
 	public static ImmutableList<String> getAllFileExtensions () {
 		return Arrays.stream(values())
 			.flatMap(fileFormat -> Arrays.stream(fileFormat.extensions))

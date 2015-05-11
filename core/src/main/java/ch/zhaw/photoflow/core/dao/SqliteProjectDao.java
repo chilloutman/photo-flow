@@ -25,7 +25,9 @@ import ch.zhaw.photoflow.core.domain.Todo;
 
 import com.google.common.collect.ImmutableList;
 
-
+/**
+ * SQLite implementation of the {@link ProjectDao}
+ */
 public class SqliteProjectDao implements ProjectDao {
 
 	@Override

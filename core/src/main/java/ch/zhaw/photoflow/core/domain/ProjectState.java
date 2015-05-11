@@ -80,11 +80,18 @@ public enum ProjectState implements State<ProjectState> {
 		return name;
 	}
 	
+
+
 	@Override
 	public boolean isValidNextState(ProjectState state) {
 		return nextStates().contains(state);
 	}
 	
+	/**
+	 * Checks if a photo may step to the next desired state.
+	 * @param {@link PhotoState} state
+	 * @return
+	 */
 	public boolean isValidPhotoState(PhotoState state) {
 		return photoStates().contains(state);
 	}
