@@ -18,8 +18,9 @@
 
 			<HBox spacing="25" alignment="CENTER">
 				<children>
-					<Button fx:id="flagButton" text="Flag" minWidth="75"/>
-					<Button fx:id="discardButton" text="Discard" minWidth="75"/>
+					<Button fx:id="flagButton" minWidth="75"/>
+					<Button fx:id="discardButton" minWidth="75"/>
+					<Button fx:id="editButton" minWidth="75"/>
 				</children>
 			</HBox>
 		</children>

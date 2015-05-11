@@ -362,6 +362,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		pauseProjectButton.getStyleClass().add("pauseProjectButton");
 		
 		if(project.getState() == ProjectState.PAUSED){
+			projectNameField.setDisable(true);
 			newButton.setDisable(true);
 			importButton.setDisable(true);
 			editButton.setDisable(true);
@@ -371,6 +372,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			todoButton.setDisable(true);
 			pauseProjectButton.setDisable(false);
 		}else {
+			projectNameField.setDisable(false);
 			newButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.NEW));
 			importButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
 			editButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
@@ -421,6 +423,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		
 		//Disable first TODO
 		//this.setDisable(true);
+		projectNameField.setDisable(true);
 		newButton.setDisable(true);
 		editButton.setDisable(true);
 		importButton.setDisable(true);

@@ -1,12 +1,13 @@
 package ch.zhaw.photoflow.controller;
 
+import java.net.URL;
 import java.util.Optional;
-
-import org.controlsfx.control.Notifications;
+import java.util.ResourceBundle;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import ch.zhaw.photoflow.core.DaoException;
@@ -16,7 +17,7 @@ import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Tag;
 
-public class PhotoController extends PhotoFlowController {
+public class PhotoController extends PhotoFlowController implements Initializable {
 
 	/** Currently selected photo. */
 	private Photo photo;
@@ -25,7 +26,7 @@ public class PhotoController extends PhotoFlowController {
 	private Optional<PhotoListener> listener;
 	
 	@FXML
-	private Button flagButton, discardButton;
+	private Button flagButton, discardButton, editButton;
 	
 	@FXML
 	private Label filePathLabel, fileSizeLabel, metadataLabel;
@@ -37,6 +38,10 @@ public class PhotoController extends PhotoFlowController {
 	public void setPhoto(Photo photo) {
 		System.out.println("Photo has been selected: " + photo);
 		this.photo = photo;
+		
+		flagButton.setDisable(false);
+		discardButton.setDisable(false);
+		editButton.setDisable(false);
 		
 		filePathLabel.textProperty().bind(stringProperty(photo, "filePath"));
 		StringExpression fileSize =  Bindings.format("%.2f MB", numberProperty(photo, "fileSize").divide(1024*1014));
@@ -61,6 +66,16 @@ public class PhotoController extends PhotoFlowController {
 				listener.discardPhoto(photo);
 				savePhoto();
 			});
+		});
+		
+		//TODO open FileHandler
+		editButton.setOnAction(event -> {
+//			listener.ifPresent(listener -> {
+//				listener.discardPhoto(photo);
+//				savePhoto();
+//			});
+			System.out.println("edit picture");
+			errorHandler.spawnInformation("Opening File explorer to exit your photo");
 		});
 	}
 	
@@ -115,6 +130,14 @@ public class PhotoController extends PhotoFlowController {
 		 */
 		public void discardPhoto(Photo photo);
 		
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		// TODO Auto-generated method stub
+		flagButton.setDisable(true);
+		discardButton.setDisable(true);
+		editButton.setDisable(true);
 	}
 	
 }
