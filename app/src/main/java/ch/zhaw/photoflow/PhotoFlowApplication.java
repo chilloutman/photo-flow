@@ -44,7 +44,7 @@ public class PhotoFlowApplication extends GuiceApplication {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 		System.out.println("Photo Flow");
-		Parent root = fxmlLoader.load(getClass().getResource("view/main_gui.fxml")).getRoot();
+		Parent root = fxmlLoader.load(getClass().getResource("view/main.fxml")).getRoot();
 
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);

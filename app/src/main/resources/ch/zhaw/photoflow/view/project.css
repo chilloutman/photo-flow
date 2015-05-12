@@ -1,0 +1,89 @@
+/* Project Toolbar */
+
+#todoCheckComboBoxPane .list-cell {
+	-fx-border-color: #fff;
+}
+
+#exportProjectButton{
+	-fx-background-image: url('../export.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 50% auto;
+}
+
+#archiveProjectButton{
+	-fx-background-image: url('../archive.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 90% auto;
+}
+
+#importPhotoButton{
+	-fx-background-image: url('../addPhoto.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 90% auto;
+}
+
+.pauseProjectButton{
+	-fx-background-image: url('../pause.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 50% auto;
+}
+
+.playProjectButton{
+	-fx-background-image: url('../play.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 50% auto;
+}
+
+.workflowButtonRed {
+	-fx-background-image: url('../red_NA.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 70% auto;
+	-fx-background-radius: 7em;
+}
+
+.workflowButtonGreen {
+	-fx-background-image: url('../check_green.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 80% auto;
+	-fx-background-radius: 7em;
+}
+
+.workflowButton {
+	-fx-background-image: none;
+	-fx-background-radius: 7em;
+}
+
+.separator {
+	-fx-border-color: #888;
+	-fx-border-style: solid;
+	-fx-border-width: 1px;
+}
+
+/* TilePane selection and ImageView borders. */
+
+.selected-photo {
+	-fx-border-color: #fff;
+	-fx-border-style: solid;
+	-fx-background-insets: 0 0 -1 0, 0, 1, 2;
+	-fx-border-width: 2px;
+}
+
+.discarded-photo {
+	-fx-border-color: red;
+	-fx-border-style: solid;
+	-fx-border-width: 2px;
+	-fx-opacity: .2;
+}
+
+.flagged-photo {
+	-fx-border-color: green;
+	-fx-border-style: solid;
+	-fx-border-width: 2px;
+}

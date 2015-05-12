@@ -7,11 +7,11 @@
 
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="633.0" prefWidth="535.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Button fx:id="buttonCreateProject" layoutX="436.0" layoutY="565.0" mnemonicParsing="false" text="Create" />
-      <Button fx:id="buttonCancelProject" layoutX="357.0" layoutY="565.0" mnemonicParsing="false" text="Cancel" />
-      <TextField fx:id="textfieldProjectName" layoutX="35.0" layoutY="49.0" prefHeight="41.0" prefWidth="449.0" />
-      <TextArea fx:id="textareaProjectDescription" layoutX="35.0" layoutY="120.0" prefHeight="241.0" prefWidth="449.0" />
-      <TextArea fx:id="textareaProjectTags" layoutX="35.0" layoutY="402.0" prefHeight="118.0" prefWidth="449.0" />
-   </children>
+	<children>
+		<Button fx:id="buttonCreateProject" layoutX="436.0" layoutY="565.0" mnemonicParsing="false" text="Create" />
+		<Button fx:id="buttonCancelProject" layoutX="357.0" layoutY="565.0" mnemonicParsing="false" text="Cancel" />
+		<TextField fx:id="textfieldProjectName" layoutX="35.0" layoutY="49.0" prefHeight="41.0" prefWidth="449.0" />
+		<TextArea fx:id="textareaProjectDescription" layoutX="35.0" layoutY="120.0" prefHeight="241.0" prefWidth="449.0" />
+		<TextArea fx:id="textareaProjectTags" layoutX="35.0" layoutY="402.0" prefHeight="118.0" prefWidth="449.0" />
+	</children>
 </AnchorPane>

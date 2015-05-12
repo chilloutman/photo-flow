@@ -1,0 +1,22 @@
+/* Photo View */
+
+#flagButton {
+	-fx-background-image: url('../thumb_up.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 35% auto;
+}
+
+#discardButton {
+	-fx-background-image: url('../thumb_down.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 35% auto;
+}
+
+#editButton {
+	-fx-background-image: url('../edit.png');
+	-fx-background-repeat: no-repeat;
+	-fx-background-position: center;
+	-fx-background-size: 50% auto;
+}
