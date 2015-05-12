@@ -19,7 +19,7 @@ public class ProjectWorkflow extends AbstractWorkflow<ProjectState> {
 	 */
 	public boolean canTransition(Project project, Collection<Photo> photos, ProjectState nextState) {
 		return canTransition(project.getState(), nextState, () ->
-			photos.stream().map(Photo::getState).allMatch(nextState::isValidPhotoState)
+			!photos.isEmpty() && photos.stream().map(Photo::getState).allMatch(nextState::isValidPhotoState)
 		);
 	}
 	

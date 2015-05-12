@@ -51,7 +51,7 @@ public class PhotoFlow {
 	}
 
 	public FileHandler fileHandler(Project project) throws FileHandlerException {
-		return new FileHandler(project.getId().get());
+		return new FileHandler(project);
 	}
 	
 	public FileHandler fileHandler(int projectId) throws FileHandlerException {

@@ -24,25 +24,25 @@
 					</columnConstraints>
 					
 					<!-- New -->
-					<Button fx:id="newButton" styleClass="workflowButtonRed" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="false" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+					<Button fx:id="newButton" styleClass="workflowButton" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="false" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
 					<Label text="New" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
 					
 					<Pane styleClass="separator" prefWidth="30" maxHeight="2" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 					
 					<!-- Edit -->
-					<Button fx:id="editButton" styleClass="workflowButtonRed" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+					<Button fx:id="editButton" styleClass="workflowButton" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
 					<Label text="Edit" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
 						
 					<Pane styleClass="separator" prefWidth="30" maxHeight="2" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 					
 					<!--  Finish -->
-					<Button fx:id="finishButton" styleClass="workflowButtonRed" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+					<Button fx:id="finishButton" styleClass="workflowButton" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
 					<Label text="Finish" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
 					
 					<Pane styleClass="separator" prefWidth="30" maxHeight="2" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
 					
 					<!-- Archive -->
-					<Button fx:id="archiveButton" styleClass="workflowButtonRed" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true" GridPane.columnIndex="6" GridPane.rowIndex="0"/>
+					<Button fx:id="archiveButton" styleClass="workflowButton" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true" GridPane.columnIndex="6" GridPane.rowIndex="0"/>
 					<Label text="Archive" GridPane.columnIndex="6" GridPane.rowIndex="1"/>
 					
 				</GridPane>
@@ -51,7 +51,6 @@
 				<HBox alignment="CENTER_RIGHT" spacing="15">
 					<Button fx:id="todoButton" text="Todo" prefWidth="65" disable="true" />
 					<Button fx:id="importPhotoButton" prefWidth="50" disable="true" />
-					<Button fx:id="archiveProjectButton" prefWidth="50" disable="true" />
 					<Button fx:id="exportProjectButton" prefWidth="50" disable="true"/>
 					<Button fx:id="pauseProjectButton" styleClass="pauseProjectButton" prefWidth="50" disable="true"/>
 				</HBox>

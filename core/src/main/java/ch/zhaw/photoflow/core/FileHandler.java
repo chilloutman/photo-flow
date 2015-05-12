@@ -17,6 +17,8 @@ import java.util.zip.ZipOutputStream;
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
+import ch.zhaw.photoflow.core.domain.Project;
+import ch.zhaw.photoflow.core.domain.ProjectState;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -32,7 +34,7 @@ public class FileHandler {
 	@VisibleForTesting
 	static File USER_HOME_DIR = new File(System.getProperty("user.home"));
 
-	private final Integer projectId;
+	private static Project project = Project.newProject();
 	
 	/**
 	 * @return {@link File} SQLite database file.
@@ -76,11 +78,22 @@ public class FileHandler {
 	 * @throws FotoHandlerException 
 	 */
 	public FileHandler(Integer projectId) {
-		this.projectId = projectId;
+		project.setId(projectId);
+	}
+	
+	/**
+	 * Constructor initializes userhome and workingPath
+	 * @throws FotoHandlerException 
+	 */
+	public FileHandler(Project project) {
+		FileHandler.project = project;
 	}
 	
 	public File projectDir () throws FileHandlerException {
-		return checkDirectory(new File(workingDir(), projectId.toString()));
+		if(project.getState() == ProjectState.ARCHIVED){
+			return checkDirectory(new File(archiveDir(), project.getId().get().toString()));
+		}
+		return checkDirectory(new File(workingDir(), project.getId().get().toString()));
 	}
 	
 	/**
@@ -228,7 +241,23 @@ public class FileHandler {
 	 * @throws FileHandlerException
 	 */
 	public void archiveProject() throws FileHandlerException {
-		File targetDir = new File(archiveDir(), projectId.toString());
+		File targetDir = new File(archiveDir(), project.getId().get().toString());
+		if (!targetDir.isDirectory()) {
+			try {
+				Files.move(projectDir().toPath(), targetDir.toPath());
+			} catch (IOException e) {
+				throw new FileHandlerException("Projectfiles could not be moved to archive!",e);
+			}
+		}
+		System.out.println("Project successfully archived!");
+	}
+	
+	/**
+	 * Method used to archive a Project, move all Files to Archive-Folder
+	 * @throws FileHandlerException
+	 */
+	public void unArchiveProject() throws FileHandlerException {
+		File targetDir = new File(workingDir(), project.getId().get().toString());
 		if (!targetDir.isDirectory()) {
 			try {
 				Files.move(projectDir().toPath(), targetDir.toPath());
