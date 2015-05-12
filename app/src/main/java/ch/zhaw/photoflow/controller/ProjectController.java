@@ -286,12 +286,12 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				
 			} catch (FileHandlerException e) {
 				System.out.println("FILEHANDLEREXCEPTION");
-				errorHandler.spawnError("Could not load your Photo. Maybe it was deleted from your filesystem...");
-				e.printStackTrace();
+				errorHandler.spawnError("Youe File is already imported. Please select another one, will you?");
+				throw new RuntimeException(e);
 			} catch (DaoException e) {
 				System.out.println("DAOEXCEPTION");
-				e.printStackTrace();
 				errorHandler.spawnError("Sorry! Something went wrong in saving your Photo. Please try again!");
+				throw new RuntimeException(e);
 			}
 			
 		}
