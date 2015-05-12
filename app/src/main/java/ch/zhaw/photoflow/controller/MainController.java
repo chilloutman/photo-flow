@@ -1,12 +1,9 @@
 package ch.zhaw.photoflow.controller;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-
-import org.controlsfx.control.Notifications;
 
 import javafx.application.Platform;
 import javafx.beans.property.StringProperty;
@@ -16,18 +13,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandlerException;
 import ch.zhaw.photoflow.core.PhotoFlow;
 import ch.zhaw.photoflow.core.domain.Project;
-import ch.zhaw.photoflow.core.domain.Tag;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -39,24 +33,14 @@ public class MainController extends PhotoFlowController implements Initializable
 	private final Project ADD_NEW_PROJECT = Project.newProject(p -> p.setName("+ New Project"));
 	
 	private final ObservableList<Project> projects = FXCollections.observableArrayList();
-	private PopUpHandler popup;
 	private ErrorHandler errorHandler = new ErrorHandler();
 
 	@FXML
 	private ProjectController projectController;
 	
 	@FXML
-	private Pane project;
-
-	@FXML
 	private ListView<Project> projectList;
 
-	private String projectName;
-	private String projectDescription;
-	private List<Tag> tags = new ArrayList<>();
-	
-	private Notifications notifications;
-	
 	@VisibleForTesting
 	protected void setPhotoFlow(PhotoFlow photoFlow) {
 		this.photoFlow = photoFlow;
@@ -81,7 +65,7 @@ public class MainController extends PhotoFlowController implements Initializable
 			if (KeyCode.DELETE.equals(keyevent.getCode()) || KeyCode.BACK_SPACE.equals(keyevent.getCode())) {
 				deleteProject(project);
 			} else if (ADD_NEW_PROJECT.equals(project) && KeyCode.ENTER.equals(keyevent.getCode())) {
-				createProjectFromEvents();
+				createProject();
 			}
 		});
 		
@@ -89,7 +73,7 @@ public class MainController extends PhotoFlowController implements Initializable
 			Project project = projectList.getSelectionModel().getSelectedItem();
 			
 			if (ADD_NEW_PROJECT.equals(project)) {
-				createProjectFromEvents();
+				createProject();
 			}
 		});
 	}
@@ -108,49 +92,27 @@ public class MainController extends PhotoFlowController implements Initializable
 		}
 	}
 	
-	private void createProjectFromEvents() {
-		project.setDisable(true);
-		popup = new PopUpHandler();
-		Optional<Project> newProject = createProject();
+	private void createProject() {
+		projectController.setProject(null);
+		CreateProjectController popup = new CreateProjectController(); // This call blocks
+		Project newProject = popup.getProject();
+		if (newProject != null) {
+			addProject(newProject);
+			projectController.setProject(newProject);
+			errorHandler.spawnInformation("Your new Project was successfully created!");
+		} else {
+			System.out.println("Canceled project creation.");
+		}
 
 		// Update selection
 		Platform.runLater(() -> {
-			projectList.getSelectionModel().select(newProject.orElse(null));
+			projectList.getSelectionModel().select(popup.getProject());
 		});
 	}
 	
 	public void projectSelected(Project selectedProject) {
 		if (selectedProject != ADD_NEW_PROJECT) {
-			project.setDisable(false);
 			projectController.setProject(selectedProject);
-		}
-	}
-
-	/**
-	 * Processes stuff for object {@link Project} and adds to list.
-	 */
-	public Optional<Project> createProject() {
-		if (popup.getName() != null) {
-			setProjectName(popup.getName());
-			setProjectDescription(popup.getDesc());
-			tags = popup.getTags();
-
-			System.out.println("Tags = " + tags);
-
-			Project project = Project.newProject(p -> {
-				p.setName(projectName);
-				p.setDescription(projectDescription);
-				p.setTags(tags);
-			});
-			addProject(project);
-			errorHandler.spawnInformation("Your new Project was successfully created!");
-			System.out.println("project created");
-			return Optional.of(project);
-		} else {
-			project.setDisable(false);
-			errorHandler.spawnWarning("You canceled the project creation!");
-			System.out.println("canceled project creation");
-			return Optional.empty();
 		}
 	}
 
@@ -166,6 +128,7 @@ public class MainController extends PhotoFlowController implements Initializable
 			System.out.println(this.projects);
 		} catch (DaoException e) {
 			// TODO: Warn user
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -201,14 +164,6 @@ public class MainController extends PhotoFlowController implements Initializable
 	@VisibleForTesting
 	protected List<Project> getProjects() {
 		return this.projects;
-	}
-
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
-
-	public void setProjectDescription(String projectDescription) {
-		this.projectDescription = projectDescription;
 	}
 
 	private static final class ProjectCell extends ListCell<Project> {

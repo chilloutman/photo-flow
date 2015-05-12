@@ -68,8 +68,6 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	private FileHandler fileHandler;
 	private List<Photo> photos = new ArrayList<Photo>();
 	final ObservableList<Todo> todos = FXCollections.observableArrayList();
-	private PopUpHandler popup;
-	private ImageViewer imageViewer;
 	private ErrorHandler errorHandler = new ErrorHandler();
 	
 	/** Daemon threads for background task execution */
@@ -105,9 +103,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		
 		reset();
 		
-		initializeProjectNameField(this.project, project);
-		System.out.println("Project \"" + project.getName() + "\" has been selected.");
 		this.project = project;
+		System.out.println("Project has been selected: " + project);
 		
 		if (this.project != null) {
 			try {
@@ -115,6 +112,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			} catch (FileHandlerException e) {
 				throw new RuntimeException(e);
 			}
+			initializeProjectNameField();
 			
 			todos.addAll(this.project.getTodos());
 			toolbar.setDisable(false);
@@ -126,17 +124,17 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	}
 	
 	private void reset() {
+		if (project != null) {
+			projectNameField.textProperty().unbindBidirectional(stringProperty(project, "name"));
+		}
 		photoController.setPhoto(null);
 		resetPhotosPane();
 		todos.clear();
 		toolbar.setDisable(true);
 	}
 	
-	private void initializeProjectNameField(Project oldProject, Project newProject) {
-		if (oldProject != null) {
-			projectNameField.textProperty().unbindBidirectional(stringProperty(oldProject, "name"));
-		}
-		projectNameField.textProperty().bindBidirectional(stringProperty(newProject, "name"));
+	private void initializeProjectNameField() {
+		projectNameField.textProperty().bindBidirectional(stringProperty(project, "name"));
 		projectNameField.textProperty().addListener((observable, oldValue, newValue) -> {
 			saveProject();
 		});
@@ -165,7 +163,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				imageNode.setOnMouseClicked((event) -> {
 					selectPhoto(photo);
 					if (event.getClickCount() == 2) {
-						imageViewer = new ImageViewer(photo, fileHandler);
+						new ImageViewer(photo, fileHandler);
 					}
 				});
 				
@@ -265,10 +263,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			
 		}
 		Notifications.create()
-		.darkStyle()
-        .title("Success")
-        .text("All your photos are belong to us!")
-        .showInformation();
+			.darkStyle()
+			.title("Success")
+			.text("All your photos are belong to us!")
+			.showInformation();
 		displayPhotos();
 		transitionState(this.project, ProjectState.IN_WORK);
 		updateWorkflowButtons();
