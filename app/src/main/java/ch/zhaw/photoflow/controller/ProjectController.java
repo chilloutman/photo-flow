@@ -454,8 +454,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		
 		if(project != null){
 			String green = "workflowButtonGreen";
-			String play = getClass().getResource("../play.png").toExternalForm();
-			String pause = getClass().getResource("../pause.png").toExternalForm();
+			String play = "playProjectButton";
+			String pause = "pauseProjectButton";
 			
 			newButton.setEffect(null);
 			newButton.getStyleClass().remove(green);
@@ -465,6 +465,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			finishButton.getStyleClass().remove(green);
 			archiveButton.setEffect(null);
 			archiveButton.getStyleClass().remove(green);
+			pauseProjectButton.getStyleClass().remove(play);
+			pauseProjectButton.getStyleClass().remove(pause);
 
 			if(project.getState() == ProjectState.PAUSED){
 				projectNameField.setDisable(true);
@@ -478,7 +480,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				exportProjectButton.setDisable(true);
 				todoButton.setDisable(true);
 				pauseProjectButton.setDisable(false);
-				pauseProjectButton.setStyle("-fx-background-image: url('" + play + "')");
+				pauseProjectButton.getStyleClass().add(play);
 			}else {
 				projectNameField.setDisable(false);
 				
@@ -489,7 +491,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				
 				todoButton.setDisable(false);
 				pauseProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.PAUSED));
-				pauseProjectButton.setStyle("-fx-background-image: url('" + pause + "')");
+				pauseProjectButton.getStyleClass().add(pause);
 			
 				switch(project.getState()){
 				case NEW:
@@ -500,7 +502,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					projectNameField.setDisable(false);
 					importPhotoButton.setDisable(false);
 					newButton.getStyleClass().add(green);
-					pauseProjectButton.setStyle("-fx-background-image: url('" + pause + "')");
+					pauseProjectButton.getStyleClass().add(pause);
 					editButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
 					break;
 				case DONE:
