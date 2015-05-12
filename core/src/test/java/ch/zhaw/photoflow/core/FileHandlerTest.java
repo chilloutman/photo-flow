@@ -104,13 +104,14 @@ public class FileHandlerTest {
 	 * @throws IOException
 	 * @throws FileHandlerException
 	 */
+	@SuppressWarnings("static-access")
 	@Test
 	public void checkArchiveProject() throws IOException, FileHandlerException {
 		fileHandler.importPhoto(photo1, file1);
 		fileHandler.importPhoto(photo2, file2);
 		fileHandler.archiveProject();
-		assertFalse(fileHandler.projectDir().isDirectory());
-		assertFalse(fileHandler.projectDir().exists());
+		assertFalse(new File(fileHandler.workingDir().getAbsolutePath()+"/"+project.getId().get()).isDirectory());
+		assertTrue(fileHandler.projectDir().exists());
 		if (file1.exists()&&file2.exists()) {
 			file1.delete();
 			file2.delete();
