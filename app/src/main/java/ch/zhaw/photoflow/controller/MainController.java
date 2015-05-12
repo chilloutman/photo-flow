@@ -127,6 +127,9 @@ public class MainController extends PhotoFlowController implements Initializable
 		if (selectedProject != ADD_NEW_PROJECT) {
 			projectController.setProject(selectedProject);
 		}
+		else {
+			projectController.setProject(null);
+		}
 	}
 
 	/**
