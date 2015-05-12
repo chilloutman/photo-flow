@@ -31,7 +31,6 @@ public class FileHandler {
 	static File USER_HOME_DIR = new File(System.getProperty("user.home"));
 
 	private final Integer projectId;
-	private final File projectDir;
 	
 	/**
 	 * @return {@link File} SQLite database file.
@@ -74,10 +73,12 @@ public class FileHandler {
 	 * Constructor initializes userhome and workingPath
 	 * @throws FotoHandlerException 
 	 */
-	public FileHandler(Integer projectId) throws FileHandlerException {
+	public FileHandler(Integer projectId) {
 		this.projectId = projectId;
-		projectDir = new File(workingDir(), projectId.toString());
-		checkDirectory(projectDir);
+	}
+	
+	public File projectDir () throws FileHandlerException {
+		return checkDirectory(new File(workingDir(), projectId.toString()));
 	}
 	
 	/**
@@ -90,11 +91,11 @@ public class FileHandler {
 	 */
 	public Photo importPhoto(Photo photo, File file) throws FileHandlerException {
 		if(FileFormat.get(file.getName()) != null){
-			if (new File(projectDir, file.getName()).exists()) {
+			if (new File(projectDir(), file.getName()).exists()) {
 				// TODO change name and import anyway.
 				throw new FileHandlerException("File already exists: " + file);
 			}
-			File newFile = new File(projectDir, file.getName());
+			File newFile = new File(projectDir(), file.getName());
 			try {
 				Files.copy(file, newFile);
 			} catch (IOException e) {
@@ -159,7 +160,7 @@ public class FileHandler {
 	 * @throws FileNotFoundException Error is thrown if physical File cannot be found or is invalid.
 	 */
 	File getPhotoFile(Photo photo) throws FileHandlerException {
-		return new File(projectDir, photo.getFilePath());
+		return new File(projectDir(), photo.getFilePath());
 	}
 	
 	/**
@@ -220,7 +221,7 @@ public class FileHandler {
 		if (!targetDir.isDirectory()) {
 			try {
 				targetDir.mkdirs();
-				Files.move(projectDir, targetDir);
+				Files.move(projectDir(), targetDir);
 			} catch (IOException e) {
 				throw new FileHandlerException("Projectfiles could not be moved to archive!",e);
 			}
@@ -233,7 +234,7 @@ public class FileHandler {
 	 * @throws FileHandlerException
 	 */
 	public void deleteProject() throws FileHandlerException {
-		deleteDirectory(projectDir);
+		deleteDirectory(projectDir());
 	}
 	
 	/**
@@ -254,9 +255,5 @@ public class FileHandler {
 		}
 		return (path.delete());
 	}
-	
-	File getProjectDir () {
-		return projectDir;
-	}
-	
+
 }

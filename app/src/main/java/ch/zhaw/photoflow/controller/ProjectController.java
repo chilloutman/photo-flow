@@ -331,7 +331,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				throw new RuntimeException(e);
 			}
 		}
-		errorHandler.spawnInformation("Your files were being transfered to new location: "+selectedFile.getAbsolutePath());
+		errorHandler.spawnInformation("Your files were being transfered to new location: " + selectedFile);
 	}
 	
 	public void pauseProject(ActionEvent event) {
@@ -454,6 +454,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					photoNodes.get(photo).getStyleClass().remove(DISCARDED_STYLE);
 					photoNodes.get(photo).getStyleClass().add(FLAGGED_STYLE);
 					
+					updateWorkflowButtons();
+					
 					System.out.println("Photo flagged: " + photo);
 				} else {
 					// TODO Button should have been disabled.
@@ -468,6 +470,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					photoNodes.get(photo).getStyleClass().remove(FLAGGED_STYLE);
 					photoNodes.get(photo).getStyleClass().add(DISCARDED_STYLE);
 					
+					updateWorkflowButtons();
+					
 					System.out.println("Photo discarded: " + photo);
 				} else {
 					// TODO Button should have been disabled.
@@ -477,38 +481,37 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			@Override
 			public void editPhoto(Photo photo) {
 				try {
-					if(isWindows())
-					{
-						System.out.println("Windows");
-						Runtime.getRuntime().exec("explorer "+ System.getProperty("user.home")+"\\PhotoFlow\\"+project.getId().get());
-					}
-					else if(isMac())
-					{
-						System.out.println("Mac: open /System/Library/CoreServices/Finder.app  "+System.getProperty("user.home")+"/PhotoFlow/"+project.getId().toString()+"/");
-						Runtime.getRuntime().exec("open /System/Library/CoreServices/Finder.app "+System.getProperty("user.home")+"/PhotoFlow/"+project.getId().get()+"/");
-					}
-					else
-					{
+					String executable;
+					String projectPath = fileHandler.projectDir().getAbsolutePath();
+					if (isWindows()) {
+						System.out.println("Opening Windows Windows Explorer");
+						executable = "explorer";
+						projectPath = projectPath.replace("/", "\\");
+					} else if (isMac()) {
+						System.out.println("Opening OS X Finder");
+						executable = "open ";
+					} else {
 						errorHandler.spawnError("Editting is not yet supported on your OS. Please buy a Mac :-P");
+						return;
 					}
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Runtime.getRuntime().exec(executable + " " + projectPath);
+				} catch (FileHandlerException | IOException e) {
+					throw new RuntimeException(e);
 				}
-			System.out.println("edit picture");
-			errorHandler.spawnInformation("Opening File explorer to exit your photo");
+				
+				errorHandler.spawnInformation("Opening File explorer to edit your photo");
 			}
 		});
 	}
 		
 	private boolean isWindows() {
-	    String os = System.getProperty("os.name").toLowerCase();
-	    return (os.indexOf("win") >= 0);
+		String os = System.getProperty("os.name").toLowerCase();
+		return os.contains("win");
 	}
 	
 	private boolean isMac() {
-	    String os = System.getProperty("os.name").toLowerCase();
-	    return (os.indexOf("mac") >= 0);
+		String os = System.getProperty("os.name").toLowerCase();
+		return os.contains("mac");
 	}
 	
 	private void initializeTodoButton() {
