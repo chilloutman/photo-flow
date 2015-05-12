@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,6 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.io.Files;
 
 
 public class FileHandler {
@@ -102,7 +102,7 @@ public class FileHandler {
 		
 		File newFile = new File(projectDir(), file.getName());
 		try {
-			Files.copy(file, newFile);
+			Files.copy(file.toPath(), newFile.toPath());
 		} catch (IOException e) {
 			throw new FileHandlerException("Could not import File (Copy Fail)!", e);
 		}
@@ -231,8 +231,7 @@ public class FileHandler {
 		File targetDir = new File(archiveDir(), projectId.toString());
 		if (!targetDir.isDirectory()) {
 			try {
-				targetDir.mkdirs();
-				Files.move(projectDir(), targetDir);
+				Files.move(projectDir().toPath(), targetDir.toPath());
 			} catch (IOException e) {
 				throw new FileHandlerException("Projectfiles could not be moved to archive!",e);
 			}
