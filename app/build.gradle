@@ -39,5 +39,7 @@ launch4j {
 
 macAppBundle {
 	mainClassName = project.mainClassName
+	appName = 'PhotoFlow'
 	icon = 'PhotoFlow.icns'
+	bundleJRE = true
 }
