@@ -19,6 +19,8 @@ import ch.zhaw.photoflow.core.domain.Tag;
 
 public class PhotoController extends PhotoFlowController implements Initializable {
 
+	private static final String STATE_PROPERTY = "state";
+	
 	/** Currently selected photo. */
 	private Photo photo;
 	private ErrorHandler errorHandler = new ErrorHandler();
@@ -29,7 +31,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 	private Button flagButton, discardButton, editButton;
 	
 	@FXML
-	private Label filePathLabel, fileSizeLabel, metadataLabel;
+	private Label filePathLabel, fileSizeLabel, stateLabel, metadataLabel;
 	
 	public void setListener(PhotoListener listener) {
 		this.listener = Optional.of(listener);
@@ -45,8 +47,11 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 	
 	private void initializeLabels() {
 		filePathLabel.textProperty().bind(stringProperty(photo, "filePath"));
+		
 		StringExpression fileSize =  Bindings.format("%.2f MB", numberProperty(photo, "fileSize").divide(1024*1014));
 		fileSizeLabel.textProperty().bind(fileSize);
+		
+		stateLabel.textProperty().bind(objectProperty(photo, STATE_PROPERTY).asString("State: %s"));
 		
 		try {
 			FileHandler fileHandler = photoFlow.fileHandler(photo.getProjectId().get());
@@ -64,6 +69,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 				listener.flagPhoto(photo);
 				savePhoto();
 				updateButtons();
+				updateState();
 			});
 		});
 		discardButton.setOnAction(event -> {
@@ -71,16 +77,22 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 				listener.discardPhoto(photo);
 				savePhoto();
 				updateButtons();
+				updateState();
 			});
 		});
 		editButton.setOnAction(event -> {
 			listener.ifPresent(listener -> {
 				listener.editPhoto(photo);
 				//savePhoto();
+				updateState();
 			});
 		});
 		
 		updateButtons();
+	}
+	
+	private void updateState() {
+		objectProperty(photo, STATE_PROPERTY).set(photo.getState());
 	}
 	
 	private void updateButtons() {

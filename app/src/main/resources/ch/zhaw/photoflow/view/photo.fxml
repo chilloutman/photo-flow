@@ -23,7 +23,7 @@
 					<Label fx:id="fileSizeLabel" text="" wrapText="true">
 						<padding><Insets left="5" right="5"/></padding>
 					</Label>
-					<Label fx:id="fileSizeLabel" text="" wrapText="true">
+					<Label fx:id="stateLabel" text="" wrapText="true">
 						<padding><Insets left="5" right="5"/></padding>
 					</Label>
 					<ScrollPane hbarPolicy="NEVER" fitToWidth="true" maxHeight="Infinity">
