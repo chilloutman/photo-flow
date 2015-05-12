@@ -129,9 +129,9 @@
 	-fx-background-size: 35% auto;
 }
 
-#editButton {
+/*#editButton {
 	-fx-background-image: url('../edit.png');
 	-fx-background-repeat: no-repeat;
 	-fx-background-position: center;
 	-fx-background-size: 50% auto;
-}
+}*/
