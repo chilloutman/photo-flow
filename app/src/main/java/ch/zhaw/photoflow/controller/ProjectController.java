@@ -432,6 +432,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					newButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
 					break;
 				case IN_WORK:
+					projectNameField.setDisable(false);
 					importPhotoButton.setDisable(false);
 					newButton.getStyleClass().add(green);
 					pauseProjectButton.setStyle("-fx-background-image: url('" + pause + "')");
@@ -439,12 +440,15 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					break;
 				case DONE:
 					exportProjectButton.setDisable(false);
+					projectNameField.setDisable(true);
+					importPhotoButton.setDisable(true);
 					newButton.getStyleClass().add(green);
 					editButton.getStyleClass().add(green);
 					finishButton.getStyleClass().add(green);
 					finishButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
 					break;
 				case ARCHIVED:
+					projectNameField.setDisable(true);
 					exportProjectButton.setDisable(true);
 					importPhotoButton.setDisable(true);
 					newButton.getStyleClass().add(green);
