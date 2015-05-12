@@ -58,6 +58,7 @@ import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
+import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 import ch.zhaw.photoflow.core.domain.Todo;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -282,6 +283,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				fileHandler.importPhoto(photo, file);
 				photoFlow.photoDao().save(photo);
 				photos.add(photo);
+				
 			} catch (FileHandlerException e) {
 				System.out.println("FILEHANDLEREXCEPTION");
 				errorHandler.spawnError("Could not load your Photo. Maybe it was deleted from your filesystem...");
@@ -299,7 +301,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			.text("All your photos are belong to us!")
 			.showInformation();
 		displayPhotos();
-		transitionState(this.project, ProjectState.IN_WORK);
+		if(photoFlow.projectWorkflow().canTransition(project, this.photos, ProjectState.IN_WORK)){
+			transitionState(this.project, ProjectState.IN_WORK);
+		}
 		updateWorkflowButtons();
 	}
 
