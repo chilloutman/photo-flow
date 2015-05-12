@@ -2,6 +2,8 @@ package ch.zhaw.photoflow.core;
 
 import ch.zhaw.photoflow.core.dao.InMemoryPhotoDao;
 import ch.zhaw.photoflow.core.dao.InMemoryProjectDao;
+import ch.zhaw.photoflow.core.dao.SQLiteConnectionProvider;
+import ch.zhaw.photoflow.core.dao.SQLiteInitialize;
 import ch.zhaw.photoflow.core.dao.SqlitePhotoDao;
 import ch.zhaw.photoflow.core.dao.SqliteProjectDao;
 import ch.zhaw.photoflow.core.domain.PhotoWorkflow;
@@ -9,7 +11,7 @@ import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 
 /**
- * This is the creator and provider the main core classes (e.g. data access objects).
+ * This is the creator of dao and business logic classes and main entry point for users of this module.
  */
 public class PhotoFlow {
 	
@@ -41,9 +43,10 @@ public class PhotoFlow {
 			photoDao = new InMemoryPhotoDao();
 			projectDao = new InMemoryProjectDao();
 		} else {
-			SQLiteInitialize.initialize();
-			photoDao = new SqlitePhotoDao();
-			projectDao = new SqliteProjectDao();
+			SQLiteConnectionProvider connectionProvider = new SQLiteConnectionProvider();
+			SQLiteInitialize.initialize(connectionProvider);
+			photoDao = new SqlitePhotoDao(connectionProvider);
+			projectDao = new SqliteProjectDao(connectionProvider);
 		}
 	}
 

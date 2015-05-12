@@ -18,7 +18,6 @@ import org.jooq.impl.DSL;
 
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.ProjectDao;
-import ch.zhaw.photoflow.core.SQLiteConnection;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
 import ch.zhaw.photoflow.core.domain.Todo;
@@ -30,13 +29,19 @@ import com.google.common.collect.ImmutableList;
  */
 public class SqliteProjectDao implements ProjectDao {
 
+	private final SQLiteConnectionProvider provider;
+	
+	public SqliteProjectDao(SQLiteConnectionProvider provider) {
+		this.provider = provider;
+	}
+	
 	@Override
 	public ImmutableList<Project> loadAll() throws DaoException {
 		
 		ImmutableList<Project> projectList = ImmutableList.of();
 
 		try {
-			Connection sqliteConnection = SQLiteConnection.getConnection();
+			Connection sqliteConnection = provider.getConnection();
 			sqliteConnection.setAutoCommit(false);
 			
 			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
@@ -66,9 +71,7 @@ public class SqliteProjectDao implements ProjectDao {
 	@Override
 	public Optional<Project> load(int id) throws DaoException {
 
-		try {
-			Connection sqliteConnection;
-			sqliteConnection = SQLiteConnection.getConnection();
+		try (Connection sqliteConnection = provider.getConnection()) {
 			sqliteConnection.setAutoCommit(false);
 			
 			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
@@ -93,9 +96,7 @@ public class SqliteProjectDao implements ProjectDao {
 	
 	@Override
 	public Project save(Project project) throws DaoException {
-		
-			try {
-				Connection sqliteConnection = SQLiteConnection.getConnection();
+			try (Connection sqliteConnection = provider.getConnection()) {
 				sqliteConnection.setAutoCommit(false);
 				
 				//Store Project
@@ -112,8 +113,7 @@ public class SqliteProjectDao implements ProjectDao {
 					prepstmt.executeUpdate();
 					sqliteConnection.commit();
 					
-				}
-				else {
+				} else {
 					//Insert
 					
 					String insertSQL = "INSERT INTO project (name,description,status) VALUES(?,?,?)";
@@ -141,11 +141,8 @@ public class SqliteProjectDao implements ProjectDao {
 	
 	@Override
 	public void delete(Project project) throws DaoException {
-		
 		if (project.getId().isPresent()) {
-			Connection sqliteConnection;
-			try {
-				sqliteConnection = SQLiteConnection.getConnection();
+			try (Connection sqliteConnection = provider.getConnection()) {
 				sqliteConnection.setAutoCommit(false);
 				Statement stmt = sqliteConnection.createStatement();
 				
@@ -173,8 +170,7 @@ public class SqliteProjectDao implements ProjectDao {
 			return todoList;
 		}
 		
-		try {
-			Connection sqliteConnection = SQLiteConnection.getConnection();
+		try (Connection sqliteConnection = provider.getConnection()) {
 			sqliteConnection.setAutoCommit(false);
 			
 			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
@@ -199,24 +195,20 @@ public class SqliteProjectDao implements ProjectDao {
 	
 	@Override
 	public Optional<Todo> loadTodo(int id) throws DaoException {
-
-		try {
-			Connection sqliteConnection;
-			sqliteConnection = SQLiteConnection.getConnection();
+		try (Connection sqliteConnection = provider.getConnection()) {
 			sqliteConnection.setAutoCommit(false);
 			
 			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
 
-			Optional<Todo> todo = create.select().from("todo").where("ID = " + id).fetch().stream().<Todo>map(
-					record -> {
-						Todo tempTodo = new Todo((String)record.getValue("description"));
-						tempTodo.setId((int)record.getValue("project_fk"));
-						tempTodo.setId((int)record.getValue("ID"));
-						tempTodo.setChecked(((int)record.getValue("checked")) == 1 ? true : false);
-						
-						return tempTodo;
-						
-					}).findFirst();
+			Optional<Todo> todo = create.select().from("todo").where("ID = " + id).fetch().stream().<Todo>map(record -> {
+				Todo tempTodo = new Todo((String)record.getValue("description"));
+				tempTodo.setId((int)record.getValue("project_fk"));
+				tempTodo.setId((int)record.getValue("ID"));
+				tempTodo.setChecked(((int)record.getValue("checked")) == 1 ? true : false);
+				
+				return tempTodo;
+				
+			}).findFirst();
 			
 			return todo;
 			
@@ -228,11 +220,7 @@ public class SqliteProjectDao implements ProjectDao {
 	
 	@Override
 	public Todo saveTodo(Project project, Todo todo) throws DaoException {
-		
-		Connection sqliteConnection;
-		
-		try {
-			sqliteConnection = SQLiteConnection.getConnection();
+		try (Connection sqliteConnection = provider.getConnection()) {
 			sqliteConnection.setAutoCommit(false);
 			
 			if (todo.getId().isPresent()) {
@@ -246,8 +234,7 @@ public class SqliteProjectDao implements ProjectDao {
 				
 				prepstmt.executeUpdate();
 				sqliteConnection.commit();
-			}
-			else {
+			} else {
 				//Insert
 				String insertSQL = "INSERT INTO todo (project_fk, description, checked) VALUES(?,?,?)";
 				PreparedStatement prepstmt = sqliteConnection.prepareStatement(insertSQL);
@@ -273,11 +260,8 @@ public class SqliteProjectDao implements ProjectDao {
 	
 	@Override
 	public void deleteTodo(Todo todo) throws DaoException {
-		
 		if (todo.getId().isPresent()) {
-			Connection sqliteConnection;
-			try {
-				sqliteConnection = SQLiteConnection.getConnection();
+			try (Connection sqliteConnection = provider.getConnection()) {
 				sqliteConnection.setAutoCommit(false);
 				Statement stmt = sqliteConnection.createStatement();
 				

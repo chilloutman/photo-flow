@@ -30,7 +30,7 @@ public class PhotoFlowApplication extends GuiceApplication {
 	}
 
 	@Override
-	public void init(List<Module> modules) throws Exception {
+	public void init(List<Module> modules) {
 		modules.add(new Module() {
 			
 			@Override
@@ -44,15 +44,18 @@ public class PhotoFlowApplication extends GuiceApplication {
 	@Override
 	public void start(Stage primaryStage) throws IOException {
 		System.out.println("Photo Flow");
-		Parent root = fxmlLoader.load(getClass().getResource("view/main.fxml")).getRoot();
-
+		URL fxml = getClass().getResource("view/main.fxml");
+		System.out.println("Loading main fxml: " + fxml);
+		
+		Parent root = fxmlLoader.load(fxml).getRoot();
 		Scene scene = new Scene(root);
 		primaryStage.setScene(scene);
+		primaryStage.setTitle("Photo Flow");
+
 		URL imagepath = getClass().getResource("app_icon_32.png");
 		Image image = new Image(imagepath.toString());
 		primaryStage.getIcons().add(image);
-		primaryStage.setTitle("Photo Flow");
-
+		
 		primaryStage.show();
 	}
 

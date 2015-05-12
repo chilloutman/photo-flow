@@ -16,7 +16,6 @@ import org.jooq.impl.DSL;
 
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.PhotoDao;
-import ch.zhaw.photoflow.core.SQLiteConnection;
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
@@ -28,14 +27,18 @@ import com.google.common.collect.ImmutableList;
  */
 public class SqlitePhotoDao implements PhotoDao {
 
+	private final SQLiteConnectionProvider provider;
+	
+	public SqlitePhotoDao(SQLiteConnectionProvider provider) {
+		this.provider = provider;
+	}
+	
 	@Override
 	public ImmutableList<Photo> loadAll(int projectId) throws DaoException {
 
 		ImmutableList<Photo> photoList = ImmutableList.of();
 
-		try {
-
-			Connection sqliteConnection = SQLiteConnection.getConnection();
+		try (Connection sqliteConnection = provider.getConnection()) {
 			sqliteConnection.setAutoCommit(false);
 			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
 			
@@ -65,10 +68,7 @@ public class SqlitePhotoDao implements PhotoDao {
 
 	@Override
 	public Optional<Photo> load(int id) throws DaoException {
-		
-		try {
-
-			Connection sqliteConnection = SQLiteConnection.getConnection();
+		try (Connection sqliteConnection = provider.getConnection()) {
 			sqliteConnection.setAutoCommit(false);
 			DSLContext create = DSL.using(sqliteConnection, SQLDialect.SQLITE);
 			
@@ -99,9 +99,7 @@ public class SqlitePhotoDao implements PhotoDao {
 	
 	@Override
 	public Photo save(Photo photo) throws DaoException {
-		
-		try {
-			Connection sqliteConnection = SQLiteConnection.getConnection();
+		try (Connection sqliteConnection = provider.getConnection()) {
 			sqliteConnection.setAutoCommit(false);
 			
 			Statement stmt = sqliteConnection.createStatement();
@@ -129,8 +127,7 @@ public class SqlitePhotoDao implements PhotoDao {
 				prepstmt.executeUpdate();
 				sqliteConnection.commit();
 				
-			}
-			else {
+			} else {
 				//Insert
 				String insertSQL = "INSERT INTO photo(project_fk, "
 						+ "file_path_to_original, "
@@ -154,7 +151,6 @@ public class SqlitePhotoDao implements PhotoDao {
 				rs.next();
 				photo.setId(rs.getInt(1));
 			}
-			
 		} catch (SQLException e) {
 			throw new DaoException("Error in saving photo", e);
 		}
@@ -164,21 +160,18 @@ public class SqlitePhotoDao implements PhotoDao {
 
 	@Override
 	public void delete(Photo photo) throws DaoException {
-		try {
-			
-			if (photo.getId().isPresent()) {
-				Connection sqliteConnection = SQLiteConnection.getConnection();
-				sqliteConnection.setAutoCommit(false);
-				Statement stmt = sqliteConnection.createStatement();
-			
-				String deleteSQL = "DELETE FROM photo " +
-						" WHERE ID = " + photo.getId().get();
-				
-				stmt.executeUpdate(deleteSQL);
-				sqliteConnection.commit();
-			}
-			
-			
+		if (!photo.getId().isPresent()) {
+			return;
+		}
+
+		try (Connection sqliteConnection = provider.getConnection()) {
+			sqliteConnection.setAutoCommit(false);
+			Statement stmt = sqliteConnection.createStatement();
+
+			String deleteSQL = "DELETE FROM photo " + " WHERE ID = " + photo.getId().get();
+
+			stmt.executeUpdate(deleteSQL);
+			sqliteConnection.commit();
 		} catch (SQLException e) {
 			throw new DaoException("Error in deleting photo", e);
 		}
