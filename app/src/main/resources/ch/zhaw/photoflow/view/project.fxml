@@ -5,32 +5,58 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import org.controlsfx.control.CheckComboBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 
 
 <BorderPane fx:controller="ch.zhaw.photoflow.controller.ProjectController" stylesheets="@project.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
 	<top>
-		<Pane fx:id="toolbar" prefHeight="75" styleClass="light-background">
-			<children>
-				<TextField fx:id="projectNameField" layoutX="20.0" layoutY="27.0" text="Project Name" />
-				<Button fx:id="newButton" styleClass="workflowButtonRed" layoutX="250.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="false"/>
-				<Label text="New" layoutX="257.0" layoutY="55.0" />
-				<Pane fx:id="separatorOne" styleClass="separator" layoutX="295.0" layoutY="29.0" prefWidth="70" prefHeight="2" ></Pane>
-				<Button fx:id="editButton" styleClass="workflowButtonRed" layoutX="370.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true"/>
-				<Label text="Edit" layoutX="380.0" layoutY="55.0" />
-				<Pane fx:id="separatorTwo" styleClass="separator" layoutX="415.0" layoutY="29.0" prefWidth="70" prefHeight="2" ></Pane>
-				<Button fx:id="finishButton" styleClass="workflowButtonRed" layoutX="490.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true"/>
-				<Label text="Finish" layoutX="494.0" layoutY="55.0" />
-				<Pane fx:id="separatorThree" styleClass="separator" layoutX="535.0" layoutY="29.0" prefWidth="70" prefHeight="2" ></Pane>
-				<Button fx:id="archiveButton" styleClass="workflowButtonRed" layoutX="610.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true"/>
-				<Label text="Archive" layoutX="610.0" layoutY="55.0" />
-
-				<Button fx:id="importPhotoButton" layoutX="700.0" layoutY="27.0" prefWidth="45" mnemonicParsing="false" disable="true" />
-				<Button fx:id="todoButton" text="Todo" layoutX="770.0" layoutY="27.0" prefWidth="60" disable="true" />
-				<Button fx:id="archiveProjectButton" layoutX="855" layoutY="27.0" prefWidth="45" mnemonicParsing="false" disable="true" />
-				<Button fx:id="exportProjectButton" layoutX="925" layoutY="27.0" prefWidth="45" mnemonicParsing="false" disable="true"/>
-				<Button fx:id="pauseProjectButton" styleClass="pauseProjectButton" layoutX="995" layoutY="27.0" prefWidth="45" mnemonicParsing="false" disable="true"/>
-			</children>
-		</Pane>
+		<BorderPane fx:id="toolbar" prefHeight="75" styleClass="light-background">
+			<padding><Insets left="25" right="25"/></padding>
+			<left>
+				<TextField fx:id="projectNameField" text="Project Name" BorderPane.alignment="CENTER_LEFT"/>
+			</left>
+			<center>
+				<GridPane hgap="5" vgap="5" alignment="CENTER">
+					<columnConstraints>
+						<ColumnConstraints halignment="CENTER"/>
+					</columnConstraints>
+					
+					<!-- New -->
+					<Button fx:id="newButton" styleClass="workflowButtonRed" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="false" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+					<Label text="New" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+					
+					<Pane styleClass="separator" prefWidth="30" maxHeight="2" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+					
+					<!-- Edit -->
+					<Button fx:id="editButton" styleClass="workflowButtonRed" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+					<Label text="Edit" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+						
+					<Pane styleClass="separator" prefWidth="30" maxHeight="2" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+					
+					<!--  Finish -->
+					<Button fx:id="finishButton" styleClass="workflowButtonRed" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+					<Label text="Finish" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
+					
+					<Pane styleClass="separator" prefWidth="30" maxHeight="2" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
+					
+					<!-- Archive -->
+					<Button fx:id="archiveButton" styleClass="workflowButtonRed" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="true" GridPane.columnIndex="6" GridPane.rowIndex="0"/>
+					<Label text="Archive" GridPane.columnIndex="6" GridPane.rowIndex="1"/>
+					
+				</GridPane>
+			</center>
+			<right>
+				<HBox alignment="CENTER_RIGHT" spacing="15">
+					<Button fx:id="importPhotoButton" prefWidth="50" disable="true" />
+					<Button fx:id="todoButton" text="Todo" prefWidth="50" disable="true" />
+					<Button fx:id="archiveProjectButton" prefWidth="50" disable="true" />
+					<Button fx:id="exportProjectButton" prefWidth="50" disable="true"/>
+					<Button fx:id="pauseProjectButton" styleClass="pauseProjectButton" prefWidth="50" disable="true"/>
+				</HBox>
+			</right>
+		</BorderPane>
 	</top>
 	<center>
 		<ScrollPane hbarPolicy="NEVER" fitToWidth="true" style="-fx-box-border: transparent; -fx-focus-color: transparent;">

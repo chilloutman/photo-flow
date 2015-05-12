@@ -78,17 +78,16 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	private PhotoController photoController;
 	
 	@FXML
-	TextField projectNameField;
+	private TextField projectNameField;
 	@FXML
-	Button newButton, archiveButton, editButton, finishButton, importPhotoButton, archiveProjectButton, exportProjectButton, todoButton, pauseProjectButton;
-	@FXML
-	Pane todoCheckComboBoxPane, separatorOne, separatorTwo, separatorThree;
-	@FXML
-	TilePane photosPane;
-	@FXML
-	Pane toolbar;
+	private Button newButton, archiveButton, editButton, finishButton, importPhotoButton, archiveProjectButton, exportProjectButton, todoButton, pauseProjectButton;
 	
-	PopOver popOver;
+	@FXML
+	private TilePane photosPane;
+	@FXML
+	private Pane toolbar;
+	
+	private PopOver popOver;
 	
 	private final Map<Photo, Node> photoNodes = new HashMap<>();
 	private Optional<Node> selectedImageNode = Optional.empty();
