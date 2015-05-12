@@ -26,7 +26,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 	private Optional<PhotoListener> listener;
 	
 	@FXML
-	private Button flagButton, discardButton, editorButton;
+	private Button flagButton, discardButton, editButton;
 	
 	@FXML
 	private Label filePathLabel, fileSizeLabel, metadataLabel;
@@ -39,10 +39,11 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		System.out.println("Photo has been selected: " + photo);
 		this.photo = photo;
 		
-		flagButton.setDisable(false);
-		discardButton.setDisable(false);
-		editorButton.setDisable(false);
-		
+		initializeLabels();
+		initializeButtons();
+	}
+	
+	private void initializeLabels() {
 		filePathLabel.textProperty().bind(stringProperty(photo, "filePath"));
 		StringExpression fileSize =  Bindings.format("%.2f MB", numberProperty(photo, "fileSize").divide(1024*1014));
 		fileSizeLabel.textProperty().bind(fileSize);
@@ -54,27 +55,38 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 			errorHandler.spawnError("Could not load any metadata from your photo :-(");
 			metadataLabel.setText("Could not load photo metadata. :-(");
 		}
-		
+	}
+	
+	private void initializeButtons() {
 		flagButton.setOnAction(event -> {
 			listener.ifPresent(listener -> {
 				listener.flagPhoto(photo);
 				savePhoto();
+				updateButtons();
 			});
 		});
 		discardButton.setOnAction(event -> {
 			listener.ifPresent(listener -> {
 				listener.discardPhoto(photo);
 				savePhoto();
+				updateButtons();
 			});
 		});
-		editorButton.setOnAction(event -> {
+		editButton.setOnAction(event -> {
 			listener.ifPresent(listener -> {
 				listener.editPhoto(photo);
 				//savePhoto();
 			});
 		});
-	}
 		
+		updateButtons();
+	}
+	
+	private void updateButtons() {
+		flagButton.setDisable(PhotoState.FLAGGED.equals(photo.getState()));
+		discardButton.setDisable(PhotoState.DISCARDED.equals(photo.getState()));
+		editButton.setDisable(false);
+	}
 	
 	private void savePhoto() {
 		try {
@@ -128,7 +140,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		public void discardPhoto(Photo photo);
 		
 		/**
-		 * Sets the status of the specified {@link Photo} object to {@link PhotoState#DISCARDED}.
+		 * Sets the status of the specified {@link Photo} object to {@link PhotoState#EDITING}.
 		 * @param photo
 		 */
 		public void editPhoto(Photo photo);
@@ -140,7 +152,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		// TODO Auto-generated method stub
 		flagButton.setDisable(true);
 		discardButton.setDisable(true);
-		editorButton.setDisable(true);
+		editButton.setDisable(true);
 	}
 	
 }

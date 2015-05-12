@@ -1,5 +1,7 @@
 package ch.zhaw.photoflow.core.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,10 +119,8 @@ public class Photo implements PersistentDomainObject {
 		return state;
 	}
 
-	/** Not public, so that only the Workflow can change it.
-	 * - Sorry Lucas :( */
 	public void setState(PhotoState state) {
-		this.state = state;
+		this.state = checkNotNull(state);
 	}
 
 	public Photographer getPhotographer() {

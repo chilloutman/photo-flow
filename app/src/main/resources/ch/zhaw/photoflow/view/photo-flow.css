@@ -125,7 +125,7 @@
 	-fx-background-size: 35% auto;
 }
 
-#editorButton {
+#editButton {
 	-fx-background-image: url('../edit.png');
 	-fx-background-repeat: no-repeat;
 	-fx-background-position: center;
