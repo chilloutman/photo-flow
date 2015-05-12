@@ -132,8 +132,12 @@ public class Project implements PersistentDomainObject {
 		if (object == null) return false;
 		if (getClass() != object.getClass()) return false;
 		Project that = (Project) object;
-
-		return Objects.equals(id, that.id);
+		
+		if (id.isPresent() && that.id.isPresent()) {
+			return Objects.equals(id, that.id);
+		} else {
+			return this == that;
+		}
 	}
 	
 	@Override

@@ -76,12 +76,6 @@ public enum ProjectState implements State<ProjectState> {
 	
 	abstract Collection<PhotoState> photoStates();
 	
-	public String getName() {
-		return name;
-	}
-	
-
-
 	@Override
 	public boolean isValidNextState(ProjectState state) {
 		return nextStates().contains(state);
@@ -94,5 +88,10 @@ public enum ProjectState implements State<ProjectState> {
 	 */
 	public boolean isValidPhotoState(PhotoState state) {
 		return photoStates().contains(state);
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 }

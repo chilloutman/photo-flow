@@ -121,9 +121,9 @@ public class SqlitePhotoDao implements PhotoDao {
 				prepstmt.setInt(1, photo.getProjectId().get());
 				prepstmt.setString(2, photo.getFilePath());
 				prepstmt.setInt(3, photo.getFileSize());
-				prepstmt.setString(4, (photo.getFileFormat() == null ) ? "" : photo.getFileFormat().toString());
+				prepstmt.setString(4, (photo.getFileFormat() == null ) ? "" : photo.getFileFormat().name());
 				prepstmt.setString(5, (photo.getCreationDate() == null ) ? "" : photo.getCreationDate().toString());
-				prepstmt.setString(6, (photo.getState() == null ) ? "" : photo.getState().toString());
+				prepstmt.setString(6, (photo.getState() == null ) ? "" : photo.getState().name());
 				prepstmt.setInt(7, photo.getId().get());
 				
 				prepstmt.executeUpdate();
@@ -143,9 +143,9 @@ public class SqlitePhotoDao implements PhotoDao {
 				prepstmt.setInt(1, photo.getProjectId().get());
 				prepstmt.setString(2, photo.getFilePath());
 				prepstmt.setInt(3, photo.getFileSize());
-				prepstmt.setString(4, (photo.getFileFormat() == null ) ? "" : photo.getFileFormat().toString());
+				prepstmt.setString(4, (photo.getFileFormat() == null ) ? "" : photo.getFileFormat().name());
 				prepstmt.setString(5, (photo.getCreationDate() == null ) ? "" : photo.getCreationDate().toString());
-				prepstmt.setString(6, (photo.getState() == null ) ? "" : photo.getState().toString());
+				prepstmt.setString(6, (photo.getState() == null ) ? "" : photo.getState().name());
 				
 				prepstmt.executeUpdate();
 				sqliteConnection.commit();

@@ -41,13 +41,14 @@ public enum PhotoState implements State<PhotoState> {
 	
 	abstract Collection<PhotoState> nextStates();
 	
-	public String getName() {
-		return name;
-	}
-	
 	@Override
 	public boolean isValidNextState(PhotoState state) {
 		return nextStates().contains(state);
+	}
+	
+	@Override
+	public String toString() {
+		return name;
 	}
 	
 }

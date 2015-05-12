@@ -135,9 +135,6 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	
 	private void initializeProjectNameField() {
 		projectNameField.textProperty().bindBidirectional(stringProperty(project, "name"));
-		projectNameField.textProperty().addListener((observable, oldValue, newValue) -> {
-			saveProject();
-		});
 	}
 	
 	private void loadPhotos() {
@@ -289,9 +286,11 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	 * @param project
 	 * @param projectStatus
 	 */
-	public void transitionState(Project project, ProjectState projectState) {
+	protected void transitionState(Project project, ProjectState projectState) {
 		if (photoFlow.projectWorkflow().canTransition(project, this.photos, projectState)) {
 			photoFlow.projectWorkflow().transition(project, this.photos, projectState);
+			// Manually update bindings.
+			objectProperty(project, "state").fireValueChangedEvent();
 			try {
 				photoFlow.projectDao().save(project);
 			} catch (DaoException e) {
@@ -484,9 +483,12 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		exportProjectButton.setOnAction(this::exportProject);
 		pauseProjectButton.setOnAction(this::pauseProject);
 		
-		
 		initializeTodoButton();
 		initializeTodoPopOver();
+		
+		projectNameField.textProperty().addListener((observable, oldValue, newValue) -> {
+			saveProject();
+		});
 	}
 	
 	private void initializeTooltips() {
@@ -573,12 +575,12 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	}
 	
 	private void initializeTodoPopOver() {
-	popOver = new PopOver();
-	popOver.autoHideProperty().set(true);
-	popOver.detachedTitleProperty().set("Todos");
-	
-	popOver.setContentNode(createPopOverContent());
-}
+		popOver = new PopOver();
+		popOver.autoHideProperty().set(true);
+		popOver.detachedTitleProperty().set("Todos");
+		
+		popOver.setContentNode(createPopOverContent());
+	}
 	
 	private VBox createPopOverContent() {
 		VBox rootBox = new VBox();

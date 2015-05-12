@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,7 +32,7 @@ public class MainController extends PhotoFlowController implements Initializable
 	/**
 	 * Special project that acts as the "add new project" button.
 	 */
-	private final Project ADD_NEW_PROJECT = Project.newProject(p -> p.setName("+ New Project"));
+	private static final Project ADD_NEW_PROJECT = Project.newProject(p -> p.setName("+ New Project"));
 	
 	private final ObservableList<Project> projects = FXCollections.observableArrayList();
 	private ErrorHandler errorHandler = new ErrorHandler();
@@ -181,9 +183,14 @@ public class MainController extends PhotoFlowController implements Initializable
 				setText("");
 				return;
 			}
-
-			StringProperty nameProperty = stringProperty(project, "name");
-			textProperty().bind(nameProperty);
+			
+			if (project.equals(ADD_NEW_PROJECT)) {
+				textProperty().bind(stringProperty(project, "name"));
+			} else {
+				StringProperty nameProperty = stringProperty(project, "name");
+				ObjectProperty<?> stateProperty = objectProperty(project, "state");
+				textProperty().bind(Bindings.format("%s (%s)", nameProperty, stateProperty));
+			}
 		}
 	}
 

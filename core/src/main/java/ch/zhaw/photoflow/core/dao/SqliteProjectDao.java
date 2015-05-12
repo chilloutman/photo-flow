@@ -106,7 +106,7 @@ public class SqliteProjectDao implements ProjectDao {
 					PreparedStatement prepstmt = sqliteConnection.prepareStatement(updateSQL);
 					prepstmt.setString(1, project.getName());
 					prepstmt.setString(2, project.getDescription());
-					prepstmt.setString(3, (project.getState() == null ) ? "" : project.getState().toString());
+					prepstmt.setString(3, (project.getState() == null ) ? "" : project.getState().name());
 					prepstmt.setInt(4, project.getId().get());
 					
 					prepstmt.executeUpdate();
@@ -120,7 +120,7 @@ public class SqliteProjectDao implements ProjectDao {
 					PreparedStatement prepstmt = sqliteConnection.prepareStatement(insertSQL);
 					prepstmt.setString(1, project.getName());
 					prepstmt.setString(2, project.getDescription());
-					String projectstate = (project.getState() == null ) ? "" : project.getState().toString();
+					String projectstate = (project.getState() == null ) ? "" : project.getState().name();
 					prepstmt.setString(3, projectstate);
 					
 					prepstmt.executeUpdate();

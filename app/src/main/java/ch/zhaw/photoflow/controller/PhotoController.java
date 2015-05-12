@@ -90,7 +90,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 				listener.flagPhoto(photo);
 				savePhoto();
 				updateButtons();
-				updateState();
+				fireStateChangeEvent();
 			});
 		});
 		discardButton.setOnAction(event -> {
@@ -98,22 +98,22 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 				listener.discardPhoto(photo);
 				savePhoto();
 				updateButtons();
-				updateState();
+				fireStateChangeEvent();
 			});
 		});
 		editButton.setOnAction(event -> {
 			listener.ifPresent(listener -> {
 				listener.editPhoto(photo);
 				//savePhoto();
-				updateState();
+				fireStateChangeEvent();
 			});
 		});
 		
 		updateButtons();
 	}
 	
-	private void updateState() {
-		objectProperty(photo, STATE_PROPERTY).set(photo.getState());
+	private void fireStateChangeEvent() {
+		objectProperty(photo, STATE_PROPERTY).fireValueChangedEvent();
 	}
 	
 	private void updateButtons() {
