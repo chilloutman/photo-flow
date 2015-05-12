@@ -1,3 +1,7 @@
+.lighter-background {
+	-fx-background-color: #666;
+	-fx-background: #666;
+}
 
 .light-background {
 	-fx-background-color: #444;

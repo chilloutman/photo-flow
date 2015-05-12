@@ -7,22 +7,44 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.Cursor?>
 
-<AnchorPane prefWidth="250" styleClass="light-background" fx:controller="ch.zhaw.photoflow.controller.PhotoController" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
-	<VBox spacing="50" fillWidth="true" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-		<padding><Insets top="10" left="10" bottom="10" right="10"/></padding>
-		<children>
-			<Label fx:id="filePathLabel" text="" wrapText="true"/>
-			<Label fx:id="fileSizeLabel" text="" wrapText="true"/>
-			<Label fx:id="metadataLabel" text="" wrapText="true"/>
-
-			<HBox spacing="25" alignment="CENTER">
+<AnchorPane prefWidth="250" styleClass="light-background,photo-detail" fx:controller="ch.zhaw.photoflow.controller.PhotoController" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+	<BorderPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="15" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+		<center>
+			<VBox spacing="15" fillWidth="true">
+				<padding><Insets top="10" bottom="10"/></padding>
 				<children>
-					<Button fx:id="flagButton" minWidth="75"/>
-					<Button fx:id="discardButton" minWidth="75"/>
-					<Button fx:id="editButton" minWidth="75"/>
+					<Label fx:id="filePathLabel" text="" wrapText="true">
+						<padding><Insets left="5" right="5"/></padding>
+					</Label>
+					<Label fx:id="fileSizeLabel" text="" wrapText="true">
+						<padding><Insets left="5" right="5"/></padding>
+					</Label>
+					<Label fx:id="fileSizeLabel" text="" wrapText="true">
+						<padding><Insets left="5" right="5"/></padding>
+					</Label>
+					<ScrollPane hbarPolicy="NEVER" fitToWidth="true" maxHeight="Infinity">
+						<content>
+							<Label fx:id="metadataLabel" text="" wrapText="true" styleClass="lighter-background" visible="false" maxWidth="Infinity">
+								<padding><Insets top="10" left="5" bottom="10" right="5"/></padding>
+							</Label>
+						</content>
+					</ScrollPane>
+				</children>
+			</VBox>
+		</center>
+		<bottom>
+			<HBox spacing="15" alignment="CENTER">
+				<children>
+					<Button fx:id="flagButton" minWidth="65"/>
+					<Button fx:id="discardButton" minWidth="65"/>
+					<Button fx:id="editButton" minWidth="65"/>
 				</children>
 			</HBox>
-		</children>
-	</VBox>
+		</bottom>
+	</BorderPane>
+	
 </AnchorPane>

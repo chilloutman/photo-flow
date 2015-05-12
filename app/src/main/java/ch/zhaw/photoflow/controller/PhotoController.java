@@ -50,10 +50,11 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		
 		try {
 			FileHandler fileHandler = photoFlow.fileHandler(photo.getProjectId().get());
-			metadataLabel.setText(fileHandler.loadPhotoMetadata(photo));
+			String metadata = fileHandler.loadPhotoMetadata(photo);
+			metadataLabel.setText("Metadata/Exif:\n" + metadata);
+			metadataLabel.setVisible(true);
 		} catch (FileHandlerException e) {
 			errorHandler.spawnError("Could not load any metadata from your photo :-(");
-			metadataLabel.setText("Could not load photo metadata. :-(");
 		}
 	}
 	

@@ -19,6 +19,7 @@ import ch.zhaw.photoflow.core.domain.Photo;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.Files;
 
@@ -90,29 +91,29 @@ public class FileHandler {
 	 * @throws FileHandlerException 
 	 */
 	public Photo importPhoto(Photo photo, File file) throws FileHandlerException {
-		if(FileFormat.get(file.getName()) != null){
-			if (new File(projectDir(), file.getName()).exists()) {
-				// TODO change name and import anyway.
-				throw new FileHandlerException("File already exists: " + file);
-			}
-			File newFile = new File(projectDir(), file.getName());
-			try {
-				Files.copy(file, newFile);
-			} catch (IOException e) {
-				throw new FileHandlerException("Could not import File (Copy Fail)!",e);
-			}
-			photo.setFilePath(newFile.getName());
-			Optional<FileFormat> fileFormat = FileFormat.get(file.getName());
-			if (!fileFormat.isPresent()) {
-				throw new FileHandlerException("File format of photo is not supported: " + file);
-			}
-			photo.setFileFormat(fileFormat.get());
-			photo.setFileSize((int) file.length());
-			photo.setCreationDate(LocalDateTime.now()); // TODO: Get file timestamp
-			return photo;
-		} else {
+		if (FileFormat.get(file.getName()) == null) {
 			throw new FileHandlerException("File Extension is invalid!");
 		}
+		if (new File(projectDir(), file.getName()).exists()) {
+			// TODO change name and import anyway.
+			throw new FileHandlerException("File already exists: " + file);
+		}
+		
+		File newFile = new File(projectDir(), file.getName());
+		try {
+			Files.copy(file, newFile);
+		} catch (IOException e) {
+			throw new FileHandlerException("Could not import File (Copy Fail)!", e);
+		}
+		photo.setFilePath(newFile.getName());
+		Optional<FileFormat> fileFormat = FileFormat.get(file.getName());
+		if (!fileFormat.isPresent()) {
+			throw new FileHandlerException("File format of photo is not supported: " + file);
+		}
+		photo.setFileFormat(fileFormat.get());
+		photo.setFileSize((int) file.length());
+		photo.setCreationDate(LocalDateTime.now()); // TODO: Get file timestamp
+		return photo;
 	}
 
 	/**
@@ -124,7 +125,6 @@ public class FileHandler {
 	public InputStream loadPhoto(Photo photo) throws FileHandlerException {
 		try {
 			File file = getPhotoFile(photo);
-			
 			return new FileInputStream(file);
 		} catch (IOException e) {
 			throw new FileHandlerException("Could not find file for photo: " + photo, e);
@@ -142,8 +142,9 @@ public class FileHandler {
 			Metadata metadata = ImageMetadataReader.readMetadata(photoInputStream);
 			
 			String s = StreamSupport.stream(metadata.getDirectories().spliterator(), false)
-				.map(directory -> directory.getTags())
-				.map(tags -> tags.toString())
+				.flatMap(directory -> directory.getTags().stream())
+				.filter(this::filterMetadataTag)
+				.map(tag -> tag.getTagName() + ": " + tag.getDescription())
 				.reduce("", (result, d) -> result + "\n" + d);
 			
 			System.out.println(s);
@@ -151,6 +152,16 @@ public class FileHandler {
 		} catch (ImageProcessingException | IOException e) {
 			throw new FileHandlerException("Could load photo metadata: " + photo, e);
 		}
+	}
+	
+	private boolean filterMetadataTag(Tag tag) {
+		System.out.println("#" + tag.getTagType() + "#" + tag);
+		return (
+			!tag.getTagName().contains("TRC") &&
+			!tag.getTagName().startsWith("Red") &&
+			!tag.getTagName().startsWith("Green") &&
+			!tag.getTagName().startsWith("Blue")
+		);
 	}
 	
 	/**
