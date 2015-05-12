@@ -369,6 +369,12 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	}
 	
 	public void updateWorkflowButtons() {
+		
+		String green = getClass().getResource("../check_green.png").toExternalForm();
+		String red = getClass().getResource("../red_NA.png").toExternalForm();
+		String play = getClass().getResource("../play.png").toExternalForm();
+		String pause = getClass().getResource("../pause.png").toExternalForm();
+		
 		newButton.setEffect(null);
 		editButton.setEffect(null);
 		finishButton.setEffect(null);
@@ -379,8 +385,6 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		editButton.getStyleClass().add("workflowButtonRed");
 		finishButton.getStyleClass().add("workflowButtonRed");
 		archiveButton.getStyleClass().add("workflowButtonRed");
-		pauseProjectButton.getStyleClass().add("pauseProjectButton");
-		
 		
 		if(project.getState() == ProjectState.PAUSED){
 			projectNameField.setDisable(true);
@@ -392,36 +396,41 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			exportProjectButton.setDisable(true);
 			todoButton.setDisable(true);
 			pauseProjectButton.setDisable(false);
+			pauseProjectButton.setStyle("-fx-background-image: url('" + play + "')");
 		}else {
 			projectNameField.setDisable(false);
 			newButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.NEW));
 			archiveButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			editButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
 			finishButton.setDisable(!(project.getState() == ProjectState.IN_WORK));
+			if(photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.DONE)){
+				finishButton.getStyleClass().add("workflowButton");
+			}else{
+				finishButton.setStyle("-fx-background-image: url('" + red + "')");
+			}
 			importPhotoButton.setDisable(!((photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK) && project.getState() != ProjectState.DONE) || project.getState() == ProjectState.IN_WORK));
 			exportProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			archiveProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
 			todoButton.setDisable(false);
 			pauseProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.PAUSED));
+			pauseProjectButton.setStyle("-fx-background-image: url('" + pause + "')");
 		}
 		
 		switch(project.getState()){
 		case NEW:
 			newButton.getStyleClass().add("workflowButton");
-			editButton.getStyleClass().add("workflowButton");
 			newButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
 			break;
 		case IN_WORK:
 			newButton.getStyleClass().removeAll();
-			newButton.getStyleClass().add("workflowButtonGreen");
+			newButton.setStyle("-fx-background-image: url('" + green + "')"); 
 			editButton.getStyleClass().add("workflowButton");
-			finishButton.getStyleClass().add("workflowButton");
 			pauseProjectButton.getStyleClass().add("pauseProjectButton");
 			editButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
 			break;
 		case DONE:
 			newButton.getStyleClass().add("workflowButtonGreen");
-			editButton.getStyleClass().add("workflowButtonGreen");
+			editButton.setStyle("-fx-background-image: url('" + green + "')"); 
 			finishButton.getStyleClass().add("workflowButtonGreen");
 			archiveButton.getStyleClass().add("workflowButton");
 			finishButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
