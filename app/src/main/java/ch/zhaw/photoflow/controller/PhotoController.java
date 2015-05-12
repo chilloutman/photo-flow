@@ -17,6 +17,9 @@ import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Tag;
 
+/**
+ * Controller for {@link Photo} specific interactions.
+ */
 public class PhotoController extends PhotoFlowController implements Initializable {
 
 	private static final String STATE_PROPERTY = "state";
@@ -37,6 +40,10 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		this.listener = Optional.of(listener);
 	}
 	
+	/**
+	 * Informs the {@link PhotoController} which {@link Photo} to display.
+	 * @param project
+	 */
 	public void setPhoto(Photo photo) {
 		System.out.println("Photo has been selected: " + photo);
 		this.photo = photo;
@@ -49,6 +56,9 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		}
 	}
 	
+	/**
+	 * Resets the {@link PhotoController}
+	 */
 	private void reset() {
 		flagButton.setDisable(true);
 		discardButton.setDisable(true);
@@ -84,6 +94,9 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		}
 	}
 	
+	/**
+	 * Initializes photo related buttons.
+	 */
 	private void initializeButtons() {
 		flagButton.setOnAction(event -> {
 			listener.ifPresent(listener -> {
@@ -116,12 +129,18 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		objectProperty(photo, STATE_PROPERTY).fireValueChangedEvent();
 	}
 	
+	/**
+	 * Disables buttons if not meant for usage in actual photostate.
+	 */
 	private void updateButtons() {
 		flagButton.setDisable(PhotoState.FLAGGED.equals(photo.getState()));
 		discardButton.setDisable(PhotoState.DISCARDED.equals(photo.getState()));
 		editButton.setDisable(false);
 	}
 	
+	/**
+	 * Saves a {@link Photo}
+	 */
 	private void savePhoto() {
 		try {
 			photoFlow.photoDao().save(photo);
@@ -131,6 +150,10 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		}
 	}
 	
+	/**
+	 * Adds and saves a new {@link Tag}
+	 * @param tagName
+	 */
 	public void addTag(String tagName) {
 		Tag tag = new Tag(tagName);
 		this.photo.addTag(tag);
@@ -145,6 +168,10 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 
 	}
 
+	/**
+	 * Deletes a {@link Tag}
+	 * @param tagName
+	 */
 	public void deleteTag(String tagName) {
 		Tag tag = new Tag(tagName);
 		this.photo.removeTag(tag);

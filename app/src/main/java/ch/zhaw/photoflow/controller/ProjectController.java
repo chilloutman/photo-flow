@@ -62,6 +62,9 @@ import ch.zhaw.photoflow.core.domain.Todo;
 
 import com.google.common.annotations.VisibleForTesting;
 
+/**
+ * Controller for {@link Project} specific interactions.
+ */
 public class ProjectController extends PhotoFlowController implements Initializable {
 	
 	private Project project;
@@ -95,6 +98,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	private static final String DISCARDED_STYLE = "discarded-photo";
 	private static final String FLAGGED_STYLE = "flagged-photo";
 
+	/**
+	 * Informs the {@link ProjectController} which project-content to display.
+	 * @param project
+	 */
 	public void setProject(Project project) {
 		if (this.project == project ) {
 			return;
@@ -122,6 +129,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		updateWorkflowButtons();
 	}
 	
+	/**
+	 * Resets the {@link ProjectController}
+	 */
 	private void reset() {
 		if (project != null) {
 			projectNameField.textProperty().unbindBidirectional(stringProperty(project, "name"));
@@ -136,6 +146,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		projectNameField.textProperty().bindBidirectional(stringProperty(project, "name"));
 	}
 	
+	/**
+	 * Loads list of {@link Photo}.
+	 */
 	private void loadPhotos() {
 		try {
 			List<Photo> loadedPhotos = photoFlow.photoDao().loadAll(project.getId().get());
@@ -147,6 +160,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		}
 	}
 	
+	/**
+	 * Display loaded photos from path {@link Photo#getFilePath()}.
+	 */
 	private void displayPhotos() {
 		resetPhotosPane();
 		
@@ -178,6 +194,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		}
 	}
 	
+	/**
+	 * Resets the pane displaying pictures.
+	 */
 	private void resetPhotosPane() {
 		// Cancel all previous tasks
 		imageLoadingTasks.forEach(task -> task.cancel(true));
@@ -187,6 +206,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		photoNodes.clear();
 	}
 	
+	/**
+	 * Display photo as selected.
+	 * @param photo
+	 */
 	private void selectPhoto(Photo photo) {
 		Node imageNode = photoNodes.get(photo);
 		
@@ -202,6 +225,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 
 	}
 	
+	/**
+	 * Use for multithreading. We don't want the GUI to wait for every task.
+	 */
 	private ExecutorService newImageLoaderService () {
 		
 		return Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors(), runnable -> {
@@ -211,6 +237,11 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		});
 	}
 
+	/**
+	 * Adds a {@link Photo} to the selected {@link Project}.
+	 * Photo will be saved.
+	 * @param photo
+	 */
 	public void addPhoto(Photo photo) {
 		photos.remove(photo);
 		photo.setProjectId(this.project.getId().get());
@@ -223,6 +254,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		}
 	}
 
+	/**
+	 * Imports pictures and saves {@link Photo} objects.
+	 * @param event
+	 */
 	public void importPhotos(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Import Photos");
@@ -268,6 +303,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		updateWorkflowButtons();
 	}
 
+	/**
+	 * Deletes a {@link Photo}.
+	 * @param photo
+	 */
 	public void deletePhoto(Photo photo) {
 		try {
 			photoFlow.photoDao().delete(photo);
@@ -303,6 +342,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		updateWorkflowButtons();
 	}
 	
+	/**
+	 * Saves a {@link Project}
+	 */
 	private void saveProject() {
 		System.out.println("Saving project: " + project);
 		try {
@@ -314,6 +356,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		updateWorkflowButtons();
 	}
 
+	/**
+	 * Changes the state of the selected {@link Project} to {@link ProjectState.ARCHIVED} if valid.
+	 * @param event
+	 */
 	public void archiveProject(ActionEvent event) {
 		try {
 			fileHandler.archiveProject();
@@ -326,6 +372,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		updateWorkflowButtons();
 	}
 	
+	/**
+	 * Exports a Project to a ZIP-File.
+	 * @param event
+	 */
 	public void exportProject(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Export Project (ZIP)");
@@ -346,6 +396,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		errorHandler.spawnInformation("Your files were being transfered to new location: " + selectedFile);
 	}
 	
+	/**
+	 * Changes the state of the selected {@link Project} to {@link ProjectState.PAUSED} if valid.
+	 * @param event
+	 */
 	public void pauseProject(ActionEvent event) {
 		pauseProjectButton.getStyleClass().removeAll();
 		if(project.getState() != ProjectState.PAUSED){
@@ -359,6 +413,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		}
 	}
 	
+	/**
+	 * Changes the state of the selected {@link Project} to {@link ProjectState.IN_WORK} if valid.
+	 * @param event
+	 */
 	public void editProject(ActionEvent event){
 		if(photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK) && !photos.isEmpty()){
 			if(project.getState() == ProjectState.ARCHIVED){
@@ -376,6 +434,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		updateWorkflowButtons();
 	}
 	
+	/**
+	 * Changes the state of the selected {@link Project} to {@link ProjectState.DONE} if valid.
+	 * @param event
+	 */
 	public void finishProject(ActionEvent event){
 		if(photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.DONE)){
 			transitionState(project, ProjectState.DONE);
@@ -385,6 +447,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		updateWorkflowButtons();
 	}
 	
+	/**
+	 * Updates the workflow button designs to indicate the actual and possible future workflow state.
+	 */
 	public void updateWorkflowButtons() {
 		
 		if(project != null){
@@ -494,12 +559,20 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		});
 	}
 	
+	/**
+	 * Initializes workflow buttons to use {@link Tooltip}.
+	 */
 	private void initializeTooltips() {
 		exportProjectButton.setTooltip(new Tooltip("Export Project"));
 		importPhotoButton.setTooltip(new Tooltip("Import a new Photo"));
 	}
 	
+	/**
+	 * Initializes PhotoListener.
+	 */
 	private void initializePhotoListener() {
+		
+		//Here comes the listener
 		photoController.setListener(new PhotoListener() {
 			
 			@Override
@@ -559,7 +632,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			}
 		});
 	}
-		
+	
 	private boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
 		return os.contains("win");
@@ -584,6 +657,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		popOver.setContentNode(createPopOverContent());
 	}
 	
+	/**
+	 * Creates the content for managing {@link Todo}s
+	 * @return
+	 */
 	private VBox createPopOverContent() {
 		VBox rootBox = new VBox();
 		
@@ -675,6 +752,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		return rootBox;
 	}
 
+	/**
+	 * Task for reading a picture from the filesystem and creates a {@link Pane} for displaying pictures.
+	 */
 	private static class ImageLoadingTask extends Task<Pane> {
 		
 		private final Photo photo;

@@ -23,10 +23,14 @@ import javafx.scene.input.KeyCode;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandlerException;
 import ch.zhaw.photoflow.core.PhotoFlow;
+import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
 
 import com.google.common.annotations.VisibleForTesting;
 
+/**
+ * Controller for interacting with every {@link Project}
+ */
 public class MainController extends PhotoFlowController implements Initializable {
 
 	/**
@@ -94,6 +98,9 @@ public class MainController extends PhotoFlowController implements Initializable
 		}
 	}
 	
+	/**
+	 * Creates a {@link Project}
+	 */
 	private void createProject() {
 		projectController.setProject(null);
 		CreateProjectController popup = new CreateProjectController(); // This call blocks
@@ -112,6 +119,10 @@ public class MainController extends PhotoFlowController implements Initializable
 		});
 	}
 	
+	/**
+	 * Selects a {@link Project}
+	 * @param selectedProject
+	 */
 	public void projectSelected(Project selectedProject) {
 		if (selectedProject != ADD_NEW_PROJECT) {
 			projectController.setProject(selectedProject);
@@ -168,6 +179,10 @@ public class MainController extends PhotoFlowController implements Initializable
 		return this.projects;
 	}
 
+	/**
+	 * {@link ProjectCell} containing instructions for building the main {@link ListView}.<br>
+	 * Binds listelements with {@link Project}s {@link Project#getName() name} and {@link Project#getState() state}
+	 */
 	private static final class ProjectCell extends ListCell<Project> {
 		
 		public ProjectCell() {

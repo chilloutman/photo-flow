@@ -17,6 +17,10 @@ import ch.zhaw.photoflow.core.PhotoFlow;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
+/**
+ * Parent of all used controllers.<br>
+ * Provides utilities for interacting between view and model.
+ */
 public abstract class PhotoFlowController {
 	
 	@Inject
@@ -37,6 +41,11 @@ public abstract class PhotoFlowController {
 		return photoFlow;
 	}
 	
+	/**
+	 * @param bean
+	 * @param propertyName
+	 * @return {@link JavaBeanObjectProperty}
+	 */
 	protected static JavaBeanObjectProperty<Object> objectProperty(Object bean, String propertyName) {
 		Object key = key(bean, propertyName);
 		if (OBJECT_PROPERTIES.containsKey(key)) {
@@ -52,6 +61,11 @@ public abstract class PhotoFlowController {
 		}
 	}
 	
+	/**
+	 * @param bean
+	 * @param propertyName
+	 * @return {@link JavaBeanStringProperty}
+	 */
 	protected static JavaBeanStringProperty stringProperty(Object bean, String propertyName) {
 		Object key = key(bean, propertyName);
 		if (STRING_PROPERTIES.containsKey(key)) {
@@ -66,6 +80,12 @@ public abstract class PhotoFlowController {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param bean
+	 * @param propertyName
+	 * @return {@link BooleanProperty}
+	 */
 	protected BooleanProperty booleanProperty(Object bean, String propertyName) {
 		try {
 			return JavaBeanBooleanPropertyBuilder.create().bean(bean).name(propertyName).build();
@@ -75,6 +95,12 @@ public abstract class PhotoFlowController {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param bean
+	 * @param property
+	 * @return {@link ReadOnlyFloatProperty}
+	 */
 	protected static ReadOnlyFloatProperty numberProperty(Object bean, String property) {
 		try {
 			// Convert to float property so we can divide and get decimals if required.
