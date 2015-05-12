@@ -286,7 +286,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				
 			} catch (FileHandlerException e) {
 				System.out.println("FILEHANDLEREXCEPTION");
-				errorHandler.spawnError("Youe File is already imported. Please select another one, will you?");
+				errorHandler.spawnError("Your File is already imported. Please select another one, will you?");
 				throw new RuntimeException(e);
 			} catch (DaoException e) {
 				System.out.println("DAOEXCEPTION");
