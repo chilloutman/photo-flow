@@ -9,7 +9,7 @@
 
 <BorderPane fx:controller="ch.zhaw.photoflow.controller.ProjectController" stylesheets="@photo-flow.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
 	<top>
-		<Pane prefHeight="75" styleClass="light-background">
+		<Pane fx:id="toolbar" prefHeight="75" styleClass="light-background">
 			<children>
 				<TextField fx:id="projectNameField" layoutX="20.0" layoutY="27.0" text="Project Name" />
 				<Button fx:id="newButton" styleClass="workflowButtonRed" layoutX="250.0" layoutY="10.0" prefWidth="40" prefHeight="40" mnemonicParsing="false"  text="" disable="false"/>

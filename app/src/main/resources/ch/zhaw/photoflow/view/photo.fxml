@@ -29,7 +29,7 @@
 					<ScrollPane hbarPolicy="NEVER" fitToWidth="true" maxHeight="Infinity">
 						<content>
 							<Label fx:id="metadataLabel" text="" wrapText="true" styleClass="lighter-background" visible="false" maxWidth="Infinity">
-								<padding><Insets top="10" left="5" bottom="10" right="5"/></padding>
+								<padding><Insets top="10" left="5" bottom="50" right="5"/></padding>
 							</Label>
 						</content>
 					</ScrollPane>

@@ -87,6 +87,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	Pane todoCheckComboBoxPane, separatorOne, separatorTwo, separatorThree;
 	@FXML
 	TilePane photosPane;
+	@FXML
+	Pane toolbar;
 	
 	PopOver popOver;
 	
@@ -101,29 +103,40 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			return;
 		}
 		
+		reset();
+		
+		initializeProjectNameField(this.project, project);
 		System.out.println("Project \"" + project.getName() + "\" has been selected.");
-		if (this.project != null) {
-			projectNameField.textProperty().unbindBidirectional(stringProperty(this.project, "name"));
-		}
 		this.project = project;
-		initializeProjectNameField();
 		
-		try {
-			fileHandler = photoFlow.fileHandler(project);
-		} catch (FileHandlerException e) {
-			throw new RuntimeException(e);
+		if (this.project != null) {
+			try {
+				fileHandler = photoFlow.fileHandler(this.project);
+			} catch (FileHandlerException e) {
+				throw new RuntimeException(e);
+			}
+			
+			todos.addAll(this.project.getTodos());
+			toolbar.setDisable(false);
+			
+			loadPhotos();
+			displayPhotos();
+			updateWorkflowButtons();
 		}
-		
-		this.todos.clear();
-		this.todos.addAll(project.getTodos());
-		
-		loadPhotos();
-		displayPhotos();
-		updateWorkflowButtons();
 	}
 	
-	private void initializeProjectNameField() {
-		projectNameField.textProperty().bindBidirectional(stringProperty(this.project, "name"));
+	private void reset() {
+		photoController.setPhoto(null);
+		resetPhotosPane();
+		todos.clear();
+		toolbar.setDisable(true);
+	}
+	
+	private void initializeProjectNameField(Project oldProject, Project newProject) {
+		if (oldProject != null) {
+			projectNameField.textProperty().unbindBidirectional(stringProperty(oldProject, "name"));
+		}
+		projectNameField.textProperty().bindBidirectional(stringProperty(newProject, "name"));
 		projectNameField.textProperty().addListener((observable, oldValue, newValue) -> {
 			saveProject();
 		});

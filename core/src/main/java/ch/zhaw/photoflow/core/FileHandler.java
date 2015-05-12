@@ -146,9 +146,7 @@ public class FileHandler {
 				.flatMap(directory -> directory.getTags().stream())
 				.filter(this::filterMetadataTag)
 				.map(tag -> tag.getTagName() + ": " + tag.getDescription())
-				.reduce("", (result, d) -> result + "\n" + d);
-			
-			System.out.println(s);
+				.reduce("", (result, tagString) -> result + tagString + "\n");
 			return s;
 		} catch (ImageProcessingException | IOException e) {
 			throw new FileHandlerException("Could load photo metadata: " + photo, e);
@@ -156,7 +154,6 @@ public class FileHandler {
 	}
 	
 	private boolean filterMetadataTag(Tag tag) {
-		System.out.println("#" + tag.getTagType() + "#" + tag);
 		return (
 			!tag.getTagName().contains("TRC") &&
 			!tag.getTagName().startsWith("Red") &&

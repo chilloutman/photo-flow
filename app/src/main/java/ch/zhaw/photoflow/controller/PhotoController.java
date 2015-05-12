@@ -41,8 +41,29 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		System.out.println("Photo has been selected: " + photo);
 		this.photo = photo;
 		
-		initializeLabels();
-		initializeButtons();
+		reset();
+		
+		if (this.photo != null) {
+			initializeLabels();
+			initializeButtons();
+		}
+	}
+	
+	private void reset() {
+		flagButton.setDisable(true);
+		discardButton.setDisable(true);
+		editButton.setDisable(true);
+		
+		filePathLabel.textProperty().unbind();
+		filePathLabel.setText("");
+		
+		fileSizeLabel.textProperty().unbind();
+		fileSizeLabel.setText("");
+		
+		stateLabel.textProperty().unbind();
+		stateLabel.setText("");
+		
+		metadataLabel.setVisible(false);
 	}
 	
 	private void initializeLabels() {
@@ -57,7 +78,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 			FileHandler fileHandler = photoFlow.fileHandler(photo.getProjectId().get());
 			String metadata = fileHandler.loadPhotoMetadata(photo);
 			metadataLabel.setText("Metadata/Exif:\n" + metadata);
-			metadataLabel.setVisible(true);
+			metadataLabel.setVisible(!metadata.isEmpty());
 		} catch (FileHandlerException e) {
 			errorHandler.spawnError("Could not load any metadata from your photo :-(");
 		}
