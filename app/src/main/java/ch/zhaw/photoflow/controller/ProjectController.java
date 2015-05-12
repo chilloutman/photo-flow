@@ -445,7 +445,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					finishButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
 					break;
 				case ARCHIVED:
-					exportProjectButton.setDisable(false);
+					exportProjectButton.setDisable(true);
 					importPhotoButton.setDisable(true);
 					newButton.getStyleClass().add(green);
 					editButton.getStyleClass().add(green);
