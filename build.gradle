@@ -1,8 +1,8 @@
 allprojects {
-	// Download all libs from maven central
-	repositories {
-		mavenCentral()
+	buildscript {
+		repositories { mavenCentral(); jcenter() }
 	}
+	repositories { mavenCentral() }
 
 	apply plugin: 'eclipse'
 

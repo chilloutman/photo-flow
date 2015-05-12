@@ -1,11 +1,43 @@
-apply plugin:'application'
+// Dependencies
 
-mainClassName = 'ch.zhaw.photoflow.PhotoFlowApplication'
+buildscript {
+	dependencies {
+		classpath(
+			'edu.sc.seis.gradle:launch4j:1.0.6'//,
+			//'edu.sc.seis.gradle:macappbundle:2.1.0'
+		)
+	}
+}
+
+plugins {
+	id "edu.sc.seis.macAppBundle" version "2.1.0"
+}
 
 dependencies {
-  compile(
-    project(':core'),
-    'com.cathive.fx:fx-guice:8.0.0',
-    'org.controlsfx:controlsfx:8.20.8'
-  )
+	compile(
+		project(':core'),
+		'com.cathive.fx:fx-guice:8.0.0',
+		'org.controlsfx:controlsfx:8.20.8'
+	)
+}
+
+// Main
+
+apply plugin:'application'
+mainClassName = 'ch.zhaw.photoflow.PhotoFlowApplication'
+
+// Windows Application
+
+apply plugin: 'launch4j'
+launch4j {
+	mainClassName = project.mainClassName
+	// TODO needs to a icon file
+	//icon = file('src/main/resources/ch/zhaw/photoflow/app_icon.png')
+}
+
+// OS X Application
+
+macAppBundle {
+	mainClassName = project.mainClassName
+	icon = 'PhotoFlow.icns'
 }
