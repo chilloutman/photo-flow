@@ -67,10 +67,11 @@ public class FileHandlerTest {
 	
 	/**
 	 * Checks that after the FileHandler is created, the corresponding Working Directories are created.
+	 * @throws FileHandlerException 
 	 */
 	@Test
-	public void checkDirectoriesCreated() {
-		assertTrue(fileHandler.getProjectDir().isDirectory());
+	public void checkDirectoriesCreated() throws FileHandlerException {
+		assertTrue(fileHandler.projectDir().isDirectory());
 	}
 	
 	/**
@@ -108,8 +109,8 @@ public class FileHandlerTest {
 		fileHandler.importPhoto(photo1, file1);
 		fileHandler.importPhoto(photo2, file2);
 		fileHandler.archiveProject();
-		assertFalse(fileHandler.getProjectDir().isDirectory());
-		assertFalse(fileHandler.getProjectDir().exists());
+		assertFalse(fileHandler.projectDir().isDirectory());
+		assertFalse(fileHandler.projectDir().exists());
 		if (file1.exists()&&file2.exists()) {
 			file1.delete();
 			file2.delete();
