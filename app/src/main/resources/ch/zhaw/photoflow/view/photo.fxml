@@ -12,7 +12,7 @@
 <?import javafx.scene.Cursor?>
 
 <AnchorPane prefWidth="250" styleClass="light-background" stylesheets="@photo.css" fx:controller="ch.zhaw.photoflow.controller.PhotoController" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
-	<BorderPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="15" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+	<BorderPane AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="15" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" style="-fx-border-style: solid hidden hidden  hidden;">
 		<center>
 			<VBox spacing="15" fillWidth="true">
 				<padding><Insets top="10" bottom="10"/></padding>

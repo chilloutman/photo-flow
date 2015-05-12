@@ -1,28 +1,28 @@
 /* Project Toolbar */
 
-#todoCheckComboBoxPane .list-cell {
-	-fx-border-color: #fff;
-}
-
-#exportProjectButton{
+#exportProjectButton {
 	-fx-background-image: url('../export.png');
 	-fx-background-repeat: no-repeat;
 	-fx-background-position: center;
 	-fx-background-size: 50% auto;
 }
 
-#archiveProjectButton{
+#archiveProjectButton {
 	-fx-background-image: url('../archive.png');
 	-fx-background-repeat: no-repeat;
 	-fx-background-position: center;
 	-fx-background-size: 90% auto;
 }
 
-#importPhotoButton{
+#importPhotoButton {
 	-fx-background-image: url('../addPhoto.png');
 	-fx-background-repeat: no-repeat;
 	-fx-background-position: center;
 	-fx-background-size: 90% auto;
+}
+
+#todoCheckComboBoxPane .list-cell {
+	-fx-border-color: #fff;
 }
 
 .pauseProjectButton{
@@ -39,24 +39,26 @@
 	-fx-background-size: 50% auto;
 }
 
-.workflowButtonRed {
-	-fx-background-image: url('../red_NA.png');
+/* Workflow */
+
+.workflowButton, .workflowButtonRed, .workflowButtonGreen {
 	-fx-background-repeat: no-repeat;
 	-fx-background-position: center;
+	-fx-background-image: none;
+	-fx-background-radius: 7em;
+	-fx-border-width: 0;
+}
+
+
+.workflowButtonRed {
+	-fx-background-image: url('../red_NA.png');
 	-fx-background-size: 70% auto;
 	-fx-background-radius: 7em;
 }
 
 .workflowButtonGreen {
 	-fx-background-image: url('../check_green.png');
-	-fx-background-repeat: no-repeat;
-	-fx-background-position: center;
 	-fx-background-size: 80% auto;
-	-fx-background-radius: 7em;
-}
-
-.workflowButton {
-	-fx-background-image: none;
 	-fx-background-radius: 7em;
 }
 
@@ -65,6 +67,7 @@
 	-fx-border-style: solid;
 	-fx-border-width: 1px;
 }
+
 
 /* TilePane selection and ImageView borders. */
 

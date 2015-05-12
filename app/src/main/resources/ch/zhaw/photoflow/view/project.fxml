@@ -20,7 +20,7 @@
 			<center>
 				<GridPane hgap="5" vgap="5" alignment="CENTER">
 					<columnConstraints>
-						<ColumnConstraints halignment="CENTER"/>
+						<ColumnConstraints halignment="CENTER"/><ColumnConstraints halignment="CENTER"/><ColumnConstraints halignment="CENTER"/><ColumnConstraints halignment="CENTER"/><ColumnConstraints halignment="CENTER"/><ColumnConstraints halignment="CENTER"/>
 					</columnConstraints>
 					
 					<!-- New -->
@@ -49,8 +49,8 @@
 			</center>
 			<right>
 				<HBox alignment="CENTER_RIGHT" spacing="15">
+					<Button fx:id="todoButton" text="Todo" prefWidth="65" disable="true" />
 					<Button fx:id="importPhotoButton" prefWidth="50" disable="true" />
-					<Button fx:id="todoButton" text="Todo" prefWidth="50" disable="true" />
 					<Button fx:id="archiveProjectButton" prefWidth="50" disable="true" />
 					<Button fx:id="exportProjectButton" prefWidth="50" disable="true"/>
 					<Button fx:id="pauseProjectButton" styleClass="pauseProjectButton" prefWidth="50" disable="true"/>

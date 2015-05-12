@@ -26,3 +26,15 @@
 	-fx-background-color: #888;
 	-fx-background: #888;
 }
+
+.button {
+	-fx-background-radius: 5px;
+	-fx-border-radius: 5px;
+	-fx-border-width: 1;
+	
+	-fx-border-color: #eee;
+	-fx-background-color: #ddd;
+	
+	-fx-text-fill: black;
+	-fx-background-insets: 0 0 0 0, 0, 1, 2;
+}
