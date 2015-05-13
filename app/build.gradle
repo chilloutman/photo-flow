@@ -3,14 +3,9 @@
 buildscript {
 	dependencies {
 		classpath(
-			'edu.sc.seis.gradle:launch4j:1.0.6'//,
-			//'edu.sc.seis.gradle:macappbundle:2.1.0'
+			'edu.sc.seis.gradle:launch4j:1.0.6'//
 		)
 	}
-}
-
-plugins {
-	id "edu.sc.seis.macAppBundle" version "2.1.0"
 }
 
 dependencies {
@@ -33,13 +28,4 @@ launch4j {
 	mainClassName = project.mainClassName
 	// TODO needs to a icon file
 	//icon = file('src/main/resources/ch/zhaw/photoflow/app_icon.png')
-}
-
-// OS X Application
-
-macAppBundle {
-	mainClassName = project.mainClassName
-	appName = 'PhotoFlow'
-	icon = 'PhotoFlow.icns'
-	bundleJRE = true
 }
