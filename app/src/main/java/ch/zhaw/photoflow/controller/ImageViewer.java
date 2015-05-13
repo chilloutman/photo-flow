@@ -115,8 +115,8 @@ public class ImageViewer{
 		dialog.setTitle("Photo Flow");
 		
 		//add Icon
-		Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(this.getClass().getResource("../app_icon_32.png").toString()));
+		//Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+		//stage.getIcons().add(new Image(this.getClass().getResource("../app_icon_32.png").toString()));
 		
 		dialog.show();
 		
