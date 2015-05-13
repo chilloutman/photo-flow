@@ -129,6 +129,7 @@ public class MainController extends PhotoFlowController implements Initializable
 		}
 		else {
 			projectController.setProject(null);
+			projectController.updateWorkflowButtons();
 		}
 	}
 
@@ -154,8 +155,8 @@ public class MainController extends PhotoFlowController implements Initializable
 	 */
 	public void deleteProject(Project project) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Löschbestätigung");
-		alert.setHeaderText("Projekt und beinhaltende Bilder unwiderruflich löschen?");
+		alert.setTitle("Delete Confirmation");
+		alert.setHeaderText("Are you sure you want to delete the project including all its Photos?");
 
 		alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
 		Optional<ButtonType> result = alert.showAndWait();

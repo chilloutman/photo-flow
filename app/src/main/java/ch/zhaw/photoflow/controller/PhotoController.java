@@ -8,8 +8,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert.AlertType;
 import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
@@ -31,7 +34,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 	private Optional<PhotoListener> listener;
 	
 	@FXML
-	private Button flagButton, discardButton, editButton;
+	private Button flagButton, discardButton, editButton, deleteButton;
 	
 	@FXML
 	private Label filePathLabel, fileSizeLabel, stateLabel, metadataLabel;
@@ -59,10 +62,11 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 	/**
 	 * Resets the {@link PhotoController}
 	 */
-	private void reset() {
+	public void reset() {
 		flagButton.setDisable(true);
 		discardButton.setDisable(true);
 		editButton.setDisable(true);
+		deleteButton.setDisable(true);
 		
 		filePathLabel.textProperty().unbind();
 		filePathLabel.setText("");
@@ -91,6 +95,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 			metadataLabel.setVisible(!metadata.isEmpty());
 		} catch (FileHandlerException e) {
 			errorHandler.spawnError("Could not load any metadata from your photo :-(");
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -121,6 +126,14 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 				fireStateChangeEvent();
 			});
 		});
+		deleteButton.setOnAction(event -> {
+			listener.ifPresent(listener -> {
+				listener.deletePhoto(photo);
+				//savePhoto();
+				updateButtons();
+				fireStateChangeEvent();
+			});
+		});
 		
 		updateButtons();
 	}
@@ -136,6 +149,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		flagButton.setDisable(PhotoState.FLAGGED.equals(photo.getState()));
 		discardButton.setDisable(PhotoState.DISCARDED.equals(photo.getState()));
 		editButton.setDisable(false);
+		deleteButton.setDisable(false);
 	}
 	
 	/**
@@ -186,6 +200,21 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		}
 	}
 	
+//	/**
+//	 * Deletes a {@link Photo}
+//	 * @param photo
+//	 */
+//	public void deletePhoto(Photo photo) {
+//		try {
+//			photoFlow.photoDao().delete(photo);
+//			photoFlow.fileHandler(photo.getProjectId().get()).deletePhoto(photo);
+//		} catch (FileHandlerException | DaoException e) {
+//			// TODO: Inform user, that persistence failed
+//			errorHandler.spawnError("The photo could no be deleted. Please try again.");
+//			throw new RuntimeException(e);
+//		}
+//	}
+	
 	public static interface PhotoListener {
 	
 		/**
@@ -206,6 +235,12 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		 */
 		public void editPhoto(Photo photo);
 		
+		/**
+		 * Sets the status of the specified {@link Photo} object to {@link PhotoState#EDITING}.
+		 * @param photo
+		 */
+		public void deletePhoto(Photo photo);
+		
 	}
 
 	@Override
@@ -214,6 +249,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		flagButton.setDisable(true);
 		discardButton.setDisable(true);
 		editButton.setDisable(true);
+		deleteButton.setDisable(true);
 	}
 	
 }

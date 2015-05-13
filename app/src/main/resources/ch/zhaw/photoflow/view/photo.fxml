@@ -39,9 +39,10 @@
 		<bottom>
 			<HBox spacing="15" alignment="CENTER">
 				<children>
-					<Button fx:id="flagButton" minWidth="65"/>
-					<Button fx:id="discardButton" minWidth="65"/>
-					<Button fx:id="editButton" minWidth="65"/>
+					<Button fx:id="flagButton" minWidth="45"/>
+					<Button fx:id="discardButton" minWidth="45"/>
+					<Button fx:id="editButton" minWidth="45"/>
+					<Button fx:id="deleteButton" minWidth="45"/>
 				</children>
 			</HBox>
 		</bottom>

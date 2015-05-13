@@ -269,6 +269,18 @@ public class FileHandler {
 	}
 	
 	/**
+	 * Deletes the photo in project directory.
+	 * @throws FileHandlerException
+	 */
+	public boolean deletePhoto(Photo photo) throws FileHandlerException {
+		File file = new File(projectDir()+"/"+photo.getFilePath());
+		if(!file.exists()){
+			System.out.println("File could not be found on disk!");
+		}
+		return file.delete();
+	}
+	
+	/**
 	 * Deletes the project directory.
 	 * @throws FileHandlerException
 	 */

@@ -25,7 +25,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -33,6 +35,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -172,6 +175,14 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			
 			task.valueProperty().addListener((observable, old, imageNode) -> {
 				photoNodes.put(photo, imageNode);
+				
+				imageNode.setOnKeyPressed((keyevent) -> {
+					selectPhoto(photo);
+
+					if (KeyCode.DELETE.equals(keyevent.getCode()) || KeyCode.BACK_SPACE.equals(keyevent.getCode())) {
+						deletePhoto(photo);
+					}
+				});
 				
 				imageNode.setOnMouseClicked((event) -> {
 					selectPhoto(photo);
@@ -314,11 +325,14 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	public void deletePhoto(Photo photo) {
 		try {
 			photoFlow.photoDao().delete(photo);
+			fileHandler.deletePhoto(photo);
 			photos.remove(photo);
-		} catch (DaoException e) {
+		} catch (FileHandlerException | DaoException e) {
 			errorHandler.spawnError("Your photo could not be deleted. Guess a 'sorry' would be appropriate...");
 			throw new RuntimeException(e);
 		}
+		displayPhotos();
+		updateWorkflowButtons();
 	}
 
 	/**
@@ -386,6 +400,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		
 		ExtensionFilter imageFilter = new ExtensionFilter("Zip Files", "*.zip");
 		fileChooser.getExtensionFilters().add(imageFilter);
+		fileChooser.setInitialFileName(project.getName()+".zip");
 		
 		File selectedFile = fileChooser.showSaveDialog(exportProjectButton.getScene().getWindow());
 		
@@ -396,6 +411,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				errorHandler.spawnError("Project could not be exported!");
 				throw new RuntimeException(e);
 			}
+		}else{
+			errorHandler.spawnWarning("You have not selected a destination Folder, have you?");
+			return;
 		}
 		errorHandler.spawnInformation("Your files were being transfered to new location: " + selectedFile);
 	}
@@ -485,6 +503,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				todoButton.setDisable(true);
 				pauseProjectButton.setDisable(false);
 				pauseProjectButton.getStyleClass().add(play);
+				photoController.reset();
 			}else {
 				projectNameField.setDisable(false);
 				
@@ -517,6 +536,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					editButton.getStyleClass().add(green);
 					finishButton.getStyleClass().add(green);
 					finishButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
+					photoController.reset();
 					break;
 				case ARCHIVED:
 					projectNameField.setDisable(true);
@@ -527,11 +547,14 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					finishButton.getStyleClass().add(green);
 					archiveButton.getStyleClass().add(green);
 					archiveButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
+					photoController.reset();
 					break;
 				default:
 					break;
 				}
 			}
+		}else {
+			projectNameField.setText("");
 		}
 	}
 
@@ -571,6 +594,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	private void initializeTooltips() {
 		exportProjectButton.setTooltip(new Tooltip("Export Project"));
 		importPhotoButton.setTooltip(new Tooltip("Import a new Photo"));
+		pauseProjectButton.setTooltip(new Tooltip("Pause/Resume Project"));
 	}
 	
 	/**
@@ -635,6 +659,30 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				}
 				
 				errorHandler.spawnInformation("Opening File explorer to edit your photo");
+			}
+
+			@Override
+			public void deletePhoto(Photo photo) {
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("Delete Confirmation");
+				alert.setHeaderText("Are you sure you want to delete this Photo?");
+
+				alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+				Optional<ButtonType> result = alert.showAndWait();
+
+				if (result.get() != ButtonType.YES){
+					return;
+				}	
+				try {
+					photoFlow.photoDao().delete(photo);
+					fileHandler.deletePhoto(photo);
+					photos.remove(photo);
+				} catch (FileHandlerException | DaoException e) {
+					errorHandler.spawnError("Delete Photo not possible.");
+					throw new RuntimeException(e);
+				}
+				displayPhotos();
+				updateWorkflowButtons();
 			}
 		});
 	}
