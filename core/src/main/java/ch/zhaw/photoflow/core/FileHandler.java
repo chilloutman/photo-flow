@@ -298,13 +298,12 @@ public class FileHandler {
 	}
 	
 	/**
-	 * Private method used to cleanup Testdata Directories and Files
-	 * @param path
-	 * @return
+	 * @param dir The directory to delete recursively.
+	 * @return {@code true} if the deletion completed successfully.
 	 */
-	private boolean deleteDirectory(File path) {
-		if (path.exists()) {
-			File[] files = path.listFiles();
+	private boolean deleteDirectory(File dir) {
+		if (dir.exists()) {
+			File[] files = dir.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isDirectory()) {
 					deleteDirectory(files[i]);
@@ -313,7 +312,7 @@ public class FileHandler {
 				}
 			}
 		}
-		return (path.delete());
+		return dir.delete();
 	}
 
 }

@@ -24,9 +24,8 @@ public enum FileFormat {
 	}
 
 	/**
-	 * Gets a {@link FileFormat} by the file name.
 	 * @param fileName The name of the file to use to determine the format.
-	 * @return {@link Optional}<{@link FileFormat}>
+	 * @return {@link FileFormat} for the given file name or {@link Optional#empty()} if none match.
 	 */
 	public static Optional<FileFormat> get(String fileName) {
 		Stream<FileFormat> s = Arrays.stream(values()).filter(fileFormat -> {

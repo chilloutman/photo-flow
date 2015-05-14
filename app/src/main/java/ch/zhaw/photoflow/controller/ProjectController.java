@@ -334,8 +334,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	 * Sets the state of the specified @{link Project} object to the given
 	 * projectState.
 	 * 
-	 * @param project
-	 * @param projectStatus
+	 * @param project The project to transition.
+	 * @param projectState The state to transition to.
 	 */
 	protected void transitionState(Project project, ProjectState projectState) {
 		if (photoFlow.projectWorkflow().canTransition(project, this.photos, projectState)) {
@@ -387,7 +387,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	
 	/**
 	 * Exports a Project to a ZIP-File.
-	 * @param event
+	 * @param event UI event.
 	 */
 	public void exportProject(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
@@ -419,11 +419,11 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	 */
 	public void pauseProject(ActionEvent event) {
 		pauseProjectButton.getStyleClass().removeAll();
-		if(project.getState() != ProjectState.PAUSED){
+		if (project.getState() != ProjectState.PAUSED) {
 			transitionState(this.project, ProjectState.PAUSED);
 			EventHandler.spawnInformation("Project paused! To continue click Button again.");
 			pauseProjectButton.getStyleClass().add("playProjectButton");
-		}else{
+		} else {
 			transitionState(this.project, ProjectState.IN_WORK);
 			EventHandler.spawnInformation("Project continues...");
 			pauseProjectButton.getStyleClass().add("pauseProjectButton");

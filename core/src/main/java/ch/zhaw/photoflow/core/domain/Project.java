@@ -31,7 +31,7 @@ public class Project implements PersistentDomainObject {
 	
 	/**
 	 * Conveniently create and configure a new instance.
-	 * @param setUpProject configure function.
+	 * @param configureProject configure function. Use setters in here.
 	 * @return the new instance.
 	 */
 	public static Project newProject (Consumer<Project> configureProject) {
