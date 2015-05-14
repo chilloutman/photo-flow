@@ -29,3 +29,15 @@ subprojects {
 		failOnError = false
 	}
 }
+
+
+task javadocAll(type: Javadoc) {
+	description 'Collect JavaDoc from all sub modules'
+	source subprojects.collect { project ->
+		project.sourceSets.main.allJava
+	}
+	classpath = files(subprojects.collect { project ->
+		project.sourceSets.main.compileClasspath
+	})
+	destinationDir = file("$buildDir/docs/javadoc")
+}

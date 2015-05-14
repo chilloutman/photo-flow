@@ -105,7 +105,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	 * @param project The project to display photos and other information.
 	 */
 	public void setProject(Project project) {
-		if (this.project == project ) {
+		if (this.project == project) {
 			return;
 		}
 		
@@ -136,7 +136,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	 */
 	private void reset() {
 		if (project != null) {
-			projectNameField.textProperty().unbindBidirectional(stringProperty(project, "name"));
+			stringProperty(project, "name").unbind();
 		}
 		photoController.setPhoto(null);
 		resetPhotosPane();
@@ -145,7 +145,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	}
 	
 	private void initializeProjectNameField() {
-		projectNameField.textProperty().bindBidirectional(stringProperty(project, "name"));
+		// Set text field to project name and bind the name property to it, so that changing the text changes the property.
+		projectNameField.textProperty().set(project.getName());
+		stringProperty(project, "name").bind(projectNameField.textProperty());
 	}
 	
 	/**
@@ -576,7 +578,9 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		initializeTodoPopOver();
 		
 		projectNameField.textProperty().addListener((observable, oldValue, newValue) -> {
-			saveProject();
+			if (project != null) {
+				saveProject();
+			}
 		});
 	}
 	

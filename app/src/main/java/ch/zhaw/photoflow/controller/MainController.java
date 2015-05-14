@@ -163,15 +163,16 @@ public class MainController extends PhotoFlowController implements Initializable
 		}
 		
 		try {
+			projectController.setProject(null);
 			photoFlow.fileHandler(project).deleteProject();
 			photoFlow.projectDao().delete(project);
 			projects.remove(project);
 		} catch (DaoException e) {
-			// TODO: Warn user
-			e.printStackTrace();
+			EventHandler.spawnError("Project could not be deleted.");
+			throw new RuntimeException(e);
 		} catch (FileHandlerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			EventHandler.spawnError("Project could not be deleted.");
+			throw new RuntimeException(e);
 		}
 	}
 
