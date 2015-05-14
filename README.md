@@ -22,6 +22,9 @@ ZHAW project: Photography Workflow Application
 ## Useful Gradle Tasks
 
 `eclipse`: Generate eclipse files. Necessary after changing project configuration or adding new libraries.
+
 `build`: Build all jar files and application binary.
+
 `run`: Run the applicaiton
+
 `run --debug-jvm`: Debug the application
