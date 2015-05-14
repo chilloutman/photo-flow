@@ -1,4 +1,4 @@
-package ch.zhaw.photoflow.core;
+package ch.zhaw.photoflow.core.dao;
 
 import ch.zhaw.photoflow.core.domain.Photo;
 

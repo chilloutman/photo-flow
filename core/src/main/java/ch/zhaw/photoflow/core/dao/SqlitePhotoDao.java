@@ -14,8 +14,6 @@ import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-import ch.zhaw.photoflow.core.DaoException;
-import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
@@ -29,6 +27,9 @@ public class SqlitePhotoDao implements PhotoDao {
 
 	private final SQLiteConnectionProvider provider;
 	
+	/**
+	 * @param provider Used to get a connection to the database.
+	 */
 	public SqlitePhotoDao(SQLiteConnectionProvider provider) {
 		this.provider = provider;
 	}

@@ -7,14 +7,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import ch.zhaw.photoflow.core.DaoException;
-import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Todo;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Implementation of {@link ProjectDao} without persistence.
+ * Useful for testing.
+ */
 public class InMemoryProjectDao implements ProjectDao {
 	
 	private static int idCounter = 0;
@@ -24,9 +26,6 @@ public class InMemoryProjectDao implements ProjectDao {
 	}
 	
 	private final List<Project> projects = new ArrayList<>();
-	
-	public InMemoryProjectDao() {
-	}
 	
 	/**
 	 * Load all projects.

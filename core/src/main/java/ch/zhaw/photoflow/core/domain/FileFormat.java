@@ -9,10 +9,12 @@ import ch.zhaw.photoflow.core.util.GuavaCollectors;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Picture file formats.
+ * Photo file formats.
  */
 public enum FileFormat {
+	/** For Photos in the JPEG format. */
 	JPEG("jpg", "jpeg"),
+	/** For Photos in the PNG format.*/
 	PNG("png");
 
 	private final String[] extensions;
@@ -22,8 +24,8 @@ public enum FileFormat {
 	}
 
 	/**
-	 * Gets a fileformat by the file name.
-	 * @param fileName
+	 * Gets a {@link FileFormat} by the file name.
+	 * @param fileName The name of the file to use to determine the format.
 	 * @return {@link Optional}<{@link FileFormat}>
 	 */
 	public static Optional<FileFormat> get(String fileName) {
@@ -37,8 +39,8 @@ public enum FileFormat {
 	}
 	
 	/**
-	 * Gets all declared file formats
-	 * @return {@link ImmutableList<String>} containing all declared file formats.
+	 * Gets all declared file formats.
+	 * @return {@link ImmutableList} containing all declared file formats.
 	 */
 	public static ImmutableList<String> getAllFileExtensions () {
 		return Arrays.stream(values())

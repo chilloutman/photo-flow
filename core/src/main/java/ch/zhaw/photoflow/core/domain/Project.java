@@ -22,6 +22,9 @@ public class Project implements PersistentDomainObject {
 	private List<Todo> todos = new ArrayList<>();
 	private List<Tag> tags = new ArrayList<>();
 	
+	/**
+	 * @return A new instance of {@link Project}.
+	 */
 	public static Project newProject () {
 		return new Project();
 	}

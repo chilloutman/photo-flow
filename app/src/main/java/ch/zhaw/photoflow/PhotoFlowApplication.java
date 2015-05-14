@@ -25,6 +25,10 @@ public class PhotoFlowApplication extends GuiceApplication {
 	@Inject
 	private GuiceFXMLLoader fxmlLoader;
 
+	/**
+	 * Launches the Photo Flow application. 
+	 * @param args No arguments will be processed.
+	 */
 	public static void main(String[] args) {
 		launch(PhotoFlowApplication.class, args);
 	}

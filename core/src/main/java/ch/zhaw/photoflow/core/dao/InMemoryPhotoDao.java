@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import ch.zhaw.photoflow.core.DaoException;
-import ch.zhaw.photoflow.core.PhotoDao;
 import ch.zhaw.photoflow.core.domain.Photo;
 
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Implementation of {@link PhotoDao} without persistence.
+ * Useful for testing.
+ */
 public class InMemoryPhotoDao implements PhotoDao {
 
 	private static int idCounter = 0;
@@ -22,9 +24,6 @@ public class InMemoryPhotoDao implements PhotoDao {
 	}
 	
 	private final List<Photo> photos = new ArrayList<>();
-	
-	public InMemoryPhotoDao() {
-	}
 	
 	@Override
 	public ImmutableList<Photo> loadAll(int projectId) {

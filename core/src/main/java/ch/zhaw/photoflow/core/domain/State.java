@@ -8,7 +8,7 @@ public interface State<T extends State<T>> {
 	
 	/**
 	 * Checks if step to the next desired state is valid.
-	 * @param {@link T} state
+	 * @param state Candidate for next state.
 	 * @return <b>true</b> if step is valid else <b>false</b>.
 	 */
 	public boolean isValidNextState(T state);

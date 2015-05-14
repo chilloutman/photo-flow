@@ -5,9 +5,6 @@ package ch.zhaw.photoflow.core.domain;
  */
 public class PhotoWorkflow extends AbstractWorkflow<PhotoState> {
 	
-	public PhotoWorkflow () {
-	}
-	
 	/**
 	 * Check if a transition is possible.
 	 * @param project The project that the photo belongs to.

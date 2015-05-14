@@ -1,4 +1,4 @@
-package ch.zhaw.photoflow.core;
+package ch.zhaw.photoflow.core.dao;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,33 +22,32 @@ public interface ProjectDao extends Dao<Project> {
 	public ImmutableList<Project> loadAll() throws DaoException;
 	
 	/**
-	 * 
-	 * @param {@link Project}
-	 * @return all todos held by a specific {@link Project}
-	 * @throws DaoException
+	 * @param project Todos for this project will be loaded.
+	 * @return all todos held by the given {@link Project}.
+	 * @throws DaoException If something goes wrong with the storage layer below.
 	 */
 	public List<Todo> loadAllTodosByProject(Project project) throws DaoException;
 	
 	/**
 	 * @param id of a {@link Todo}.
 	 * @return a {@link Todo} identified by given parameter.
-	 * @throws DaoException
+	 * @throws DaoException If something goes wrong with the storage layer below.
 	 */
 	public Optional<Todo> loadTodo(int id) throws DaoException;
 	
 	/**
 	 * Saves the {@link Todo} object relating to the provided {@link Project}.
-	 * @param {@link Project}
-	 * @param {@link Todo}
-	 * @return {@link Todo}
-	 * @throws DaoException
+	 * @param project {@link Project} that the todo is linked to.
+	 * @param todo {@link Todo} The todo to save.
+	 * @return {@link Todo} The given todo with generated id.
+	 * @throws DaoException If something goes wrong with the storage layer below.
 	 */
 	public Todo saveTodo(Project project, Todo todo) throws DaoException;
 	
 	/**
 	 * Removes a Todo.
-	 * @param {@link todo}
-	 * @throws DaoException
+	 * @param todo The todo to be remove.
+	 * @throws DaoException If something goes wrong with the storage layer below.
 	 */
 	public void deleteTodo(Todo todo) throws DaoException;
 }

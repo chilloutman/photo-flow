@@ -20,6 +20,9 @@ import javafx.stage.Modality;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.Tag;
 
+/**
+ * Displays a dialog to create a new project.
+ */
 public class CreateProjectController extends PhotoFlowController {
 
 	private Project project;
@@ -109,7 +112,7 @@ public class CreateProjectController extends PhotoFlowController {
 	}
 	
 	/**
-	 * The project being created. May be {@code null}.
+	 * @return The project being created. May be {@code null}.
 	 */
 	public Project getProject() {
 		return project;

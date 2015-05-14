@@ -27,13 +27,16 @@ public class Photo implements PersistentDomainObject {
 	private Photographer photographer;
 	private List<Tag> tags = new ArrayList<>();
 	
+	/**
+	 * @return A new Instance of {@link Photo}.
+	 */
 	public static Photo newPhoto () {
 		return new Photo();
 	}
 	
 	/**
 	 * Conveniently create and configure a new instance.
-	 * @param setUpProject configure function.
+	 * @param configurePhoto configure function. You should use setters in here.
 	 * @return the new instance.
 	 */
 	public static Photo newPhoto (Consumer<Photo> configurePhoto) {

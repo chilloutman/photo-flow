@@ -26,7 +26,9 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.google.common.annotations.VisibleForTesting;
 
-
+/**
+ * Handles file related tasks
+ */
 public class FileHandler {
 	
 	private static final String PHOTO_FLOW = "PhotoFlow";
@@ -34,7 +36,7 @@ public class FileHandler {
 	@VisibleForTesting
 	static File USER_HOME_DIR = new File(System.getProperty("user.home"));
 
-	private static Project project = Project.newProject();
+	private Project project = Project.newProject();
 	
 	/**
 	 * @return {@link File} SQLite database file.
@@ -75,22 +77,28 @@ public class FileHandler {
 	
 	/**
 	 * Constructor initializes userhome and workingPath
-	 * @throws FotoHandlerException 
+	 * IMPORTANT NOTE: A file handler constructed with just an id might not correctly with archived projects.
+	 * Use {@link FileHandler#FileHandler(Project)} whenever possible!
+	 * @param projectId
 	 */
 	public FileHandler(Integer projectId) {
-		project.setId(projectId);
+		this.project.setId(projectId);
 	}
 	
 	/**
 	 * Constructor initializes userhome and workingPath
-	 * @throws FotoHandlerException 
+	 * @param project
 	 */
 	public FileHandler(Project project) {
-		FileHandler.project = project;
+		this.project = project;
 	}
 	
+	/**
+	 * @return The project direcory.
+	 * @throws FileHandlerException If required directories don't exist and can't be created.
+	 */
 	public File projectDir () throws FileHandlerException {
-		if(project.getState() == ProjectState.ARCHIVED){
+		if (ProjectState.ARCHIVED.equals(project.getState())) {
 			return checkDirectory(new File(archiveDir(), project.getId().get().toString()));
 		}
 		return checkDirectory(new File(workingDir(), project.getId().get().toString()));
@@ -101,8 +109,7 @@ public class FileHandler {
 	 * @param photo Logical representation of a Photo.
 	 * @param file Physical Photo-File.
 	 * @return Photo Updated logical representation of a Photo.
-	 * @throws IOException Throws an Error if File already exists in Project-Directory.
-	 * @throws FileHandlerException 
+	 * @throws FileHandlerException If File already exists in Project-Directory. 
 	 */
 	public Photo importPhoto(Photo photo, File file) throws FileHandlerException {
 		if (FileFormat.get(file.getName()) == null) {
@@ -112,7 +119,7 @@ public class FileHandler {
 			// TODO change name and import anyway.
 			throw new FileHandlerException("File already exists: " + file);
 		}
-		
+
 		File newFile = new File(projectDir(), file.getName());
 		try {
 			Files.copy(file.toPath(), newFile.toPath());
@@ -186,11 +193,11 @@ public class FileHandler {
 	}
 	
 	/**
-	 * Method to zip a list of physical Project-Photo-Files into one Zip-File.
-	 * @param zipName Name of the Zip-File.
+	 * Method to zip a list of physical project photo files into one zip file.
+	 * @param zipName Name of the zip file.
 	 * @param list List of physical Photos.
-	 * @return created Zip-File.
-	 * @throws FileNotFoundException If a File in the List cannot be found, this Exception is thrown.
+	 * @return created zip file.
+	 * @throws FileHandlerException If a File in the List cannot be found, this Exception is thrown.
 	 */
 	public File exportZip(String zipName, List<Photo> list) throws FileHandlerException {
 		try (
@@ -233,7 +240,7 @@ public class FileHandler {
 			}
 	
 			zos.closeEntry();
-		}		
+		}
 	}
 	
 	/**
@@ -270,10 +277,12 @@ public class FileHandler {
 	
 	/**
 	 * Deletes the photo in project directory.
+	 * @param photo the photo to delete.
+	 * @return {@code true} if the deletion completed successfully.
 	 * @throws FileHandlerException
 	 */
 	public boolean deletePhoto(Photo photo) throws FileHandlerException {
-		File file = new File(projectDir()+"/"+photo.getFilePath());
+		File file = new File(projectDir(), photo.getFilePath());
 		if(!file.exists()){
 			System.out.println("File could not be found on disk!");
 		}

@@ -83,8 +83,8 @@ public enum ProjectState implements State<ProjectState> {
 	
 	/**
 	 * Checks if a photo may step to the next desired state.
-	 * @param {@link PhotoState} state
-	 * @return
+	 * @param state {@link PhotoState}
+	 * @return {@code true} when state is a valid state to transition to from this state.
 	 */
 	public boolean isValidPhotoState(PhotoState state) {
 		return photoStates().contains(state);

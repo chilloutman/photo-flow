@@ -16,6 +16,7 @@ public class SQLiteInitialize {
 
 	/**
 	 * Initializes a SQLite database with the database script provided in Resources folder.
+	 * @param provider Used to get a connection to the database.
 	 */
 	public static void initialize(SQLiteConnectionProvider provider) {
 		try {

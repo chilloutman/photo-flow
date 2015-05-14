@@ -16,8 +16,6 @@ import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-import ch.zhaw.photoflow.core.DaoException;
-import ch.zhaw.photoflow.core.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
 import ch.zhaw.photoflow.core.domain.Todo;
@@ -31,6 +29,9 @@ public class SqliteProjectDao implements ProjectDao {
 
 	private final SQLiteConnectionProvider provider;
 	
+	/**
+	 * @param provider Used to get a connection to the database.
+	 */
 	public SqliteProjectDao(SQLiteConnectionProvider provider) {
 		this.provider = provider;
 	}

@@ -4,27 +4,32 @@ package ch.zhaw.photoflow.core.domain;
  * Implementation of a model for locations.
  */
 public class Location {
+
+	private final float lat;
+	private final float lon;
 	
-	private float lat;	//latitude
-	private float lon;	//longitude
-	
-	public Location() {
-		
-	}
-	
-	
-	/************ GETTERS AND SETTERS ************/
-	public float getLat() {
-		return lat;
-	}
-	public void setLat(float lat) {
+	/**
+	 * Creates a new immutable location object.
+	 * @param lat Latitude
+	 * @param lon Longitude
+	 */
+	public Location(float lat, float lon) {
 		this.lat = lat;
-	}
-	public float getLon() {
-		return lon;
-	}
-	public void setLon(float lon) {
 		this.lon = lon;
 	}
 	
+	/**
+	 * @return Latitude
+	 */
+	public float getLat() {
+		return lat;
+	}
+
+	/**
+	 * @return Longitude
+	 */
+	public float getLon() {
+		return lon;
+	}
+
 }

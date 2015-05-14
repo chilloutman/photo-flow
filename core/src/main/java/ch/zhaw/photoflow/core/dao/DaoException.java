@@ -1,4 +1,4 @@
-package ch.zhaw.photoflow.core;
+package ch.zhaw.photoflow.core.dao;
 
 /**
  * Thrown for any unrecoverable underlying problem with a storage layer.

@@ -26,6 +26,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -35,7 +36,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -53,15 +53,14 @@ import org.controlsfx.control.Notifications;
 import org.controlsfx.control.PopOver;
 
 import ch.zhaw.photoflow.controller.PhotoController.PhotoListener;
-import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
+import ch.zhaw.photoflow.core.dao.DaoException;
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;
-import ch.zhaw.photoflow.core.domain.ProjectWorkflow;
 import ch.zhaw.photoflow.core.domain.Todo;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -75,7 +74,6 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	private FileHandler fileHandler;
 	private List<Photo> photos = new ArrayList<Photo>();
 	final ObservableList<Todo> todos = FXCollections.observableArrayList();
-	private ErrorHandler errorHandler = new ErrorHandler();
 	
 	/** Daemon threads for background task execution */
 	private final ExecutorService imageLoaderService = newImageLoaderService();
@@ -104,7 +102,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 
 	/**
 	 * Informs the {@link ProjectController} which project-content to display.
-	 * @param project
+	 * @param project The project to display photos and other information.
 	 */
 	public void setProject(Project project) {
 		if (this.project == project ) {
@@ -159,7 +157,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			this.photos.clear();
 			this.photos.addAll(loadedPhotos);
 		} catch (DaoException e) {
-			errorHandler.spawnError("Something went wrong :-( Please try again!");
+			EventHandler.spawnError("Something went wrong :-( Please try again!");
 			throw new RuntimeException(e);
 		}
 	}
@@ -197,7 +195,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			
 			task.onFailedProperty().addListener((observale, a, b) -> {
 				System.out.println("Loading photo failed: " + photo);
-				errorHandler.spawnError("Darn! We could not load your Image "+photo.getFilePath());
+				EventHandler.spawnError("Darn! We could not load your Image "+photo.getFilePath());
 				imageLoadingTasks.remove(task);
 			});
 			
@@ -219,8 +217,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	}
 	
 	/**
-	 * Display photo as selected.
-	 * @param photo
+	 * @param photo Photo to select.
 	 */
 	private void selectPhoto(Photo photo) {
 		Node imageNode = photoNodes.get(photo);
@@ -261,7 +258,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			photoFlow.photoDao().save(photo);
 			photos.add(photo);
 		} catch (DaoException e) {
-			errorHandler.spawnError("We are so sorry. We tried really hard to add your photo to the project, but we failed...miserably!");
+			EventHandler.spawnError("We are so sorry. We tried really hard to add your photo to the project, but we failed...miserably!");
 			throw new RuntimeException(e);
 		}
 	}
@@ -281,7 +278,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		List<File> selectedFiles = fileChooser.showOpenMultipleDialog(importPhotoButton.getScene().getWindow());
 		
 		if (selectedFiles == null) {
-			errorHandler.spawnWarning("You have not selected any photos, have you?");
+			EventHandler.spawnWarning("You have not selected any photos, have you?");
 			return;
 		}
 		
@@ -296,12 +293,10 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				photos.add(photo);
 				
 			} catch (FileHandlerException e) {
-				System.out.println("FILEHANDLEREXCEPTION");
-				errorHandler.spawnError("Your File is already imported. Please select another one, will you?");
+				EventHandler.spawnError("Your File is already imported. Please select another one, will you?");
 				throw new RuntimeException(e);
 			} catch (DaoException e) {
-				System.out.println("DAOEXCEPTION");
-				errorHandler.spawnError("Sorry! Something went wrong in saving your Photo. Please try again!");
+				EventHandler.spawnError("Sorry! Something went wrong in saving your Photo. Please try again!");
 				throw new RuntimeException(e);
 			}
 			
@@ -328,7 +323,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			fileHandler.deletePhoto(photo);
 			photos.remove(photo);
 		} catch (FileHandlerException | DaoException e) {
-			errorHandler.spawnError("Your photo could not be deleted. Guess a 'sorry' would be appropriate...");
+			EventHandler.spawnError("Your photo could not be deleted. Guess a 'sorry' would be appropriate...");
 			throw new RuntimeException(e);
 		}
 		displayPhotos();
@@ -350,12 +345,12 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			try {
 				photoFlow.projectDao().save(project);
 			} catch (DaoException e) {
-				errorHandler.spawnError("Something went wrong in saving Project!");
+				EventHandler.spawnError("Something went wrong in saving Project!");
 			}
 			saveProject();
 		} else {
-			errorHandler.spawnError("Your Project is not in a correct State!");
-			throw new RuntimeException();
+			EventHandler.spawnError("Your Project is not in a correct State!");
+			throw new IllegalStateException("Your Project is not in a correct State!");
 		}
 		updateWorkflowButtons();
 	}
@@ -368,23 +363,23 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		try {
 			photoFlow.projectDao().save(project);
 		} catch (DaoException e) {
-			errorHandler.spawnError("Something went wrong in saving Project!");
+			EventHandler.spawnError("Something went wrong in saving Project!");
 			throw new RuntimeException(e);
 		}
 		updateWorkflowButtons();
 	}
 
 	/**
-	 * Changes the state of the selected {@link Project} to {@link ProjectState.ARCHIVED} if valid.
+	 * Changes the state of the selected {@link Project} to {@link ProjectState#ARCHIVED} if valid.
 	 * @param event
 	 */
 	public void archiveProject(ActionEvent event) {
 		try {
 			fileHandler.archiveProject();
 			transitionState(this.project, ProjectState.ARCHIVED);
-			errorHandler.spawnInformation("Project was archived using cryo tech!");
+			EventHandler.spawnInformation("Project was archived using cryo tech!");
 		} catch (FileHandlerException e) {
-			errorHandler.spawnError("Project could not be archived!");
+			EventHandler.spawnError("Project could not be archived!");
 			throw new RuntimeException(e);
 		}
 		updateWorkflowButtons();
@@ -408,40 +403,40 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			try {
 			fileHandler.exportZip(selectedFile.getAbsolutePath(), photos);
 			} catch (FileHandlerException e) {
-				errorHandler.spawnError("Project could not be exported!");
+				EventHandler.spawnError("Project could not be exported!");
 				throw new RuntimeException(e);
 			}
-		}else{
-			errorHandler.spawnWarning("You have not selected a destination Folder, have you?");
+		} else {
+			EventHandler.spawnWarning("You have not selected a destination Folder, have you?");
 			return;
 		}
-		errorHandler.spawnInformation("Your files were being transfered to new location: " + selectedFile);
+		EventHandler.spawnInformation("Your files were being transfered to new location: " + selectedFile);
 	}
 	
 	/**
-	 * Changes the state of the selected {@link Project} to {@link ProjectState.PAUSED} if valid.
+	 * Changes the state of the selected {@link Project} to {@link ProjectState#PAUSED} if valid.
 	 * @param event
 	 */
 	public void pauseProject(ActionEvent event) {
 		pauseProjectButton.getStyleClass().removeAll();
 		if(project.getState() != ProjectState.PAUSED){
 			transitionState(this.project, ProjectState.PAUSED);
-			errorHandler.spawnInformation("Project paused! To continue click Button again.");
+			EventHandler.spawnInformation("Project paused! To continue click Button again.");
 			pauseProjectButton.getStyleClass().add("playProjectButton");
 		}else{
 			transitionState(this.project, ProjectState.IN_WORK);
-			errorHandler.spawnInformation("Project continues...");
+			EventHandler.spawnInformation("Project continues...");
 			pauseProjectButton.getStyleClass().add("pauseProjectButton");
 		}
 	}
 	
 	/**
-	 * Changes the state of the selected {@link Project} to {@link ProjectState.IN_WORK} if valid.
+	 * Changes the state of the selected {@link Project} to {@link ProjectState#IN_WORK} if valid.
 	 * @param event
 	 */
 	public void editProject(ActionEvent event){
-		if(photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK) && !photos.isEmpty()){
-			if(project.getState() == ProjectState.ARCHIVED){
+		if (photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK) && !photos.isEmpty()) {
+			if (project.getState() == ProjectState.ARCHIVED) {
 				try {
 					fileHandler.unArchiveProject();
 				} catch (FileHandlerException e) {
@@ -450,21 +445,21 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				}
 			}
 			transitionState(project, ProjectState.IN_WORK);
-		}else{
-			errorHandler.spawnWarning("State cannot be changed! Be sure you have imported any Photos");
+		} else {
+			EventHandler.spawnWarning("State cannot be changed! Be sure you have imported any Photos");
 		}
 		updateWorkflowButtons();
 	}
 	
 	/**
-	 * Changes the state of the selected {@link Project} to {@link ProjectState.DONE} if valid.
+	 * Changes the state of the selected {@link Project} to {@link ProjectState#DONE} if valid.
 	 * @param event
 	 */
 	public void finishProject(ActionEvent event){
-		if(photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.DONE)){
+		if (photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.DONE)) {
 			transitionState(project, ProjectState.DONE);
-		}else{
-			errorHandler.spawnWarning("Finishing Project not possible! Every Photo must be flagged or discarded!");
+		} else {
+			EventHandler.spawnWarning("Finishing Project not possible! Every Photo must be flagged or discarded!");
 		}
 		updateWorkflowButtons();
 	}
@@ -473,12 +468,11 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	 * Updates the workflow button designs to indicate the actual and possible future workflow state.
 	 */
 	public void updateWorkflowButtons() {
-		
-		if(project != null){
+		if (project != null) {
 			String green = "workflowButtonGreen";
 			String play = "playProjectButton";
 			String pause = "pauseProjectButton";
-			
+
 			newButton.setEffect(null);
 			newButton.getStyleClass().remove(green);
 			editButton.setEffect(null);
@@ -490,33 +484,33 @@ public class ProjectController extends PhotoFlowController implements Initializa
 			pauseProjectButton.getStyleClass().remove(play);
 			pauseProjectButton.getStyleClass().remove(pause);
 
-			if(project.getState() == ProjectState.PAUSED){
+			if (project.getState() == ProjectState.PAUSED) {
 				projectNameField.setDisable(true);
-				
+
 				newButton.setDisable(true);
 				archiveButton.setDisable(true);
 				editButton.setDisable(true);
 				finishButton.setDisable(true);
-				
+
 				importPhotoButton.setDisable(true);
 				exportProjectButton.setDisable(true);
 				todoButton.setDisable(true);
 				pauseProjectButton.setDisable(false);
 				pauseProjectButton.getStyleClass().add(play);
 				photoController.reset();
-			}else {
+			} else {
 				projectNameField.setDisable(false);
-				
+
 				newButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.NEW));
 				editButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.IN_WORK));
 				finishButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.DONE));
 				archiveButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.ARCHIVED));
-				
+
 				todoButton.setDisable(false);
 				pauseProjectButton.setDisable(!photoFlow.projectWorkflow().canTransition(project, photos, ProjectState.PAUSED));
 				pauseProjectButton.getStyleClass().add(pause);
-			
-				switch(project.getState()){
+
+				switch (project.getState()) {
 				case NEW:
 					importPhotoButton.setDisable(false);
 					newButton.setEffect(new DropShadow(10, Color.YELLOWGREEN));
@@ -553,7 +547,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					break;
 				}
 			}
-		}else {
+		} else {
 			projectNameField.setText("");
 		}
 	}
@@ -565,8 +559,6 @@ public class ProjectController extends PhotoFlowController implements Initializa
 		initializeTooltips();
 		initializePhotoListener();
 		
-		//Disable first TODO
-		//this.setDisable(true);
 		projectNameField.setDisable(true);
 		newButton.setDisable(true);
 		editButton.setDisable(true);
@@ -601,8 +593,6 @@ public class ProjectController extends PhotoFlowController implements Initializa
 	 * Initializes PhotoListener.
 	 */
 	private void initializePhotoListener() {
-		
-		//Here comes the listener
 		photoController.setListener(new PhotoListener() {
 			
 			@Override
@@ -617,7 +607,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					
 					System.out.println("Photo flagged: " + photo);
 				} else {
-					// TODO Button should have been disabled.
+					throw new IllegalStateException("Button should have been disabled.");
 				}
 			}
 			
@@ -633,7 +623,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					
 					System.out.println("Photo discarded: " + photo);
 				} else {
-					// TODO Button should have been disabled.
+					throw new IllegalStateException("Button should have been disabled.");
 				}
 			}
 
@@ -650,15 +640,16 @@ public class ProjectController extends PhotoFlowController implements Initializa
 						System.out.println("Opening OS X Finder");
 						executable = "open ";
 					} else {
-						errorHandler.spawnError("Editting is not yet supported on your OS. Please buy a Mac :-P");
+						EventHandler.spawnError("Editting is not yet supported on your OS. Please buy a Mac :-P");
 						return;
 					}
 					Runtime.getRuntime().exec(executable + " " + projectPath);
 				} catch (FileHandlerException | IOException e) {
+					EventHandler.spawnError("Could not open file browser");
 					throw new RuntimeException(e);
 				}
 				
-				errorHandler.spawnInformation("Opening File explorer to edit your photo");
+				EventHandler.spawnInformation("Opening File explorer to edit your photo");
 			}
 
 			@Override
@@ -678,7 +669,7 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					fileHandler.deletePhoto(photo);
 					photos.remove(photo);
 				} catch (FileHandlerException | DaoException e) {
-					errorHandler.spawnError("Delete Photo not possible.");
+					EventHandler.spawnError("Delete Photo not possible.");
 					throw new RuntimeException(e);
 				}
 				displayPhotos();
@@ -745,9 +736,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 						checkedProperty.addListener((observable, oldvalue, newvalue) -> {
 							try {
 								photoFlow.projectDao().saveTodo(project, todo);
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							} catch (DaoException e) {
+								throw new RuntimeException(e);
 							}
 						});
 						checkBox.selectedProperty().bindBidirectional(checkedProperty);
@@ -766,8 +756,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 				try {
 					photoFlow.projectDao().deleteTodo(selectedTodo);
 					todos.remove(selectedTodo);
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (DaoException e) {
+					throw new RuntimeException(e);
 				}
 			}
 		});
@@ -789,9 +779,8 @@ public class ProjectController extends PhotoFlowController implements Initializa
 					project.addTodo(todo);
 					todos.add(todo);
 					descriptionTextField.setText("");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (DaoException e) {
+					throw new RuntimeException(e);
 				}
 			}
 		});

@@ -20,10 +20,9 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.KeyCode;
-import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandlerException;
 import ch.zhaw.photoflow.core.PhotoFlow;
-import ch.zhaw.photoflow.core.domain.Photo;
+import ch.zhaw.photoflow.core.dao.DaoException;
 import ch.zhaw.photoflow.core.domain.Project;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -39,7 +38,6 @@ public class MainController extends PhotoFlowController implements Initializable
 	private static final Project ADD_NEW_PROJECT = Project.newProject(p -> p.setName("+ New Project"));
 	
 	private final ObservableList<Project> projects = FXCollections.observableArrayList();
-	private ErrorHandler errorHandler = new ErrorHandler();
 
 	@FXML
 	private ProjectController projectController;
@@ -93,8 +91,8 @@ public class MainController extends PhotoFlowController implements Initializable
 			this.projects.add(ADD_NEW_PROJECT);
 			this.projects.addAll(photoFlow.projectDao().loadAll());
 		} catch (DaoException e) {
-			e.printStackTrace();
-			errorHandler.spawnError("Could not load project! Please try restart PhotoFlow!");
+			EventHandler.spawnError("Could not load project! Please try restart PhotoFlow!");
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -108,7 +106,7 @@ public class MainController extends PhotoFlowController implements Initializable
 		if (newProject != null) {
 			addProject(newProject);
 			projectController.setProject(newProject);
-			errorHandler.spawnInformation("Your new Project was successfully created!");
+			EventHandler.spawnInformation("Your new Project was successfully created!");
 		} else {
 			System.out.println("Canceled project creation.");
 		}
@@ -120,8 +118,7 @@ public class MainController extends PhotoFlowController implements Initializable
 	}
 	
 	/**
-	 * Selects a {@link Project}
-	 * @param selectedProject
+	 * @param selectedProject Project that has been selected.
 	 */
 	public void projectSelected(Project selectedProject) {
 		if (selectedProject != ADD_NEW_PROJECT) {

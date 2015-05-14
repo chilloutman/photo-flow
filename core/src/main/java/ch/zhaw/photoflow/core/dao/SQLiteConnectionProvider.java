@@ -10,15 +10,18 @@ import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
 
 /**
- * Manages the connection pool.
+ * Manages SQL {@link Connection connections}.
  */
 public class SQLiteConnectionProvider {
 
-	public static final String DB_BASE_URL = "jdbc:sqlite:";
-	public static final String DRIVER_CLASS = "org.sqlite.JDBC";
+	private static final String DB_BASE_URL = "jdbc:sqlite:";
+	private static final String DRIVER_CLASS = "org.sqlite.JDBC";
 
 	private Connection connection = null;
 
+	/**
+	 * Prepare by loading the driver class.
+	 */
 	public SQLiteConnectionProvider() {
 		try {
 			Class.forName(DRIVER_CLASS);
@@ -28,9 +31,8 @@ public class SQLiteConnectionProvider {
 	}
 
 	/**
-	 * Creates a {@link Connection} to the photoflow sqlite database if necessary. Else the existing {@link Connection} will be returned. 
-	 * @return {@link Connection}
-	 * @throws SQLException
+	 * @return A new connection to the Photo Flow SQLite database.
+	 * @throws SQLException When a connection could not be created.
 	 */
 	private Connection createConnection() throws SQLException {
 		SQLiteConfig config = new SQLiteConfig();
@@ -45,8 +47,8 @@ public class SQLiteConnectionProvider {
 	}
 
 	/**
-	 * @return A ready-to use {@link Connection} of the connection pool. The caller is responsible for closing this connection!
-	 * @throws SQLException
+	 * @return An existing open {@link Connection connection} or a new connection. The caller is responsible for closing this connection!
+	 * @throws SQLException When a connection could not be created.
 	 */
 	public Connection getConnection() throws SQLException {
 		if (connection == null || connection.isClosed()) {

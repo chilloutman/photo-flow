@@ -8,14 +8,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringExpression;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.Alert.AlertType;
-import ch.zhaw.photoflow.core.DaoException;
 import ch.zhaw.photoflow.core.FileHandler;
 import ch.zhaw.photoflow.core.FileHandlerException;
+import ch.zhaw.photoflow.core.dao.DaoException;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.PhotoState;
 import ch.zhaw.photoflow.core.domain.Tag;
@@ -29,7 +26,6 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 	
 	/** Currently selected photo. */
 	private Photo photo;
-	private ErrorHandler errorHandler = new ErrorHandler();
 	
 	private Optional<PhotoListener> listener;
 	
@@ -39,13 +35,17 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 	@FXML
 	private Label filePathLabel, fileSizeLabel, stateLabel, metadataLabel;
 	
+	/**
+	 * @param listener Listener to set.
+	 * @see PhotoListener
+	 */
 	public void setListener(PhotoListener listener) {
 		this.listener = Optional.of(listener);
 	}
 	
 	/**
 	 * Informs the {@link PhotoController} which {@link Photo} to display.
-	 * @param project
+	 * @param photo Information for this photo will be loaded and displayed.
 	 */
 	public void setPhoto(Photo photo) {
 		System.out.println("Photo has been selected: " + photo);
@@ -94,7 +94,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 			metadataLabel.setText("Metadata/Exif:\n" + metadata);
 			metadataLabel.setVisible(!metadata.isEmpty());
 		} catch (FileHandlerException e) {
-			errorHandler.spawnError("Could not load any metadata from your photo :-(");
+			EventHandler.spawnError("Could not load any metadata from your photo :-(");
 			throw new RuntimeException(e);
 		}
 	}
@@ -159,7 +159,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 		try {
 			photoFlow.photoDao().save(photo);
 		} catch (DaoException e) {
-			errorHandler.spawnError("Your photo could not be safed somehow. Plese try again! Everybody needs a second chance :-)");
+			EventHandler.spawnError("Your photo could not be safed somehow. Plese try again! Everybody needs a second chance :-)");
 			throw new RuntimeException(e);
 		}
 	}
@@ -176,7 +176,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 			photoFlow.photoDao().save(this.photo);
 		} catch (DaoException e) {
 			this.photo.removeTag(tag);
-			errorHandler.spawnError("Your Tags could not be safed. You would not have used the anyway, right?");
+			EventHandler.spawnError("Your Tags could not be safed. You would not have used the anyway, right?");
 			throw new RuntimeException(e);
 		}
 
@@ -184,7 +184,7 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 
 	/**
 	 * Deletes a {@link Tag}
-	 * @param tagName
+	 * @param tagName The name of the tag to be deleted.
 	 */
 	public void deleteTag(String tagName) {
 		Tag tag = new Tag(tagName);
@@ -194,27 +194,15 @@ public class PhotoController extends PhotoFlowController implements Initializabl
 			photoFlow.photoDao().save(this.photo);
 		} catch (DaoException e) {
 			this.photo.addTag(tag);
-			// TODO: Inform user, that persistence failed
-			errorHandler.spawnError("The photo tags could no be safed. Please try again.");
+			EventHandler.spawnError("The photo tags could no be safed. Please try again.");
 			throw new RuntimeException(e);
 		}
 	}
 	
-//	/**
-//	 * Deletes a {@link Photo}
-//	 * @param photo
-//	 */
-//	public void deletePhoto(Photo photo) {
-//		try {
-//			photoFlow.photoDao().delete(photo);
-//			photoFlow.fileHandler(photo.getProjectId().get()).deletePhoto(photo);
-//		} catch (FileHandlerException | DaoException e) {
-//			// TODO: Inform user, that persistence failed
-//			errorHandler.spawnError("The photo could no be deleted. Please try again.");
-//			throw new RuntimeException(e);
-//		}
-//	}
-	
+	/**
+	 * Gets notified about actions to be executed on a photo.
+	 * The listener is responsible for handling status transitions and delete operations.
+	 */
 	public static interface PhotoListener {
 	
 		/**

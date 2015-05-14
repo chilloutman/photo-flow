@@ -11,6 +11,10 @@ public class Tag {
 
 	private final String name;
 	
+	/**
+	 * Creates a new immutable instance of {@link Tag}.
+	 * @param name {@link #getName()}
+	 */
 	public Tag(String name) {
 		this.name = name;
 	}

@@ -11,7 +11,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.zhaw.photoflow.core.DaoException;
+import ch.zhaw.photoflow.core.dao.DaoException;
 import ch.zhaw.photoflow.core.domain.Project;
 
 

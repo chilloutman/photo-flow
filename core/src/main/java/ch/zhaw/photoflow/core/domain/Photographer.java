@@ -5,13 +5,18 @@ import java.util.Objects;
 import com.google.common.base.MoreObjects;
 
 /**
- * This class is immutable. There should be no setters.
+ * Model Representation of a photographer.
  */
 public class Photographer {
 
 	private final String firstName;
 	private final String lastName;
 	
+	/**
+	 * Create a new immutable instance of {@link Photographer}.
+	 * @param firstName {@link #getFirstName()}.
+	 * @param lastName {@link #getLastName()}.
+	 */
 	public Photographer(String firstName, String lastName) {
 		this.firstName = firstName;
 		this.lastName = lastName;

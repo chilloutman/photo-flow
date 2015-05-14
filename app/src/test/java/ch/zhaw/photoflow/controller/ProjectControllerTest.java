@@ -10,9 +10,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.zhaw.photoflow.core.DaoException;
-import ch.zhaw.photoflow.core.PhotoDao;
-import ch.zhaw.photoflow.core.ProjectDao;
+import ch.zhaw.photoflow.core.dao.DaoException;
+import ch.zhaw.photoflow.core.dao.PhotoDao;
+import ch.zhaw.photoflow.core.dao.ProjectDao;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
 import ch.zhaw.photoflow.core.domain.ProjectState;

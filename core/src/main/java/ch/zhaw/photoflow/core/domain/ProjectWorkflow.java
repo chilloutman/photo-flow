@@ -7,9 +7,6 @@ import java.util.Collection;
  */
 public class ProjectWorkflow extends AbstractWorkflow<ProjectState> {
 	
-	public ProjectWorkflow () {
-	}
-	
 	/**
 	 * Validates the transition to the next state.
 	 * @param project

@@ -5,16 +5,22 @@ import static ch.zhaw.photoflow.core.domain.Project.newProject;
 
 import java.time.LocalDateTime;
 
+import ch.zhaw.photoflow.core.dao.DaoException;
+import ch.zhaw.photoflow.core.dao.PhotoDao;
+import ch.zhaw.photoflow.core.dao.ProjectDao;
 import ch.zhaw.photoflow.core.domain.FileFormat;
 import ch.zhaw.photoflow.core.domain.Photo;
 import ch.zhaw.photoflow.core.domain.Project;
 
 import com.google.common.collect.ImmutableList;
 
-
+/**
+ * Generates dummy data.
+ * Useful for developers.
+ */
 public final class DummyData {
 	
-	public static final ImmutableList<Project> PROJECTS = ImmutableList.of(
+	private static final ImmutableList<Project> PROJECTS = ImmutableList.of(
 		newProject(p -> {
 			p.setName("Secret Project");
 			p.setDescription("TOP SECRET, MAN!");
@@ -28,7 +34,7 @@ public final class DummyData {
 		})
 	);
 	
-	public static final ImmutableList<Photo> PHOTOS = ImmutableList.of(
+	private static final ImmutableList<Photo> PHOTOS = ImmutableList.of(
 		newPhoto(p -> {
 			p.setCreationDate(LocalDateTime.now());
 			p.setFileFormat(FileFormat.JPEG);
